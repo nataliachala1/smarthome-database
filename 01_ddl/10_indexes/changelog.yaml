@@ -1,0 +1,113 @@
+databaseChangeLog:
+- changeSet:
+    id: d9647530-11fb-4b7e-a92c-f6ee620f8c3a
+    author: natalia chala
+    labels: BD-01-dev,ddl,index
+    changes:
+    - sqlFile:
+        path: 001_auth_indexes.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/10_indexes/001_auth_indexes.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: b25b47f8-2951-4383-9107-7b578c81d76d
+    author: natalia chala
+    labels: BD-01-dev,ddl,index
+    changes:
+    - sqlFile:
+        path: 002_homes_indexes.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/10_indexes/002_homes_indexes.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 5c6c697f-2d32-41da-ae31-0984bed48a62
+    author: natalia chala
+    labels: BD-01-dev,ddl,index
+    changes:
+    - sqlFile:
+        path: 003_devices_indexes.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/10_indexes/003_devices_indexes.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 748c900a-68b2-4a8a-b76f-408764691e5d
+    author: natalia chala
+    labels: BD-01-dev,ddl,index
+    changes:
+    - sqlFile:
+        path: 004_consumption_indexes.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/10_indexes/004_consumption_indexes.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 04cdddce-1c13-439b-b60b-96e6c4eb095a
+    author: natalia chala
+    labels: BD-01-dev,ddl,index
+    changes:
+    - sqlFile:
+        path: 005_notifications_indexes.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/10_indexes/005_notifications_indexes.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 7dfec709-3dea-41c9-9731-52a8dce27465
+    author: natalia chala
+    labels: BD-01-dev,ddl,index
+    changes:
+    - sqlFile:
+        path: 006_sync_indexes.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/10_indexes/006_sync_indexes.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 5ab7bcd2-3f7f-4531-90fb-c13b66c007d2
+    author: natalia chala
+    labels: BD-01-dev,ddl,index
+    changes:
+    - sqlFile:
+        path: 007_config_indexes.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/10_indexes/007_config_indexes.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 8692c538-a72b-431b-8afc-903dbde62987
+    author: natalia chala
+    labels: BD-01-dev,ddl,index
+    changes:
+    - sqlFile:
+        path: 008_audit_indexes.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/10_indexes/008_audit_indexes.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false

@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS config.idx_home_recommendation_enabled_frequency;

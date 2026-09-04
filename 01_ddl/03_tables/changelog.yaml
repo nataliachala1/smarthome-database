@@ -1,0 +1,121 @@
+databaseChangeLog:
+  - changeSet:
+      id: 19a23933-46d0-4909-8d3d-e94a7aec1689
+      author: natalia chala
+      labels: "BD-01-dev,ddl,table"
+      comment: Creates the auth domain tables.
+      changes:
+        - sqlFile:
+            path: 001_create_auth_tables.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/001_create_auth_tables_rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: c77d2fbc-0a83-4f79-b089-424452cc3cc8
+      author: natalia chala
+      labels: "BD-01-dev,ddl,table"
+      comment: Creates the homes domain tables.
+      changes:
+        - sqlFile:
+            path: 002_create_homes_tables.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/002_create_homes_tables_rollbacks.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: 305b5430-ab58-4512-8682-933181e31ec9
+      author: natalia chala
+      labels: "BD-01-dev,ddl,table"
+      comment: Creates the devices domain tables.
+      changes:
+        - sqlFile:
+            path: 003_create_devices_tables.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/003_create_devices_tables_rollbacks.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: 406c6541-bc69-4623-9793-044292f42fd0
+      author: natalia chala
+      labels: "BD-01-dev,ddl,table"
+      comment: Creates the consumption domain tables.
+      changes:
+        - sqlFile:
+            path: 004_create_consumption_tables.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/004_create_consumption_tables.rollbacks.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: c4f5e16e-82a7-43b0-86d7-7aad33a158b9
+      author: natalia chala
+      labels: "BD-01-dev,ddl,table"
+      comment: Creates the notifications domain tables.
+      changes:
+        - sqlFile:
+            path: 005_create_notifications_tables.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/005_create_notifications_tables.rollbacks.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: 507d7652-cd7a-4784-9894-1553a4c56d0e
+      author: natalia chala
+      labels: "BD-01-dev,ddl,table"
+      comment: Creates the sync domain tables.
+      changes:
+        - sqlFile:
+            path: 006_create_sync_tables.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/006_create_sync_tables.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: 608e8763-de8b-4895-aa96-2664a5d77e1f
+      author: natalia chala
+      labels: "BD-01-dev,ddl,table"
+      comment: Creates the config domain tables.
+      changes:
+        - sqlFile:
+            path: 007_create_config_tables.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/007_create_config_tables_rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: 2af62fe1-5bc2-4e7f-93b6-7b9860c56a21
+      author: natalia chala
+      labels: "BD-01-dev,ddl,table"
+      comment: Creates the identity_audit domain tables.
+      changes:
+        - sqlFile:
+            path: 008_create_identity_audit_tables.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/03_tables/008_create_audit_tables.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false

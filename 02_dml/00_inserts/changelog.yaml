@@ -1,0 +1,29 @@
+databaseChangeLog:
+- changeSet:
+    id: 91bbf5f6-bb17-45f4-a4b6-63b885ec5308
+    author: natalia chala
+    labels: BD-01-dev,dml,insert
+    changes:
+    - sqlFile:
+        path: 001_insert_roles.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/02_dml/00_inserts/001_insert_roles.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: dd406ee7-34c0-416d-befe-52254f5cab75
+    author: natalia chala
+    labels: BD-01-dev,dml,insert
+    changes:
+    - sqlFile:
+        path: 004_insert_tipos_dispositivos.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/02_dml/00_inserts/004_insert_tipos_dispositivos.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false

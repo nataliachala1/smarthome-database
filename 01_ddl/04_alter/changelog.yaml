@@ -1,0 +1,111 @@
+databaseChangeLog:
+- changeSet:
+    id: a00ac303-9af8-4292-bc3d-7b7600190f51
+    author: natalia chala
+    labels: BD-01-dev,ddl,alter,foreign-key
+    changes:
+    - sqlFile:
+        path: 001_add_alter_auth.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/04_alter/001_add_alter_auth.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: ea9f510a-51ea-4ccc-a56a-b42ce0fc1991
+    author: natalia chala
+    labels: BD-01-dev,ddl,alter,foreign-key
+    changes:
+    - sqlFile:
+        path: 002_add_alter_homes.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/04_alter/002_add_alter_homes.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 9d8dd52d-cd9f-48f1-b8df-94ccdcf1dd1a
+    author: natalia chala
+    labels: BD-01-dev,ddl,alter,foreign-key
+    changes:
+    - sqlFile:
+        path: 003_add_alter_devices.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/04_alter/003_add_alter_devices.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 94147612-fe99-438e-8fe6-8f4aa5f09b5a
+    author: natalia chala
+    labels: BD-01-dev,ddl,alter,foreign-key
+    changes:
+    - sqlFile:
+        path: 004_add_alter_consumption.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/04_alter/004_add_alter_consumption.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 74496839-d385-4921-9935-c2954ffcf0ba
+    author: natalia chala
+    labels: BD-01-dev,ddl,alter,foreign-key
+    changes:
+    - sqlFile:
+        path: 005_add_alter_notifications.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/04_alter/005_add_alter_notifications.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: a0cbc7b1-6884-4eb1-a5f5-34eb147d06db
+    author: natalia chala
+    labels: BD-01-dev,ddl,alter,foreign-key
+    changes:
+    - sqlFile:
+        path: 006_add_alter_sync.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/04_alter/006_add_alter_sync.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 5c14a249-6430-4623-8e75-a2464c12e220
+    author: natalia chala
+    labels: BD-01-dev,ddl,alter,foreign-key
+    changes:
+    - sqlFile:
+        path: 007_add_alter_identity_audit.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/04_alter/007_add_alter_identity_audit.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+
+- changeSet:
+    id: 8a7dc29e-e743-4c32-a05d-c3e05010df1f
+    author: natalia chala
+    changes:
+      - sqlFile:
+          path: 008_fix_zone_active_name_uniqueness.sql
+          relativeToChangelogFile: true
+    rollback:
+      - sqlFile:
+          path: ../../../05_rollbacks/01_ddl/04_alter/008_fix_zone_active_name_uniqueness.rollback.sql
+          relativeToChangelogFile: true

@@ -1,0 +1,16 @@
+DROP TRIGGER IF EXISTS trg_backup_updated_at ON sync.backup;
+DROP TRIGGER IF EXISTS trg_home_notification_preference_updated_at ON config.home_notification_preference;
+DROP TRIGGER IF EXISTS trg_home_recommendation_preference_updated_at ON config.home_recommendation_preference;
+DROP TRIGGER IF EXISTS trg_user_preference_updated_at ON config.user_preference;
+DROP TRIGGER IF EXISTS trg_alert_rule_updated_at ON notifications.alert_rule;
+DROP TRIGGER IF EXISTS trg_notification_updated_at ON notifications.notification;
+DROP TRIGGER IF EXISTS trg_recommendation_updated_at ON consumption.recommendation;
+DROP TRIGGER IF EXISTS trg_consumption_metric_updated_at ON consumption.consumption_metric;
+DROP TRIGGER IF EXISTS trg_device_schedule_updated_at ON devices.device_schedule;
+DROP TRIGGER IF EXISTS trg_smart_device_updated_at ON devices.smart_device;
+DROP TRIGGER IF EXISTS trg_device_updated_at ON devices.device;
+DROP TRIGGER IF EXISTS trg_device_type_updated_at ON devices.device_type;
+DROP TRIGGER IF EXISTS trg_home_member_updated_at ON homes.home_member;
+DROP TRIGGER IF EXISTS trg_zone_updated_at ON homes.zone;
+DROP TRIGGER IF EXISTS trg_home_updated_at ON homes.home;
+DROP TRIGGER IF EXISTS trg_user_updated_at ON auth."user";

@@ -1,0 +1,114 @@
+databaseChangeLog:
+- changeSet:
+    id: d50ff794-183a-4e9c-bba9-d1d3e6c57206
+    author: natalia chala
+    labels: BD-01-dev,ddl,function
+    comment: Creates the technical updated_at trigger function.
+    changes:
+    - sqlFile:
+        path: 001_update_functions.sql
+        relativeToChangelogFile: true
+        stripComments: false
+        splitStatements: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/07_functions/001_update_functions_rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 9b7c9fc6-93e0-447a-b111-76e398b4640c
+    author: natalia chala
+    labels: BD-01-dev,ddl,function
+    comment: Creates minimal technical authentication helpers for RLS.
+    changes:
+    - sqlFile:
+        path: 004_auth_security_functions.sql
+        relativeToChangelogFile: true
+        stripComments: false
+        splitStatements: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/07_functions/004_auth_security_functions.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: deb3fc9e-ac39-4515-bcef-640226993f77
+    author: natalia chala
+    labels: BD-01-dev,ddl,function
+    comment: Creates the controlled monthly consumption partition maintenance function.
+    changes:
+    - sqlFile:
+        path: 005_consumption_partition_functions.sql
+        relativeToChangelogFile: true
+        stripComments: false
+        splitStatements: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/07_functions/005_consumption_partition_functions.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 43a79f51-f436-4099-b24a-ffbdc55838b0
+    author: natalia chala
+    labels: BD-01-dev,ddl,function,rls
+    comment: Creates home membership and ownership helpers used by row-level security.
+    changes:
+    - sqlFile:
+        path: 006_rls_security_functions.sql
+        relativeToChangelogFile: true
+        stripComments: false
+        splitStatements: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/07_functions/006_rls_security_functions.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 34077983-26ba-47b4-aa80-888ef0b5b662
+    author: natalia chala
+    labels: BD-01-dev,ddl,function,rls
+    comment: Creates device authorization helpers used by row-level security.
+    changes:
+    - sqlFile:
+        path: 007_rls_device_security_functions.sql
+        relativeToChangelogFile: true
+        stripComments: false
+        splitStatements: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/07_functions/007_rls_device_security_functions.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: b5df25d1-5987-428a-8e85-b18ea9592467
+    author: natalia chala
+    labels: BD-01-dev,ddl,function,rls
+    comment: Creates device-to-home consistency helper used by consumption RLS.
+    changes:
+    - sqlFile:
+        path: 008_rls_consumption_security_functions.sql
+        relativeToChangelogFile: true
+        stripComments: false
+        splitStatements: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/07_functions/008_rls_consumption_security_functions.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
+- changeSet:
+    id: 19c41bf7-5c40-46ee-a222-02be7b624bbd
+    author: natalia chala
+    labels: BD-01-dev,ddl,function,rls
+    comment: Creates notification recipient, alert and status-transition helpers used
+      by RLS.
+    changes:
+    - sqlFile:
+        path: 009_rls_notification_security_functions.sql
+        relativeToChangelogFile: true
+        stripComments: false
+        splitStatements: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/07_functions/009_rls_notification_security_functions.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false

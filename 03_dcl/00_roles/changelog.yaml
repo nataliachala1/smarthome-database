@@ -1,0 +1,21 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 7afd86d3-7320-4910-9e36-3ce73849fb82
+      author: natalia chala
+      labels: "BD-01-dev,dcl,role"
+      comment: Creates PostgreSQL technical roles for Smart Home.
+
+      changes:
+        - sqlFile:
+            path: 001_create_roles.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/03_dcl/00_roles/001_create_roles.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
