@@ -10,7 +10,7 @@ GRANT SELECT, INSERT ON TABLE consumption.consumption TO smarthome_admin;
 
 GRANT SELECT ON TABLE consumption.consumption_metric TO smarthome_app;
 GRANT SELECT, INSERT ON TABLE consumption.consumption_metric TO smarthome_worker;
-GRANT UPDATE (kwh_total, total_cost, average_watts, max_watts, min_watts)
+GRANT UPDATE (kwh_total, average_watts, max_watts, min_watts)
 ON TABLE consumption.consumption_metric TO smarthome_worker;
 GRANT SELECT, INSERT, UPDATE ON TABLE consumption.consumption_metric TO smarthome_admin;
 

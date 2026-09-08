@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS consumption.consumption (
   current_a         NUMERIC(10,4) NULL,
   frequency_hz      NUMERIC(8,4)  NULL,
   temperature_c     NUMERIC(8,4)  NULL,
-  estimated_cost    NUMERIC(12,4) NULL,
   read_at           TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
   CONSTRAINT pk_consumption PRIMARY KEY (id_consumption, read_at),
   CONSTRAINT ck_consumption_power CHECK (power_w >= 0),
@@ -22,8 +21,7 @@ CREATE TABLE IF NOT EXISTS consumption.consumption (
   CONSTRAINT ck_consumption_voltage CHECK (voltage_v IS NULL OR voltage_v >= 0),
   CONSTRAINT ck_consumption_current CHECK (current_a IS NULL OR current_a >= 0),
   CONSTRAINT ck_consumption_frequency CHECK (frequency_hz IS NULL OR frequency_hz > 0),
-  CONSTRAINT ck_consumption_temperature CHECK (temperature_c IS NULL OR temperature_c BETWEEN -100 AND 200),
-  CONSTRAINT ck_consumption_cost CHECK (estimated_cost IS NULL OR estimated_cost >= 0)
+  CONSTRAINT ck_consumption_temperature CHECK (temperature_c IS NULL OR temperature_c BETWEEN -100 AND 200)
 ) PARTITION BY RANGE (read_at);
 
 CREATE INDEX IF NOT EXISTS idx_consumption_id_device ON consumption.consumption (id_device);
@@ -41,7 +39,6 @@ CREATE TABLE IF NOT EXISTS consumption.consumption_metric (
   start_at              TIMESTAMPTZ   NOT NULL,
   end_at                TIMESTAMPTZ   NOT NULL,
   kwh_total             NUMERIC(12,6) NOT NULL DEFAULT 0,
-  total_cost            NUMERIC(12,4) NULL,
   average_watts         NUMERIC(10,4) NULL,
   max_watts             NUMERIC(10,4) NULL,
   min_watts             NUMERIC(10,4) NULL,
@@ -52,7 +49,6 @@ CREATE TABLE IF NOT EXISTS consumption.consumption_metric (
   CONSTRAINT ck_consumption_metric_period CHECK (period IN ('hora', 'dia', 'semana', 'mes')),
   CONSTRAINT ck_consumption_metric_dates CHECK (end_at > start_at),
   CONSTRAINT ck_consumption_metric_kwh CHECK (kwh_total >= 0),
-  CONSTRAINT ck_consumption_metric_cost CHECK (total_cost IS NULL OR total_cost >= 0),
   CONSTRAINT ck_consumption_metric_watts CHECK (
     (average_watts IS NULL OR average_watts >= 0)
     AND (max_watts IS NULL OR max_watts >= 0)

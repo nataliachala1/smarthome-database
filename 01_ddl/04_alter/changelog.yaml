@@ -107,5 +107,5 @@ databaseChangeLog:
             relativeToChangelogFile: true
     rollback:
         - sqlFile:
-            path: ../../05_rollbacks/01_ddl/04_alter/008_fix_device_active_name_uniqueness.rollback.sql
+            path: ../../05_rollbacks/01_ddl/04_alter/009_fix_device_active_name_uniqueness.rollback.sql
             relativeToChangelogFile: true

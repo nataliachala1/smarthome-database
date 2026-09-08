@@ -1,4 +1,4 @@
-wdatabaseChangeLog:
+databaseChangeLog:
 - changeSet:
     id: e8a7609f-7954-4ade-b40a-f4c76790e402
     author: natalia chala

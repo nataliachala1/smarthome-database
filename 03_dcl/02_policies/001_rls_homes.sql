@@ -97,7 +97,7 @@ WITH CHECK (
 -- UPDATE
 --
 -- Únicamente OWNER.
--- Incluye soft delete de zona.
+-- Incluye soft delete del hogar.
 -- ------------------------------------------------------------
 
 -- ============================================================

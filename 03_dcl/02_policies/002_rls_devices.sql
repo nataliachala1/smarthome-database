@@ -184,7 +184,7 @@ USING (
 --   updated_at
 --
 -- Por tanto, incluso con esta policy el rol técnico no puede
--- cambiar hogar, zona, nombre, status, etc.
+-- cambiar hogar, nombre, status, etc.
 -- ------------------------------------------------------------
 
 CREATE POLICY device_ingest_update_policy

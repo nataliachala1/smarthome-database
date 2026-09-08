@@ -5,6 +5,8 @@ GRANT SELECT ON TABLE devices.device_type
 TO smarthome_admin, smarthome_app, smarthome_readonly;
 
 GRANT SELECT, INSERT ON TABLE devices.device TO smarthome_app;
+GRANT UPDATE (id_device_type, name, status, connectivity_status, is_on, manufacturer_device_id, transport_type, messaging_protocol, deleted_at)
+ON TABLE devices.device TO smarthome_app;
 
 GRANT SELECT, INSERT, UPDATE ON TABLE devices.device TO smarthome_admin;
 GRANT SELECT ON TABLE devices.device TO smarthome_ingest;

@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS config.user_preference (
   time_format        VARCHAR(5)   NOT NULL DEFAULT '24h',
   currency           VARCHAR(10)  NOT NULL DEFAULT 'COP',
   temperature_unit   VARCHAR(5)   NOT NULL DEFAULT 'C',
+  timezone           VARCHAR(100) NOT NULL DEFAULT 'America/Bogota',
   created_at         TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   updated_at         TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   CONSTRAINT pk_user_preference PRIMARY KEY (id_user_preference),
