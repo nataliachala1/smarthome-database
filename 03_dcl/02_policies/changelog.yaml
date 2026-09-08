@@ -121,15 +121,3 @@ databaseChangeLog:
         - sqlFile:
             path: ../../../05_rollbacks/03_dcl/02_policies/008_fix_home_select_policy_initial_owner.rollback.sql
             relativeToChangelogFile: true
-
-  - changeSet:
-        id: 4cf6f20f-c3db-4853-8171-9da5b78699ba
-        author: smarthome
-        changes:
-          - sqlFile:
-              path: 009_fix_zone_select_policy_soft_delete.sql
-              relativeToChangelogFile: true
-        rollback:
-          - sqlFile:
-              path: ../../../05_rollbacks/03_dcl/02_policies/009_fix_zone_select_policy_soft_delete.rollback.sql
-              relativeToChangelogFile: true

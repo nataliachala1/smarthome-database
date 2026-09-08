@@ -7,7 +7,3 @@ CREATE INDEX IF NOT EXISTS idx_consumption_device_read_at
 
 CREATE INDEX IF NOT EXISTS idx_consumption_metric_home_period_start
   ON consumption.consumption_metric(id_home, period, start_at DESC);
-
-CREATE INDEX IF NOT EXISTS idx_recommendation_home_status
-  ON consumption.recommendation(id_home, status, created_at DESC)
-  WHERE deleted_at IS NULL;

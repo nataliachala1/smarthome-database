@@ -62,23 +62,3 @@ CREATE TABLE IF NOT EXISTS consumption.consumption_metric (
     max_watts IS NULL OR min_watts IS NULL OR max_watts >= min_watts
   )
 );
-
-CREATE TABLE IF NOT EXISTS consumption.recommendation (
-  id_recommendation       UUID          NOT NULL DEFAULT gen_random_uuid(),
-  id_home                 UUID          NOT NULL,
-  id_device               UUID          NULL,
-  title                   VARCHAR(200)  NOT NULL,
-  description             TEXT          NOT NULL,
-  estimated_savings_kwh   NUMERIC(10,4) NULL,
-  estimated_savings_cost  NUMERIC(12,4) NULL,
-  priority                VARCHAR(10)   NOT NULL DEFAULT 'media',
-  status                  VARCHAR(20)   NOT NULL DEFAULT 'pendiente',
-  created_at              TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
-  updated_at              TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
-  deleted_at              TIMESTAMPTZ   NULL,
-  CONSTRAINT pk_recommendation PRIMARY KEY (id_recommendation),
-  CONSTRAINT ck_recommendation_priority CHECK (priority IN ('alta', 'media', 'baja')),
-  CONSTRAINT ck_recommendation_status CHECK (status IN ('pendiente', 'implementada', 'descartada')),
-  CONSTRAINT ck_recommendation_savings_kwh CHECK (estimated_savings_kwh IS NULL OR estimated_savings_kwh > 0),
-  CONSTRAINT ck_recommendation_savings_cost CHECK (estimated_savings_cost IS NULL OR estimated_savings_cost > 0)
-);

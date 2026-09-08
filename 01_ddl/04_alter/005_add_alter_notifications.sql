@@ -2,6 +2,7 @@ ALTER TABLE notifications.alert
   ADD CONSTRAINT fk_alert_rule_device
     FOREIGN KEY (id_alert_rule, id_device)
     REFERENCES notifications.alert_rule(id_alert_rule, id_device),
+    
   ADD CONSTRAINT fk_alert_device_home
     FOREIGN KEY (id_device, id_home)
     REFERENCES devices.device(id_device, id_home);

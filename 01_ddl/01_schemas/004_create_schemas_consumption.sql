@@ -1,2 +1,2 @@
--- Consumo eléctrico normalizado, métricas y recomendaciones.
+-- Consumo eléctrico normalizado y métricas de energía.
 CREATE SCHEMA IF NOT EXISTS consumption;

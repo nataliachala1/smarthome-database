@@ -97,15 +97,15 @@ databaseChangeLog:
         path: ../../05_rollbacks/01_ddl/04_alter/007_add_alter_identity_audit.rollback.sql
         relativeToChangelogFile: true
         stripComments: false
-
+        
 - changeSet:
-    id: 8a7dc29e-e743-4c32-a05d-c3e05010df1f
+    id: 10fe8f39-4023-4e66-b0c8-35d4bc11fcad
     author: natalia chala
     changes:
-      - sqlFile:
-          path: 008_fix_zone_active_name_uniqueness.sql
-          relativeToChangelogFile: true
+        - sqlFile:
+            path: 008_fix_device_active_name_uniqueness.sql
+            relativeToChangelogFile: true
     rollback:
-      - sqlFile:
-          path: ../../../05_rollbacks/01_ddl/04_alter/008_fix_zone_active_name_uniqueness.rollback.sql
-          relativeToChangelogFile: true
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/04_alter/008_fix_device_active_name_uniqueness.rollback.sql
+            relativeToChangelogFile: true

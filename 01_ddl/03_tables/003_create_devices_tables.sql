@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS devices.device_type (
 CREATE TABLE IF NOT EXISTS devices.device (
   id_device              UUID          NOT NULL DEFAULT gen_random_uuid(),
   id_home                UUID          NOT NULL,
-  id_zone                UUID          NOT NULL,
   id_device_type         UUID          NOT NULL,
   name                   VARCHAR(100)  NOT NULL,
   status                 VARCHAR(20)   NOT NULL DEFAULT 'ACTIVE',
@@ -45,9 +44,7 @@ CREATE TABLE IF NOT EXISTS devices.device (
   CONSTRAINT ck_device_lifecycle CHECK (
     (status = 'ACTIVE' AND deleted_at IS NULL)
     OR (status = 'DEACTIVATED' AND deleted_at IS NOT NULL)
-  ),
-  CONSTRAINT fk_device_zone_home
-    FOREIGN KEY (id_zone, id_home) REFERENCES homes.zone (id_zone, id_home)
+  )
 );
 
 CREATE TABLE IF NOT EXISTS devices.smart_device (

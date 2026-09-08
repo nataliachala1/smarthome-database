@@ -1,2 +1,2 @@
--- Hogares, zonas, tarifas eléctricas y membresías contextuales.
+-- Hogares, membresías contextuales y relaciones del hogar.
 CREATE SCHEMA IF NOT EXISTS homes;

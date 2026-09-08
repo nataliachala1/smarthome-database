@@ -9,7 +9,6 @@ REVOKE EXECUTE ON FUNCTION devices.fn_can_manage_device(UUID) FROM smarthome_app
 REVOKE EXECUTE ON FUNCTION devices.fn_can_view_device(UUID, TEXT[]) FROM smarthome_app;
 REVOKE EXECUTE ON FUNCTION devices.fn_is_device_owner(UUID) FROM smarthome_app;
 REVOKE EXECUTE ON FUNCTION devices.fn_is_active_device_type(UUID) FROM smarthome_app;
-REVOKE EXECUTE ON FUNCTION devices.fn_is_active_zone(UUID, UUID) FROM smarthome_app;
 
 REVOKE EXECUTE ON FUNCTION homes.fn_self_membership_transition_allowed(UUID, UUID, UUID, TEXT, TEXT, TIMESTAMPTZ, TIMESTAMPTZ) FROM smarthome_app;
 REVOKE EXECUTE ON FUNCTION homes.fn_owner_membership_update_allowed(UUID, UUID, UUID, TEXT, TEXT, TIMESTAMPTZ, TIMESTAMPTZ) FROM smarthome_app;

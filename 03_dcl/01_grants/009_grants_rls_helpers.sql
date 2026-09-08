@@ -14,7 +14,6 @@ GRANT EXECUTE ON FUNCTION homes.fn_can_create_initial_owner(UUID, UUID) TO smart
 GRANT EXECUTE ON FUNCTION homes.fn_owner_membership_update_allowed(UUID, UUID, UUID, TEXT, TEXT, TIMESTAMPTZ, TIMESTAMPTZ) TO smarthome_app;
 GRANT EXECUTE ON FUNCTION homes.fn_self_membership_transition_allowed(UUID, UUID, UUID, TEXT, TEXT, TIMESTAMPTZ, TIMESTAMPTZ) TO smarthome_app;
 
-GRANT EXECUTE ON FUNCTION devices.fn_is_active_zone(UUID, UUID) TO smarthome_app;
 GRANT EXECUTE ON FUNCTION devices.fn_is_active_device_type(UUID) TO smarthome_app;
 GRANT EXECUTE ON FUNCTION devices.fn_is_device_owner(UUID) TO smarthome_app;
 GRANT EXECUTE ON FUNCTION devices.fn_can_view_device(UUID, TEXT[]) TO smarthome_app;
