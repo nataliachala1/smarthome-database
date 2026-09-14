@@ -73,7 +73,6 @@ USING (
 --
 -- Un nuevo dispositivo:
 --   - pertenece a hogar ACTIVE;
---   - utiliza zona ACTIVE del mismo hogar;
 --   - utiliza tipo de dispositivo disponible;
 --   - comienza ACTIVE;
 --   - comienza OFFLINE;
@@ -88,11 +87,6 @@ TO smarthome_app
 WITH CHECK (
 
     homes.fn_can_manage_home(id_home)
-
-    AND devices.fn_is_active_zone(
-        id_zone,
-        id_home
-    )
 
     AND devices.fn_is_active_device_type(
         id_device_type
@@ -152,7 +146,6 @@ WITH CHECK (
     devices.fn_device_app_update_allowed(
         id_device,
         id_home,
-        id_zone,
         id_device_type,
         name,
         status,
@@ -191,7 +184,7 @@ USING (
 --   updated_at
 --
 -- Por tanto, incluso con esta policy el rol técnico no puede
--- cambiar hogar, zona, nombre, status, etc.
+-- cambiar hogar, nombre, status, etc.
 -- ------------------------------------------------------------
 
 CREATE POLICY device_ingest_update_policy

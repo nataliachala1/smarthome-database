@@ -56,14 +56,13 @@ CREATE TABLE IF NOT EXISTS notifications.notification (
   created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   CONSTRAINT pk_notification PRIMARY KEY (id_notification),
-  CONSTRAINT ck_notification_type CHECK (type IN ('ALERT', 'RECOMMENDATION', 'SYSTEM')),
+  CONSTRAINT ck_notification_type CHECK (type IN ('ALERT', 'SYSTEM')),
   CONSTRAINT ck_notification_status CHECK (status IN ('UNREAD', 'READ', 'DISMISSED')),
   CONSTRAINT ck_notification_priority CHECK (priority IN ('alta', 'media', 'baja')),
   CONSTRAINT ck_notification_channel CHECK (channel IN ('IN_APP')),
   CONSTRAINT ck_notification_device_context CHECK (id_device IS NULL OR id_home IS NOT NULL),
   CONSTRAINT ck_notification_alert_context CHECK (
     (type = 'ALERT' AND id_alert IS NOT NULL AND id_home IS NOT NULL AND id_device IS NOT NULL)
-    OR (type = 'RECOMMENDATION' AND id_alert IS NULL AND id_home IS NOT NULL)
     OR (type = 'SYSTEM' AND id_alert IS NULL)
   )
 );

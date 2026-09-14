@@ -1,1 +1,1 @@
-DROP INDEX IF EXISTS config.idx_home_recommendation_enabled_frequency;
+-- No hay índices activos de configuración en la fase actual.

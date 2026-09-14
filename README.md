@@ -1,5 +1,7 @@
 # Smart Home Database
 
+Alcance del 8 de septiembre: [migración a dispositivos por hogar, validaciones y pendientes](./VALIDACION_FINAL.md). El historial anterior se conserva y la nueva migración aún no se ha aplicado a la base local original.
+
 Baseline PostgreSQL + Liquibase para Smart Home.
 
 ## Componentes activos
@@ -14,11 +16,14 @@ Las views, materialized views y procedures heredadas fueron retiradas del baseli
 
 ## Inicio local
 
+> El baseline parte de una base PostgreSQL limpia y no incluye zonas, tarifas eléctricas ni recomendaciones. Solo contempla la estructura vigente de hogar → dispositivo y los módulos activos de la fase 01-dev.
+
 1. Copiar `.env.example` a `.env` y cambiar `POSTGRES_PASSWORD`.
-2. Ejecutar `docker compose up -d postgres`.
-3. Validar: `docker compose run --rm liquibase --defaults-file=liquibase.properties validate`.
-4. Revisar SQL: `docker compose run --rm liquibase --defaults-file=liquibase.properties update-sql`.
-5. Aplicar: `docker compose run --rm liquibase --defaults-file=liquibase.properties update`.
+2. Reiniciar el entorno de desarrollo local y limpiar el volumen de PostgreSQL si hay residuos previos: `docker compose down -v`.
+3. Ejecutar `docker compose up -d postgres`.
+4. Validar: `docker compose run --rm liquibase --defaults-file=liquibase.properties validate`.
+5. Revisar SQL: `docker compose run --rm liquibase --defaults-file=liquibase.properties update-sql`.
+6. Aplicar: `docker compose run --rm liquibase --defaults-file=liquibase.properties update`.
 
 > `smarthome_owner` es el usuario bootstrap/migrador del entorno local. Los roles `smarthome_app`, `smarthome_ingest`, `smarthome_worker`, `smarthome_readonly` y `smarthome_admin` son roles PostgreSQL `NOLOGIN`; las cuentas LOGIN y sus membresías se provisionan fuera de estas migraciones.
 

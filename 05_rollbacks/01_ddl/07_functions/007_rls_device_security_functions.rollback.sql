@@ -10,4 +10,4 @@ DROP FUNCTION IF EXISTS devices.fn_can_manage_device(UUID);
 DROP FUNCTION IF EXISTS devices.fn_can_view_device(UUID, TEXT[]);
 DROP FUNCTION IF EXISTS devices.fn_is_device_owner(UUID);
 DROP FUNCTION IF EXISTS devices.fn_is_active_device_type(UUID);
-DROP FUNCTION IF EXISTS devices.fn_is_active_zone(UUID, UUID);
+

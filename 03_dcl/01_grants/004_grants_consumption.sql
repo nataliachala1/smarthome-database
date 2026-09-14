@@ -10,15 +10,9 @@ GRANT SELECT, INSERT ON TABLE consumption.consumption TO smarthome_admin;
 
 GRANT SELECT ON TABLE consumption.consumption_metric TO smarthome_app;
 GRANT SELECT, INSERT ON TABLE consumption.consumption_metric TO smarthome_worker;
-GRANT UPDATE (kwh_total, total_cost, average_watts, max_watts, min_watts)
+GRANT UPDATE (kwh_total, average_watts, max_watts, min_watts)
 ON TABLE consumption.consumption_metric TO smarthome_worker;
 GRANT SELECT, INSERT, UPDATE ON TABLE consumption.consumption_metric TO smarthome_admin;
-
-GRANT SELECT ON TABLE consumption.recommendation TO smarthome_app;
-GRANT SELECT, INSERT ON TABLE consumption.recommendation TO smarthome_worker;
-GRANT UPDATE (title, description, estimated_savings_kwh, estimated_savings_cost, priority, status, deleted_at)
-ON TABLE consumption.recommendation TO smarthome_worker;
-GRANT SELECT, INSERT, UPDATE ON TABLE consumption.recommendation TO smarthome_admin;
 
 REVOKE ALL ON FUNCTION consumption.fn_ensure_consumption_partitions(INT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION consumption.fn_ensure_consumption_partitions(INT)

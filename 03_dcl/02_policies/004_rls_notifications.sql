@@ -18,7 +18,7 @@
 -- notification:
 --   cada usuario -> consultar únicamente las propias.
 --   ingest -> ALERT.
---   worker -> RECOMMENDATION / SYSTEM.
+--   worker -> SYSTEM.
 --
 -- No existen policies DELETE.
 -- ============================================================
@@ -250,12 +250,7 @@ WITH CHECK (
 -- ------------------------------------------------------------
 -- INSERT — worker
 --
--- Caso A:
---   RECOMMENDATION
---   solo OWNER / MEMBER.
---
--- Caso B:
---   SYSTEM
+-- SYSTEM
 --   puede ser global para un usuario o contextual al hogar.
 -- ------------------------------------------------------------
 
@@ -264,92 +259,33 @@ ON notifications.notification
 FOR INSERT
 TO smarthome_worker
 WITH CHECK (
-
     id_alert IS NULL
-
+    AND type = 'SYSTEM'
     AND auth.fn_is_active_user(id_user)
-
     AND (
-
-        -- ====================================================
-        -- RECOMMENDATION
-        -- ====================================================
         (
-            type = 'RECOMMENDATION'
-
-            AND id_home IS NOT NULL
-
-            AND homes.fn_is_home_active(id_home)
-
+            id_home IS NULL
+            AND id_device IS NULL
+        )
+        OR
+        (
+            id_home IS NOT NULL
             AND notifications.fn_recipient_has_home_role(
                 id_user,
                 id_home,
                 ARRAY[
                     'OWNER',
-                    'MEMBER'
+                    'MEMBER',
+                    'GUEST'
                 ]::TEXT[],
-                ARRAY['ACTIVE']::TEXT[]
+                ARRAY[
+                    'PENDING',
+                    'ACTIVE'
+                ]::TEXT[]
             )
-
             AND (
                 id_device IS NULL
-
-                OR
-
-                devices.fn_device_belongs_to_home(
-                    id_device,
-                    id_home
-                )
-            )
-        )
-
-        OR
-
-        -- ====================================================
-        -- SYSTEM
-        -- ====================================================
-        (
-            type = 'SYSTEM'
-
-            AND (
-
-                -- Notificación global dirigida a un usuario.
-                (
-                    id_home IS NULL
-                    AND id_device IS NULL
-                )
-
-                OR
-
-                -- Notificación contextual de un hogar.
-                (
-                    id_home IS NOT NULL
-
-                    AND notifications.fn_recipient_has_home_role(
-                        id_user,
-                        id_home,
-                        ARRAY[
-                            'OWNER',
-                            'MEMBER',
-                            'GUEST'
-                        ]::TEXT[],
-                        ARRAY[
-                            'PENDING',
-                            'ACTIVE'
-                        ]::TEXT[]
-                    )
-
-                    AND (
-                        id_device IS NULL
-
-                        OR
-
-                        devices.fn_device_belongs_to_home(
-                            id_device,
-                            id_home
-                        )
-                    )
-                )
+                OR devices.fn_device_belongs_to_home(id_device, id_home)
             )
         )
     )

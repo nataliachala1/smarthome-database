@@ -143,8 +143,8 @@ COMMENT ON ROLE smarthome_ingest IS
 
 -- ============================================================
 -- smarthome_worker
--- Jobs controlados: agregaciones, recomendaciones,
--- mantenimiento de particiones, etc.
+-- Jobs controlados: agregaciones, mantenimiento de particiones
+-- y tareas internas controladas.
 -- ============================================================
 
 DO $$

@@ -1,5 +1,7 @@
 # Validación final del baseline Smart Home
 
+> Documento histórico del baseline anterior al 8 de septiembre de 2026. Para el modelo vigente hogar → dispositivo y las validaciones de esta entrega, consultar [la validación vigente](./README.md).
+
 ## Estado
 
 Este paquete fue reconstruido a partir de la carpeta nueva entregada y depurado para eliminar restos del modelo anterior y conflictos de merge.

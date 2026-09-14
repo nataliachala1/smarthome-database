@@ -19,6 +19,13 @@ services:
       timeout: 5s
       retries: 10
 
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: smarthome_mqtt
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+
   liquibase:
     image: liquibase/liquibase:4.29
     container_name: liquibase_runner
