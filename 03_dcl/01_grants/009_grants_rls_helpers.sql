@@ -18,7 +18,7 @@ GRANT EXECUTE ON FUNCTION devices.fn_is_active_device_type(UUID) TO smarthome_ap
 GRANT EXECUTE ON FUNCTION devices.fn_is_device_owner(UUID) TO smarthome_app;
 GRANT EXECUTE ON FUNCTION devices.fn_can_view_device(UUID, TEXT[]) TO smarthome_app;
 GRANT EXECUTE ON FUNCTION devices.fn_can_manage_device(UUID) TO smarthome_app;
-GRANT EXECUTE ON FUNCTION devices.fn_device_app_update_allowed(UUID, UUID, UUID, UUID, TEXT, TEXT, BOOLEAN, TEXT, TEXT, TIMESTAMPTZ) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION devices.fn_device_app_update_allowed(UUID, UUID, UUID, TEXT, TEXT, BOOLEAN, TEXT, TEXT, TIMESTAMPTZ) TO smarthome_app;
 GRANT EXECUTE ON FUNCTION devices.fn_is_ingestable_device(UUID) TO smarthome_ingest;
 GRANT EXECUTE ON FUNCTION devices.fn_device_belongs_to_home(UUID, UUID) TO smarthome_ingest, smarthome_worker;
 

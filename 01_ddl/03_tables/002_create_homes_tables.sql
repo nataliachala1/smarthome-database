@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS homes.home (
   id_home    UUID         NOT NULL DEFAULT gen_random_uuid(),
   created_by UUID         NOT NULL,
   name       VARCHAR(100) NOT NULL,
-  stratum    SMALLINT     NOT NULL,
   status     VARCHAR(20)  NOT NULL DEFAULT 'ACTIVE',
   created_at TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
