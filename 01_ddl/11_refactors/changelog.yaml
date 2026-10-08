@@ -1,0 +1,106 @@
+databaseChangeLog:
+  - changeSet:
+      id: remove-device-type-2026-09-24
+      author: natalia chala
+      labels: BD-01-dev,ddl,refactor,devices
+      comment: Removes the obsolete device type catalog and id_device_type dependency.
+      changes:
+        - sqlFile:
+            path: 001_remove_device_type.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/11_refactors/001_remove_device_type.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+
+  - changeSet:
+      id: fix-device-lifecycle-permissions-2026-10-01
+      author: natalia chala
+      labels: BD-01-dev,ddl,security,devices
+      comment: Allows lifecycle operations to set connectivity status while preserving MEMBER restrictions.
+      changes:
+        - sqlFile:
+            path: 002_fix_device_lifecycle_permissions.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/11_refactors/002_fix_device_lifecycle_permissions.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+
+  - changeSet:
+      id: allow-iot-active-home-recipient-read-2026-10-01
+      author: natalia chala
+      labels: BD-01-dev,security,iot,realtime
+      comment: Allows the IoT ingestion role to resolve recipients of active homes without exposing application user access.
+      changes:
+        - sqlFile:
+            path: 003_allow_iot_home_recipient_read.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/11_refactors/003_allow_iot_home_recipient_read.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+
+  - changeSet:
+      id: allow-iot-alert-read-2026-10-01
+      author: natalia chala
+      labels: security,iot,notifications
+      comment: Allows MQTT ingestion to read existing alerts for duplicate detection.
+      changes:
+        - sqlFile:
+            path: 004_allow_iot_alert_read.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/11_refactors/004_allow_iot_alert_read.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+  - changeSet:
+      id: allow-iot-notification-returning-2026-10-01
+      author: natalia chala
+      labels: security,iot,notifications
+      comment: Allows IoT ingestion to read ALERT notifications required by INSERT RETURNING.
+      changes:
+        - sqlFile:
+            path: 005_allow_iot_notification_returning.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/11_refactors/005_allow_iot_notification_returning.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+  - changeSet:
+      id: add-device-last-seen-at-2026-10-02
+      author: natalia chala
+      labels: devices,iot,realtime
+      comment: Adds last_seen_at to support offline device detection.
+      changes:
+        - sqlFile:
+            path: 006_add_device_last_seen_at.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/11_refactors/006_add_device_last_seen_at.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+            splitStatements: false
