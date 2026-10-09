@@ -4,7 +4,7 @@ REVOKE EXECUTE ON FUNCTION notifications.fn_recipient_has_home_role(UUID, UUID, 
 
 REVOKE EXECUTE ON FUNCTION devices.fn_device_belongs_to_home(UUID, UUID) FROM smarthome_ingest, smarthome_worker;
 REVOKE EXECUTE ON FUNCTION devices.fn_is_ingestable_device(UUID) FROM smarthome_ingest;
-REVOKE EXECUTE ON FUNCTION devices.fn_device_app_update_allowed(UUID, UUID, UUID, UUID, TEXT, TEXT, BOOLEAN, TEXT, TEXT, TIMESTAMPTZ) FROM smarthome_app;
+REVOKE EXECUTE ON FUNCTION devices.fn_device_app_update_allowed(UUID, UUID, TEXT, TEXT, TEXT, BOOLEAN, TEXT, TEXT, TIMESTAMPTZ) FROM smarthome_app;
 REVOKE EXECUTE ON FUNCTION devices.fn_can_manage_device(UUID) FROM smarthome_app;
 REVOKE EXECUTE ON FUNCTION devices.fn_can_view_device(UUID, TEXT[]) FROM smarthome_app;
 REVOKE EXECUTE ON FUNCTION devices.fn_is_device_owner(UUID) FROM smarthome_app;

@@ -144,9 +144,9 @@ REVOKE ALL ON FUNCTION devices.fn_is_ingestable_device(UUID) FROM PUBLIC;
 CREATE OR REPLACE FUNCTION devices.fn_device_app_update_allowed(
     p_device_id UUID,
     p_home_id UUID,
-    p_device_type_id UUID,
     p_name TEXT,
     p_status TEXT,
+    p_connectivity_status TEXT,
     p_is_on BOOLEAN,
     p_transport_type TEXT,
     p_messaging_protocol TEXT,
@@ -179,18 +179,13 @@ BEGIN
     -- OWNER
     -- ========================================================
     IF homes.fn_can_manage_home(v_old.id_home) THEN
-       IF NOT devices.fn_is_active_device_type(p_device_type_id)
-          OR p_name IS NULL
+       IF p_name IS NULL
           OR pg_catalog.btrim(p_name) = '' THEN
            RETURN FALSE;
        END IF;
 
        -- Ciclo de vida coherente.
        IF p_status = 'ACTIVE' AND p_deleted_at IS NOT NULL THEN
-           RETURN FALSE;
-       END IF;
-
-       IF p_status = 'DEACTIVATED' AND p_deleted_at IS NULL THEN
            RETURN FALSE;
        END IF;
 
@@ -212,9 +207,9 @@ BEGIN
            ARRAY['MEMBER']::TEXT[]
        ) THEN
 
-       RETURN p_device_type_id = v_old.id_device_type
-          AND p_name IS NOT DISTINCT FROM v_old.name
+       RETURN p_name IS NOT DISTINCT FROM v_old.name
           AND p_status IS NOT DISTINCT FROM v_old.status
+          AND p_connectivity_status IS NOT DISTINCT FROM v_old.connectivity_status
           AND p_transport_type IS NOT DISTINCT FROM v_old.transport_type
           AND p_messaging_protocol IS NOT DISTINCT FROM v_old.messaging_protocol
           AND p_deleted_at IS NOT DISTINCT FROM v_old.deleted_at
@@ -227,6 +222,6 @@ $$;
 
 REVOKE ALL
 ON FUNCTION devices.fn_device_app_update_allowed(
-    UUID, UUID, UUID, TEXT, TEXT, BOOLEAN, TEXT, TEXT, TIMESTAMPTZ
+    UUID, UUID, TEXT, TEXT, TEXT, BOOLEAN, TEXT, TEXT, TIMESTAMPTZ
 )
 FROM PUBLIC;

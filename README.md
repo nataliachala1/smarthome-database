@@ -12,6 +12,8 @@ Baseline PostgreSQL + Liquibase para Smart Home.
 - `04_tcl`: sin scripts de negocio. Las transacciones funcionales pertenecen a NestJS + Prisma.
 - `05_rollbacks`: rollback de todos los changeSets activos.
 
+El contrato `devices.device` coincide con Prisma: cada dispositivo pertenece a un hogar, registra `last_seen_at` para el watchdog MQTT y permite desactivación temporal (`DEACTIVATED` con `deleted_at` nulo) además de eliminación lógica (`DEACTIVATED` con `deleted_at` informado).
+
 Las views, materialized views y procedures heredadas fueron retiradas del baseline porque pertenecían al modelo anterior o duplicaban lógica de negocio.
 
 ## Inicio local

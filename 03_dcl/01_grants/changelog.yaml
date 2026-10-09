@@ -125,18 +125,3 @@ databaseChangeLog:
         path: ../../05_rollbacks/03_dcl/01_grants/009_grants_rls_helpers.rollback.sql
         relativeToChangelogFile: true
         stripComments: false
-- changeSet:
-    id: grants-refresh-token-2026-09-22
-    author: natalia chala
-    labels: BD-01-dev,dcl,grant,auth
-    comment: Grants application access required for refresh-token sessions.
-    changes:
-      - sqlFile:
-          path: 010_grants_refresh_token.sql
-          relativeToChangelogFile: true
-          stripComments: false
-    rollback:
-      - sqlFile:
-          path: ../../05_rollbacks/03_dcl/01_grants/010_grants_refresh_token.rollback.sql
-          relativeToChangelogFile: true
-          stripComments: false
