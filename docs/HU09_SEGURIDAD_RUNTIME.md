@@ -22,6 +22,20 @@ Evidencia del backend al 14/10/2026: **82 pruebas unitarias y 17 pruebas HTTP ai
 
 Antes de integrar en staging se debe comprobar la IP efectiva detrás del proxy y revisar la solución de contadores si existen varias réplicas. Los privilegios reales, el historial aplicado y las pruebas multiusuario BD-03/BD-04 siguen pendientes. Contrato `429`, cuotas y límites operativos: [reporte del incremento de backend](https://github.com/nataliachala1/smarthome-backend/blob/49d5e55/docs/HU09_RATE_LIMITING.md).
 
+## Compatibilidad con sesiones Socket.IO (tercer incremento, BD-17)
+
+Backend compatible: [da0a5ca](https://github.com/nataliachala1/smarthome-backend/commit/da0a5ca), rama `09-dev`. Reutiliza el esquema funcional de BD `f097a0a`; no añade changesets ni modifica SQL, roles o índices.
+
+La autenticación realtime comprueba `user.status`, el rol global y `user.session_version`. `logout-all` incrementa la versión existente y avisa a los sockets del mismo proceso antes de revocar los refresh tokens. Las comprobaciones por evento y periódicas detectan cambios visibles en las lecturas de cuenta; no sustituyen coordinación entre réplicas.
+
+Antes de entregar detalles del hogar se consulta `home_member` con contexto RLS del destinatario. Se exige `id_user` e `id_home` coincidentes, `status = ACTIVE`, rol `OWNER` o `MEMBER`, `accepted_at` no nulo, `ended_at` nulo y hogar `ACTIVE` con `deleted_at` nulo. No se usa `home.created_by` como sustituto de membresía. GUEST no recibe estos detalles; el resumen básico sigue pendiente de definición. El contador personal de notificaciones no concede acceso a datos del hogar.
+
+Resultado del backend al 14/10/2026: **82 pruebas unitarias y 66 pruebas de integración aisladas aprobadas**, incluyendo 49 casos nuevos de Socket.IO/concurrencia/resolución de módulo y 17 de regresión HTTP. Los JWT y clientes Socket.IO son reales; las lecturas de usuario y membresía y la persistencia de refresh se sustituyen por fixtures. Esto no valida RLS ni permisos instalados. Las seis pruebas SQL del primer incremento no se repitieron porque el SQL no cambió.
+
+Pendiente BD-03/BD-04: ejecutar la matriz con conexiones PostgreSQL reales sin privilegios elevados, probar usuarios de hogares diferentes y cambios concurrentes de membresía, y medir el coste de consultas por evento. Lectura de permisos y envío de red no forman una transacción atómica; una revocación posterior a la lectura puede coincidir con una entrega en curso. No declarar BD-17 cerrado con la evidencia aislada.
+
+Contrato, renovación por reconexión y límites de logout individual/WSS/múltiples instancias: [reporte de seguridad realtime](https://github.com/nataliachala1/smarthome-backend/blob/da0a5ca/docs/HU09_REALTIME_SECURITY.md).
+
 ## Auditoría de solo lectura (BD-02)
 
 `scripts/audit-runtime-roles.sql` utiliza un LOGIN real de aplicación o ingesta, lee únicamente catálogos y termina la transacción con `ROLLBACK`. Requiere PostgreSQL 16 y psql. No consulta contraseñas ni datos de negocio.
