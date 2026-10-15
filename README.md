@@ -1,5 +1,7 @@
 # Smart Home Database
 
+HU11: [fixture de broker TLS y evidencia de identidades/ACL](docs/HU11_MQTT_IDENTITIES.md). No altera PostgreSQL ni el broker existente; persistencia y reconciliación pendientes.
+
 HU10: [compatibilidad de MQTT TLS y namespace con persistencia](docs/HU10_MQTT_TLS_NAMESPACE.md). Incremento documental sin DDL; identidad del broker y pairing siguen pendientes.
 
 HU 09-dev: [baseline coordinado, auditoría de roles de solo lectura y pruebas aisladas](docs/HU09_SEGURIDAD_RUNTIME.md). No modifica el historial Liquibase ni autoriza reinicializar una base existente.
