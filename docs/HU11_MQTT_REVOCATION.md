@@ -1,5 +1,7 @@
 # HU11 — Registro y revocación durable en PostgreSQL
 
+Este documento conserva el alcance del segundo incremento. El [tercer incremento](HU11_MQTT_REVOCATION_RUNTIME.md) incorpora auditoría de permisos para el trabajador automático del backend, sin nuevos changesets.
+
 Fecha: 2026-10-15. Segundo incremento en `11-dev`, sobre `71443f27f38fc31ef08e29e8a0a60f40aad3f3db`; backend coordinado: commit [`20eee23`](https://github.com/nataliachala1/smarthome-backend/commit/20eee233274bf8d89c479fdb44a2679e2a2d157a), sobre `a0d41581c7bd2f2bdb9ac289deb5054991214ba7`. Diff y resultados de pruebas presentados; commit/push autorizados por el usuario el 2026-10-15.
 
 ## Cambio incremental
