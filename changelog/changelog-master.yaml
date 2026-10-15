@@ -11,3 +11,6 @@ databaseChangeLog:
   - include:
       file: ../releases/009_session_schema/changelog.yaml
       relativeToChangelogFile: true
+  - include:
+      file: ../releases/016_consumption_access/changelog.yaml
+      relativeToChangelogFile: true
