@@ -36,6 +36,10 @@ Pendiente BD-03/BD-04: ejecutar la matriz con conexiones PostgreSQL reales sin p
 
 Contrato, renovación por reconexión y límites de logout individual/WSS/múltiples instancias: [reporte de seguridad realtime](https://github.com/nataliachala1/smarthome-backend/blob/da0a5ca/docs/HU09_REALTIME_SECURITY.md).
 
+## Familias de sesión (cuarto incremento, BD-17)
+
+Backend [6b033fe](https://github.com/nataliachala1/smarthome-backend/commit/6b033fe) agrega `sid`, logout individual y rotación transaccional, reutilizando el esquema existente. Se incorpora una fixture de prueba, sin changesets. [Contrato y evidencia PostgreSQL](HU09_SESSION_FAMILIES.md): 17 casos con repositorio Prisma real aprobados; permisos/RLS instalados y operación distribuida pendientes. Esta evidencia complementa las pruebas aisladas de los incrementos anteriores.
+
 ## Auditoría de solo lectura (BD-02)
 
 `scripts/audit-runtime-roles.sql` utiliza un LOGIN real de aplicación o ingesta, lee únicamente catálogos y termina la transacción con `ROLLBACK`. Requiere PostgreSQL 16 y psql. No consulta contraseñas ni datos de negocio.
