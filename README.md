@@ -1,5 +1,7 @@
 # Smart Home Database
 
+HU 09-dev: [baseline coordinado, auditoría de roles de solo lectura y pruebas aisladas](docs/HU09_SEGURIDAD_RUNTIME.md). No modifica el historial Liquibase ni autoriza reinicializar una base existente.
+
 Alcance del 8 de septiembre: [migración a dispositivos por hogar, validaciones y pendientes](./VALIDACION_FINAL.md). El historial anterior se conserva y la nueva migración aún no se ha aplicado a la base local original.
 
 Baseline PostgreSQL + Liquibase para Smart Home.
