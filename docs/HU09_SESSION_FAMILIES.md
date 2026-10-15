@@ -2,6 +2,8 @@
 
 **Fecha:** 14/10/2026. **Rama:** `09-dev`. **Backend compatible:** [6b033fe](https://github.com/nataliachala1/smarthome-backend/commit/6b033fe).
 
+**Actualización posterior:** la prueba Liquibase desde cero detectó que los objetos de sesión de Prisma/fixture no estaban en los 62 changesets originales. El [puente de esquema de sesiones](HU09_SESSION_SCHEMA_BRIDGE.md), preparado en `16-dev`, agrega esa dependencia y la verifica sin reiniciar datos existentes. Las referencias anteriores al esquema funcional no acreditaban su creación mediante el historial ni su presencia en una instalación real.
+
 El backend vincula sus access tokens al `family_id` existente mediante el claim `sid`. Logout individual revoca la familia; HTTP y Socket.IO exigen que exista un refresh no revocado ni expirado de esa familia, usuario y `session_version`. Otro login del mismo usuario mantiene una familia independiente.
 
 El esquema funcional sigue siendo el del commit `f097a0a`. Este incremento añade una fixture sintética y documentación, sin cambios en Liquibase, tablas, índices o permisos instalados.
