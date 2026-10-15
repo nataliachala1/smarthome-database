@@ -10,6 +10,18 @@
 
 En esta HU backend y BD avanzan en paralelo: backend valida la configuración declarada y BD prepara la comprobación de privilegios reales. No hace falta un changeset nuevo para consultar los catálogos.
 
+## Compatibilidad con límites HTTP (segundo incremento de BD-02)
+
+El backend incorpora límites por IP y método del controlador en el commit [49d5e55](https://github.com/nataliachala1/smarthome-backend/commit/49d5e55), rama `09-dev`. Es compatible con el contenido funcional de BD `f097a0a`; no requiere nuevos changesets, tablas, índices ni grants. En este segundo incremento el cambio del repositorio BD es documental.
+
+Las solicitudes que exceden su cuota reciben `429` antes de ejecutar los casos de uso. Esto incluye registro, login, recuperación de contraseña y reactivación. Los contadores residen en memoria acotada del proceso de API y no generan escrituras PostgreSQL. El límite de login por IP complementa el bloqueo de cuenta ya existente; no cambia los campos o reglas persistidas de intentos fallidos.
+
+`/health/ready` y `/health` conservan su consulta de BD y quedan sujetos a la cuota general. `/health/live` está exento y no consulta BD. La protección por roles/RLS sigue siendo necesaria para cada operación permitida por el límite HTTP.
+
+Evidencia del backend al 14/10/2026: **82 pruebas unitarias y 17 pruebas HTTP aisladas aprobadas**, además de compilación, TypeScript y ESLint de archivos cambiados. Las pruebas HTTP sustituyen casos de uso, Prisma y el guard JWT; verifican que no se invoquen operaciones por encima de la cuota, pero no demuestran aislamiento RLS, autenticación real ni carga sobre PostgreSQL. Las seis pruebas SQL del primer incremento no se repitieron porque no hubo cambios en SQL ni en su script de prueba.
+
+Antes de integrar en staging se debe comprobar la IP efectiva detrás del proxy y revisar la solución de contadores si existen varias réplicas. Los privilegios reales, el historial aplicado y las pruebas multiusuario BD-03/BD-04 siguen pendientes. Contrato `429`, cuotas y límites operativos: [reporte del incremento de backend](https://github.com/nataliachala1/smarthome-backend/blob/49d5e55/docs/HU09_RATE_LIMITING.md).
+
 ## Auditoría de solo lectura (BD-02)
 
 `scripts/audit-runtime-roles.sql` utiliza un LOGIN real de aplicación o ingesta, lee únicamente catálogos y termina la transacción con `ROLLBACK`. Requiere PostgreSQL 16 y psql. No consulta contraseñas ni datos de negocio.
