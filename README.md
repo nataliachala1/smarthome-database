@@ -1,6 +1,6 @@
 # Smart Home Database
 
-HU11: [auditoría del trabajador de revocación](docs/HU11_MQTT_REVOCATION_RUNTIME.md), sobre el [registro persistente](docs/HU11_MQTT_REVOCATION.md) y la [fixture TLS](docs/HU11_MQTT_IDENTITIES.md). Ejecución automática optativa en backend; despliegue y pairing pendientes.
+HU11: [historial transaccional de identidades MQTT](docs/HU11_MQTT_IDENTITY_HISTORY.md), sobre la [auditoría del trabajador](docs/HU11_MQTT_REVOCATION_RUNTIME.md), el [registro persistente](docs/HU11_MQTT_REVOCATION.md) y la [fixture TLS](docs/HU11_MQTT_IDENTITIES.md). Ejecución automática optativa en backend; despliegue y pairing pendientes.
 
 HU10: [compatibilidad de MQTT TLS y namespace con persistencia](docs/HU10_MQTT_TLS_NAMESPACE.md). Incremento documental sin DDL; identidad del broker y pairing siguen pendientes.
 

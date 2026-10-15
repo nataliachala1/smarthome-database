@@ -1,5 +1,7 @@
 # HU11 — Auditoría y operación del trabajador de revocación
 
+Este documento conserva la evidencia del tercer incremento. El [cuarto incremento](HU11_MQTT_IDENTITY_HISTORY.md) añade historial transaccional y amplía la auditoría de ocho a nueve comprobaciones.
+
 Fecha: 2026-10-15. Tercer incremento en `11-dev`, sobre BD `eeef0824a445e64d77fefcfaf0c60ca2a26eeaf2` y backend `20eee233274bf8d89c479fdb44a2679e2a2d157a`. Diff y resultados de pruebas presentados; commit/push de este incremento autorizados por el usuario el 2026-10-15.
 
 ## Cambio de base de datos
