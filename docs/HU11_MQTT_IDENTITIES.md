@@ -1,5 +1,7 @@
 # HU11 — Fixture de identidad MQTT y coordinación de persistencia
 
+Este documento conserva el alcance del primer incremento. El [segundo incremento](HU11_MQTT_REVOCATION.md) añade el changeset de registro y revocación durable y describe sus nuevas pruebas y límites.
+
 Fecha: 2026-10-15. Rama `11-dev` desde `10-dev` / `9b9742b6d8f344440145d5b233e33161f9ac1d56`. Backend coordinado: `11-dev`, commit [`a0d4158`](https://github.com/nataliachala1/smarthome-backend/commit/a0d41581c7bd2f2bdb9ac289deb5054991214ba7), base `10-dev` / `63f4bf56a203ddb514fb53e935dc5860944f2e0a`. La dependencia corresponde al namespace probado en HU10. Diff y resultados de pruebas presentados; commit/push autorizados por el usuario el 2026-10-15.
 
 ## Artefactos y evidencia

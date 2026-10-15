@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu11-mqtt-identity-durable-revocation-v1
+      author: smarthome
+      labels: HU11,mqtt,security
+      changes:
+        - sqlFile:
+            path: mqtt-revocation.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: mqtt-revocation.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

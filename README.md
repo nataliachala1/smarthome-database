@@ -1,6 +1,6 @@
 # Smart Home Database
 
-HU11: [fixture de broker TLS y evidencia de identidades/ACL](docs/HU11_MQTT_IDENTITIES.md). No altera PostgreSQL ni el broker existente; persistencia y reconciliación pendientes.
+HU11: [registro persistente y revocación durable](docs/HU11_MQTT_REVOCATION.md), sobre la [fixture TLS del primer incremento](docs/HU11_MQTT_IDENTITIES.md). Changeset incremental validado en bases desechables; activación operativa y pairing pendientes.
 
 HU10: [compatibilidad de MQTT TLS y namespace con persistencia](docs/HU10_MQTT_TLS_NAMESPACE.md). Incremento documental sin DDL; identidad del broker y pairing siguen pendientes.
 
