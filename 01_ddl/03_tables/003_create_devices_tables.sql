@@ -17,13 +17,13 @@ CREATE TABLE IF NOT EXISTS devices.device_type (
 CREATE TABLE IF NOT EXISTS devices.device (
   id_device              UUID          NOT NULL DEFAULT gen_random_uuid(),
   id_home                UUID          NOT NULL,
-  id_device_type         UUID          NOT NULL,
   name                   VARCHAR(100)  NOT NULL,
   status                 VARCHAR(20)   NOT NULL DEFAULT 'ACTIVE',
   connectivity_status    VARCHAR(20)   NOT NULL DEFAULT 'OFFLINE',
   is_on                  BOOLEAN       NOT NULL DEFAULT FALSE,
   current_power_w        NUMERIC(10,2) NULL,
   manufacturer_device_id VARCHAR(100)  NULL,
+  last_seen_at           TIMESTAMPTZ   NULL,
   transport_type         VARCHAR(20)   NULL,
   messaging_protocol     VARCHAR(20)   NULL,
   created_at             TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS devices.device (
   CONSTRAINT ck_device_current_power CHECK (current_power_w IS NULL OR current_power_w >= 0),
   CONSTRAINT ck_device_lifecycle CHECK (
     (status = 'ACTIVE' AND deleted_at IS NULL)
-    OR (status = 'DEACTIVATED' AND deleted_at IS NOT NULL)
+    OR status = 'DEACTIVATED'
   )
 );
 

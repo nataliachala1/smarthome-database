@@ -73,7 +73,6 @@ USING (
 --
 -- Un nuevo dispositivo:
 --   - pertenece a hogar ACTIVE;
---   - utiliza tipo de dispositivo disponible;
 --   - comienza ACTIVE;
 --   - comienza OFFLINE;
 --   - no inventa potencia actual;
@@ -87,10 +86,6 @@ TO smarthome_app
 WITH CHECK (
 
     homes.fn_can_manage_home(id_home)
-
-    AND devices.fn_is_active_device_type(
-        id_device_type
-    )
 
     AND status = 'ACTIVE'
 
@@ -146,9 +141,9 @@ WITH CHECK (
     devices.fn_device_app_update_allowed(
         id_device,
         id_home,
-        id_device_type,
         name,
         status,
+        connectivity_status,
         is_on,
         transport_type,
         messaging_protocol,
