@@ -14,3 +14,6 @@ databaseChangeLog:
   - include:
       file: ../releases/016_consumption_access/changelog.yaml
       relativeToChangelogFile: true
+  - include:
+      file: ../releases/018_household_permissions/changelog.yaml
+      relativeToChangelogFile: true
