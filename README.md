@@ -1,3 +1,5 @@
+HU15: [CI de base de datos](docs/HU15_CICD_STAGING.md). Valida y aplica Liquibase solo sobre PostgreSQL desechable; sin DDL nuevo ni despliegue externo.
+
 # Smart Home Database
 
 HU 09-dev: [baseline coordinado, auditoría de roles de solo lectura y pruebas aisladas](docs/HU09_SEGURIDAD_RUNTIME.md). No modifica el historial Liquibase ni autoriza reinicializar una base existente.
