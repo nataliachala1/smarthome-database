@@ -1,0 +1,8 @@
+# Published HU11 increments 2/3, before technical transition history.
+databaseChangeLog:
+  - include:
+      file: hu10-baseline.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../../releases/011_mqtt_revocation/changelog.yaml
+      relativeToChangelogFile: true

@@ -1,5 +1,9 @@
 # Smart Home Database
 
+HU11/HU12: [EMQX Serverless y condiciones de activación coordinada](docs/HU11_EMQX_SERVERLESS_PAIRING_READINESS.md). El backend exige proveedor administrativo explícito; el trabajador Mosquitto no admite EMQX Serverless. Incremento documental sin DDL; pairing y activación siguen abiertos.
+
+HU11: [coordinación de preparación de credenciales MQTT](docs/HU11_MQTT_CREDENTIAL_PREPARATION.md), sobre el [historial transaccional](docs/HU11_MQTT_IDENTITY_HISTORY.md), la [auditoría del trabajador](docs/HU11_MQTT_REVOCATION_RUNTIME.md), el [registro persistente](docs/HU11_MQTT_REVOCATION.md) y la [fixture TLS](docs/HU11_MQTT_IDENTITIES.md). Preparación interna sin DDL nuevo; reserva, activación coordinada, pairing y despliegue pendientes.
+
 HU10: [compatibilidad de MQTT TLS y namespace con persistencia](docs/HU10_MQTT_TLS_NAMESPACE.md). Incremento documental sin DDL; identidad del broker y pairing siguen pendientes.
 
 HU 09-dev: [baseline coordinado, auditoría de roles de solo lectura y pruebas aisladas](docs/HU09_SEGURIDAD_RUNTIME.md). No modifica el historial Liquibase ni autoriza reinicializar una base existente.

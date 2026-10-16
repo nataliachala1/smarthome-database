@@ -8,3 +8,9 @@ databaseChangeLog:
   - include:
       file: ../03_dcl/changelog.yaml
       relativeToChangelogFile: true
+  - include:
+      file: ../releases/011_mqtt_revocation/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/011_mqtt_identity_events/changelog.yaml
+      relativeToChangelogFile: true
