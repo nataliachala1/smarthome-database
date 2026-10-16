@@ -2,6 +2,8 @@
 
 HU16: [permisos de consumo, resumen GUEST aprobado e históricos](docs/HU16_CONSUMPTION_ACCESS.md). Incluye el [puente del esquema de sesiones faltante en el historial original](docs/HU09_SESSION_SCHEMA_BRIDGE.md). Los nuevos changesets se probaron solo en PostgreSQL desechable; contrastar la instalación antes de migrar.
 
+Roles y permisos funcionales: [definición de OWNER, MEMBER y GUEST](docs/ROLES_Y_PERMISOS.md). La granularidad de permisos se deja como decisión de producto; este documento no define implementación técnica.
+
 HU 09-dev: [baseline coordinado, auditoría de roles de solo lectura y pruebas aisladas](docs/HU09_SEGURIDAD_RUNTIME.md). No modifica el historial Liquibase ni autoriza reinicializar una base existente.
 
 Cuarto incremento HU09: [familias de sesión y pruebas con PostgreSQL desechable](docs/HU09_SESSION_FAMILIES.md). La fixture no forma parte de las migraciones.
