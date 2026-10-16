@@ -1,3 +1,5 @@
+HU14: [observabilidad del backend](docs/HU14_OBSERVABILITY_METRICS.md). Incremento sin DDL ni consultas persistidas; la salud y metricas se exportan desde NestJS.
+
 # Smart Home Database
 
 HU11/HU12: [EMQX Serverless y condiciones de activación coordinada](docs/HU11_EMQX_SERVERLESS_PAIRING_READINESS.md). El backend exige proveedor administrativo explícito; el trabajador Mosquitto no admite EMQX Serverless. Incremento documental sin DDL; pairing y activación siguen abiertos.
