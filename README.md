@@ -1,5 +1,7 @@
 # Smart Home Database
 
+HU13 / BD-16: [compatibilidad con validación RPC local](docs/HU13_SHELLY_LOCAL_RPC.md). Incremento sin cambios de esquema; requiere coordinar la integración de los avances HU16 existentes.
+
 HU 09-dev: [baseline coordinado, auditoría de roles de solo lectura y pruebas aisladas](docs/HU09_SEGURIDAD_RUNTIME.md). No modifica el historial Liquibase ni autoriza reinicializar una base existente.
 
 Cuarto incremento HU09: [familias de sesión y pruebas con PostgreSQL desechable](docs/HU09_SESSION_FAMILIES.md). La fixture no forma parte de las migraciones.
