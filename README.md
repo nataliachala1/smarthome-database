@@ -1,3 +1,5 @@
+HU14: [observabilidad del backend](docs/HU14_OBSERVABILITY_METRICS.md). Incremento sin DDL ni consultas persistidas; la salud y metricas se exportan desde NestJS.
+
 # Smart Home Database
 
 HU 09-dev: [baseline coordinado, auditoría de roles de solo lectura y pruebas aisladas](docs/HU09_SEGURIDAD_RUNTIME.md). No modifica el historial Liquibase ni autoriza reinicializar una base existente.
