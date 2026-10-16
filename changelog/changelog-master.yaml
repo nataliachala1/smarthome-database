@@ -17,3 +17,6 @@ databaseChangeLog:
   - include:
       file: ../releases/018_household_permissions/changelog.yaml
       relativeToChangelogFile: true
+  - include:
+      file: ../releases/019_device_pairing_sessions/changelog.yaml
+      relativeToChangelogFile: true

@@ -4,6 +4,8 @@ HU16: [permisos de consumo, resumen GUEST aprobado e históricos](docs/HU16_CONS
 
 HU16: [permisos de hogar y excepciones por dispositivo](docs/HU16_PERMISOS_HOGAR.md), release Liquibase `018_household_permissions`.
 
+HU16: [sesiones de vinculación Shelly](docs/HU16_DEVICE_PAIRING_SESSIONS.md), release Liquibase `019_device_pairing_sessions`. El esquema reserva la identidad y protege la transición; la prueba confiable MQTT y el aprovisionamiento individual del broker siguen pendientes.
+
 Roles y permisos: [OWNER, MEMBER y GUEST](docs/ROLES_Y_PERMISOS.md). Las membresías MEMBER/GUEST tienen valores base por rol; `OWNER` puede ajustar permisos de hogar y dispositivo.
 
 HU 09-dev: [baseline coordinado, auditoría de roles de solo lectura y pruebas aisladas](docs/HU09_SEGURIDAD_RUNTIME.md). No modifica el historial Liquibase ni autoriza reinicializar una base existente.
