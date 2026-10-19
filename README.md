@@ -6,6 +6,8 @@ HU16: [permisos de hogar y excepciones por dispositivo](docs/HU16_PERMISOS_HOGAR
 
 HU16: [sesiones de vinculación Shelly](docs/HU16_DEVICE_PAIRING_SESSIONS.md), release Liquibase `019_device_pairing_sessions`. El esquema reserva la identidad y protege la transición; la prueba confiable MQTT y el aprovisionamiento individual del broker siguen pendientes.
 
+HU16 LAN: la release Liquibase `020_lan_pairing_method` agrega `LAN` como método de sesión; no habilita BLE ni cambia sesiones `AP` existentes. El alta sigue bloqueada hasta integrar proveedor MQTT individual y evidencia confiable.
+
 Roles y permisos: [OWNER, MEMBER y GUEST](docs/ROLES_Y_PERMISOS.md). Las membresías MEMBER/GUEST tienen valores base por rol; `OWNER` puede ajustar permisos de hogar y dispositivo.
 
 HU 09-dev: [baseline coordinado, auditoría de roles de solo lectura y pruebas aisladas](docs/HU09_SEGURIDAD_RUNTIME.md). No modifica el historial Liquibase ni autoriza reinicializar una base existente.
