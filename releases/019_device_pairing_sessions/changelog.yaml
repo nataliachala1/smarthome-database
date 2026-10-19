@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-device-pairing-sessions-20261016
+      author: smarthome
+      labels: 'HU16,BD-09,BD-10,pairing,rls'
+      comment: Adds short-lived owner-scoped pairing sessions without storing Wi-Fi or MQTT credentials.
+      changes:
+        - sqlFile:
+            path: 001_device_pairing_sessions.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_device_pairing_sessions.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

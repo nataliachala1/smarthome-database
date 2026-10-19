@@ -1,5 +1,7 @@
 # HU 09-dev · baseline y permisos de runtime
 
+Actualización transversal en `16-dev`: [HU16 — consumo con RLS real](HU16_CONSUMPTION_ACCESS.md) y [puente de sesiones](HU09_SESSION_SCHEMA_BRIDGE.md). El ensayo del historial original reveló los objetos de sesión ausentes; se agregaron changesets y se aprobaron 28 casos con un LOGIN sin privilegios elevados sobre una BD nueva. El estado de una instalación existente sigue sin verificarse.
+
 ## Línea base y coordinación (BD-01)
 
 - Repositorio BD: `nataliachala1/smarthome-database`, rama de trabajo `09-dev`, desde `03-dev` / `e18b2d0`.

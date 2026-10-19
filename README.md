@@ -1,12 +1,24 @@
+# Smart Home Database
+
 HU14: [observabilidad del backend](docs/HU14_OBSERVABILITY_METRICS.md). Incremento sin DDL ni consultas persistidas; la salud y metricas se exportan desde NestJS.
 
-# Smart Home Database
+
+HU16: [permisos de consumo, resumen GUEST aprobado e históricos](docs/HU16_CONSUMPTION_ACCESS.md). Incluye el [puente del esquema de sesiones faltante en el historial original](docs/HU09_SESSION_SCHEMA_BRIDGE.md). Los nuevos changesets se probaron solo en PostgreSQL desechable; contrastar la instalación antes de migrar.
+
+HU16: [permisos de hogar y excepciones por dispositivo](docs/HU16_PERMISOS_HOGAR.md), release Liquibase `018_household_permissions`.
+
+HU16: [sesiones de vinculación Shelly](docs/HU16_DEVICE_PAIRING_SESSIONS.md), release Liquibase `019_device_pairing_sessions`. El esquema reserva la identidad y protege la transición; la prueba confiable MQTT y el aprovisionamiento individual del broker siguen pendientes.
+
+HU16 LAN: la release Liquibase `020_lan_pairing_method` agrega `LAN` como método de sesión; no habilita BLE ni cambia sesiones `AP` existentes. El alta sigue bloqueada hasta integrar proveedor MQTT individual y evidencia confiable.
+
+Roles y permisos: [OWNER, MEMBER y GUEST](docs/ROLES_Y_PERMISOS.md). Las membresías MEMBER/GUEST tienen valores base por rol; `OWNER` puede ajustar permisos de hogar y dispositivo.
 
 HU11/HU12: [EMQX Serverless y condiciones de activación coordinada](docs/HU11_EMQX_SERVERLESS_PAIRING_READINESS.md). El backend exige proveedor administrativo explícito; el trabajador Mosquitto no admite EMQX Serverless. Incremento documental sin DDL; pairing y activación siguen abiertos.
 
 HU11: [coordinación de preparación de credenciales MQTT](docs/HU11_MQTT_CREDENTIAL_PREPARATION.md), sobre el [historial transaccional](docs/HU11_MQTT_IDENTITY_HISTORY.md), la [auditoría del trabajador](docs/HU11_MQTT_REVOCATION_RUNTIME.md), el [registro persistente](docs/HU11_MQTT_REVOCATION.md) y la [fixture TLS](docs/HU11_MQTT_IDENTITIES.md). Preparación interna sin DDL nuevo; reserva, activación coordinada, pairing y despliegue pendientes.
 
 HU10: [compatibilidad de MQTT TLS y namespace con persistencia](docs/HU10_MQTT_TLS_NAMESPACE.md). Incremento documental sin DDL; identidad del broker y pairing siguen pendientes.
+
 
 HU 09-dev: [baseline coordinado, auditoría de roles de solo lectura y pruebas aisladas](docs/HU09_SEGURIDAD_RUNTIME.md). No modifica el historial Liquibase ni autoriza reinicializar una base existente.
 
