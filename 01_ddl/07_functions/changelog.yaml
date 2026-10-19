@@ -112,3 +112,19 @@ databaseChangeLog:
         path: ../../05_rollbacks/01_ddl/07_functions/009_rls_notification_security_functions.rollback.sql
         relativeToChangelogFile: true
         stripComments: false
+- changeSet:
+    id: 6e859c61-d534-4fe6-904c-92a7e175fd72
+    author: natalia chala
+    labels: BD-01-dev,ddl,function,rls,device-lifecycle
+    comment: Aligns device update authorization with inactive and soft-deleted lifecycle states.
+    changes:
+      - sqlFile:
+          path: 010_align_device_lifecycle_security.sql
+          relativeToChangelogFile: true
+          stripComments: false
+          splitStatements: false
+    rollback:
+      - sqlFile:
+          path: ../../05_rollbacks/01_ddl/07_functions/010_align_device_lifecycle_security.rollback.sql
+          relativeToChangelogFile: true
+          stripComments: false

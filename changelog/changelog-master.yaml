@@ -12,6 +12,12 @@ databaseChangeLog:
       file: ../releases/009_session_schema/changelog.yaml
       relativeToChangelogFile: true
   - include:
+      file: ../releases/011_mqtt_revocation/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/011_mqtt_identity_events/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
       file: ../releases/016_consumption_access/changelog.yaml
       relativeToChangelogFile: true
   - include:

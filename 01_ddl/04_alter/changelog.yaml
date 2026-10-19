@@ -109,3 +109,50 @@ databaseChangeLog:
         - sqlFile:
             path: ../../05_rollbacks/01_ddl/04_alter/009_fix_device_active_name_uniqueness.rollback.sql
             relativeToChangelogFile: true
+- changeSet:
+    id: 7f13ce58-1d50-4bde-95ef-1c5fa908f1c8
+    author: natalia chala
+    labels: BD-01-dev,ddl,alter,device-lifecycle
+    comment: Aligns device lifecycle with inactive and soft-deleted states.
+    changes:
+      - sqlFile:
+          path: 010_align_device_lifecycle.sql
+          relativeToChangelogFile: true
+          stripComments: false
+    rollback:
+      - sqlFile:
+          path: ../../05_rollbacks/01_ddl/04_alter/010_align_device_lifecycle.rollback.sql
+          relativeToChangelogFile: true
+          stripComments: false
+
+- changeSet:
+    id: add-user-session-version-2026-09-22
+    author: natalia chala
+    labels: auth,security,session
+    comment: Adds session version used for global session invalidation.
+    changes:
+      - sqlFile:
+          path: 011_add_user_session_version.sql
+          relativeToChangelogFile: true
+          stripComments: false
+    rollback:
+      - sqlFile:
+          path: ../../05_rollbacks/01_ddl/04_alter/011_add_user_session_version.rollback.sql
+          relativeToChangelogFile: true
+          stripComments: false
+
+- changeSet:
+    id: create-refresh-token-table-2026-09-22
+    author: natalia chala
+    labels: auth,security,refresh-token
+    comment: Creates refresh token persistence for rotating sessions.
+    changes:
+      - sqlFile:
+          path: 012_create_refresh_token_table.sql
+          relativeToChangelogFile: true
+          stripComments: false
+    rollback:
+      - sqlFile:
+          path: ../../05_rollbacks/01_ddl/04_alter/012_create_refresh_token_table.rollback.sql
+          relativeToChangelogFile: true
+          stripComments: false
