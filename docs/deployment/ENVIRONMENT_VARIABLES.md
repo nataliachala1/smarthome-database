@@ -16,6 +16,8 @@ Configúralas en Dokploy después de identificar los valores reales en el VPS. `
 | `MQTT_BROKER_URL`, `MQTT_USERNAME`, `MQTT_PASSWORD` | EMQX Cloud con esquema `mqtts://` y usuario de backend con privilegios mínimos. |
 | `MQTT_TOPIC_NAMESPACE` | Namespace de producción acordado con EMQX, por ejemplo `smarthome/production/v1`. |
 | `MQTT_TLS_CA_FILE` | Opcional. Vacío usa las CA confiables del sistema. No desactives validación TLS. |
+| `SMTP_USER`, `SMTP_APP_PASSWORD` | Cuenta Gmail y contraseña de aplicación para enviar activaciones y restablecimientos. No uses la contraseña normal de Gmail. |
+| `SMTP_FROM` | Opcional. Remitente que Gmail permite usar; por defecto se usa `SMTP_USER`. |
 | `COOKIE_SAME_SITE` | `lax` si frontend y API usan el mismo origen/proxy. |
 | `TRUSTED_PROXY_CIDRS` | CIDRs reales del proxy Dokploy, solo después de confirmarlos. Vacío ignora headers de IP reenviados. |
 | `BACKEND_IMAGE_TAG`, `FRONTEND_IMAGE_TAG` | `dev` en operación normal. Para rollback, usa el SHA de imagen previamente publicado. |
