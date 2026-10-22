@@ -67,14 +67,30 @@ BEGIN
 END
 $$;
 
-ALTER ROLE smarthome_app
-  NOLOGIN
-  NOSUPERUSER
-  NOCREATEDB
-  NOCREATEROLE
-  INHERIT
-  NOREPLICATION
-  NOBYPASSRLS;
+DO $$
+BEGIN
+  -- A PostgreSQL cluster may already use this role as its bootstrap
+  -- superuser (POSTGRES_USER). Preserve that account; production
+  -- application connections must use a separate LOGIN member role.
+  IF EXISTS (
+    SELECT 1
+    FROM pg_roles
+    WHERE rolname = 'smarthome_app'
+      AND rolsuper
+  ) THEN
+    RAISE NOTICE 'Preserving pre-existing superuser smarthome_app; use a separate LOGIN role for the application.';
+  ELSE
+    ALTER ROLE smarthome_app
+      NOLOGIN
+      NOSUPERUSER
+      NOCREATEDB
+      NOCREATEROLE
+      INHERIT
+      NOREPLICATION
+      NOBYPASSRLS;
+  END IF;
+END
+$$;
 
 COMMENT ON ROLE smarthome_app IS
   'Rol tecnico utilizado por NestJS. Acceso limitado por GRANT y Row Level Security.';
