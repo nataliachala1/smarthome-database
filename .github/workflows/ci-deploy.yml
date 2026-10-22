@@ -18,12 +18,12 @@ jobs:
         image: postgres:18-alpine
         env:
           POSTGRES_DB: smarthome_ci
-          POSTGRES_USER: smarthome_ci
+          POSTGRES_USER: smarthome_app
           POSTGRES_PASSWORD: ci-only-password
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U smarthome_ci -d smarthome_ci"
+          --health-cmd "pg_isready -U smarthome_app -d smarthome_ci"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 12
@@ -34,7 +34,7 @@ jobs:
           docker run --rm --network host
           -v "$PWD:/liquibase/project:ro" -w /liquibase/project
           -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome_ci
-          -e LIQUIBASE_COMMAND_USERNAME=smarthome_ci
+          -e LIQUIBASE_COMMAND_USERNAME=smarthome_app
           -e LIQUIBASE_COMMAND_PASSWORD=ci-only-password
           -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml
           liquibase/liquibase:4.29
@@ -44,17 +44,23 @@ jobs:
           docker run --rm --network host
           -v "$PWD:/liquibase/project:ro" -w /liquibase/project
           -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome_ci
-          -e LIQUIBASE_COMMAND_USERNAME=smarthome_ci
+          -e LIQUIBASE_COMMAND_USERNAME=smarthome_app
           -e LIQUIBASE_COMMAND_PASSWORD=ci-only-password
           -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml
           liquibase/liquibase:4.29
           --defaults-file=liquibase.properties update
+      - name: Confirm migrations preserved the PostgreSQL bootstrap superuser
+        run: >-
+          docker run --rm --network host -e PGPASSWORD=ci-only-password postgres:18-alpine
+          psql -h 127.0.0.1 -U smarthome_app -d smarthome_ci -Atc
+          "SELECT rolsuper FROM pg_roles WHERE rolname='smarthome_app'"
+          | grep -qx t
       - name: Confirm no changesets remain pending
         run: >-
           docker run --rm --network host
           -v "$PWD:/liquibase/project:ro" -w /liquibase/project
           -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome_ci
-          -e LIQUIBASE_COMMAND_USERNAME=smarthome_ci
+          -e LIQUIBASE_COMMAND_USERNAME=smarthome_app
           -e LIQUIBASE_COMMAND_PASSWORD=ci-only-password
           -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml
           liquibase/liquibase:4.29
