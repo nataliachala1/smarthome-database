@@ -45,8 +45,8 @@ Las views, materialized views y procedures heredadas fueron retiradas del baseli
 > El baseline parte de una base PostgreSQL limpia y no incluye zonas, tarifas eléctricas ni recomendaciones. Solo contempla la estructura vigente de hogar → dispositivo y los módulos activos de la fase 01-dev.
 
 1. Copiar `.env.example` a `.env` y cambiar `POSTGRES_PASSWORD`.
-2. Reiniciar el entorno de desarrollo local y limpiar el volumen de PostgreSQL si hay residuos previos: `docker compose down -v`.
-3. Ejecutar `docker compose up -d postgres`.
+2. No borres ni recrees volúmenes existentes. Si necesitas una base vacía, usa un proyecto/volumen de prueba separado.
+3. Ejecutar `docker compose up -d --wait postgres`.
 4. Validar: `docker compose run --rm liquibase --defaults-file=liquibase.properties validate`.
 5. Revisar SQL: `docker compose run --rm liquibase --defaults-file=liquibase.properties update-sql`.
 6. Aplicar: `docker compose run --rm liquibase --defaults-file=liquibase.properties update`.
@@ -62,3 +62,10 @@ SELECT set_config('app.current_user_id', '<uuid>', true);
 ```
 
 No utilizar un `SET` persistente sobre conexiones del pool.
+
+## Despliegue Hostinger/Dokploy
+
+El despliegue de `dev` se prepara en [docs/deployment](docs/deployment/ARCHITECTURE.md).
+La composición de producción está en `docker-compose.production.yml`; no publica
+PostgreSQL y aplica Liquibase antes de arrancar el backend. Revisa primero las
+condiciones de acceso y el estado de la base existente en la documentación.

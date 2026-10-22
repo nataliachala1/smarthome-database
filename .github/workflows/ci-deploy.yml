@@ -1,0 +1,87 @@
+name: Validate migrations and deploy dev
+
+on:
+  push:
+    branches: [dev]
+permissions:
+  contents: read
+
+concurrency:
+  group: smarthome-dev-deploy
+  cancel-in-progress: false
+
+jobs:
+  validate-migrations:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: smarthome_ci
+          POSTGRES_USER: smarthome_ci
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U smarthome_ci -d smarthome_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate and apply all Liquibase changesets to a clean database
+        run: >-
+          docker run --rm --network host
+          -v "$PWD:/liquibase/project:ro" -w /liquibase/project
+          -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome_ci
+          -e LIQUIBASE_COMMAND_USERNAME=smarthome_ci
+          -e LIQUIBASE_COMMAND_PASSWORD=ci-only-password
+          -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml
+          liquibase/liquibase:4.29
+          --defaults-file=liquibase.properties validate
+      - name: Apply migrations to the disposable CI database
+        run: >-
+          docker run --rm --network host
+          -v "$PWD:/liquibase/project:ro" -w /liquibase/project
+          -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome_ci
+          -e LIQUIBASE_COMMAND_USERNAME=smarthome_ci
+          -e LIQUIBASE_COMMAND_PASSWORD=ci-only-password
+          -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml
+          liquibase/liquibase:4.29
+          --defaults-file=liquibase.properties update
+      - name: Confirm no changesets remain pending
+        run: >-
+          docker run --rm --network host
+          -v "$PWD:/liquibase/project:ro" -w /liquibase/project
+          -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome_ci
+          -e LIQUIBASE_COMMAND_USERNAME=smarthome_ci
+          -e LIQUIBASE_COMMAND_PASSWORD=ci-only-password
+          -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml
+          liquibase/liquibase:4.29
+          --defaults-file=liquibase.properties status --verbose
+      - name: Validate production Compose syntax
+        run: >-
+          docker compose --env-file .env.production.example -f docker-compose.production.yml config --quiet
+
+  deploy:
+    if: ${{ false }} # Enable only after the VPS backup and restore audit is complete.
+    needs: validate-migrations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Dokploy
+        env:
+          DOKPLOY_DEPLOY_WEBHOOK: ${{ secrets.DOKPLOY_DEPLOY_WEBHOOK }}
+        run: |
+          test -n "$DOKPLOY_DEPLOY_WEBHOOK"
+          curl --fail --silent --show-error --request POST "$DOKPLOY_DEPLOY_WEBHOOK" --output /dev/null
+      - name: Verify deployment health
+        env:
+          DEPLOYMENT_HEALTH_URL: ${{ secrets.DEPLOYMENT_HEALTH_URL }}
+        run: |
+          test -n "$DEPLOYMENT_HEALTH_URL"
+          for attempt in $(seq 1 36); do
+            if curl --fail --silent "$DEPLOYMENT_HEALTH_URL" --output /dev/null; then exit 0; fi
+            sleep 10
+          done
+          echo "Deployment health check did not pass within 6 minutes."
+          exit 1

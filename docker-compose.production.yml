@@ -1,0 +1,170 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-smarthome}
+      POSTGRES_USER: ${POSTGRES_USER:-smarthome_owner}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in Dokploy}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    stop_grace_period: 1m
+
+  liquibase:
+    image: liquibase/liquibase:4.29
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    working_dir: /liquibase/project
+    volumes:
+      - ./:/liquibase/project:ro
+    environment:
+      LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-smarthome}
+      LIQUIBASE_COMMAND_USERNAME: ${POSTGRES_USER:-smarthome_owner}
+      LIQUIBASE_COMMAND_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in Dokploy}
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog/changelog-master.yaml
+    command: ["--defaults-file=liquibase.properties", "update"]
+    networks:
+      - database
+
+  db-roles:
+    image: postgres:18-alpine
+    restart: "no"
+    depends_on:
+      liquibase:
+        condition: service_completed_successfully
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGDATABASE: ${POSTGRES_DB:-smarthome}
+      PGUSER: ${POSTGRES_USER:-smarthome_owner}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in Dokploy}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Set APP_DB_PASSWORD in Dokploy}
+      IOT_DB_PASSWORD: ${IOT_DB_PASSWORD:?Set IOT_DB_PASSWORD in Dokploy}
+    command:
+      - sh
+      - -ec
+      - |
+        psql -v ON_ERROR_STOP=1 \
+          -v app_password="$${APP_DB_PASSWORD}" \
+          -v iot_password="$${IOT_DB_PASSWORD}" <<'SQL'
+        SELECT format('CREATE ROLE smarthome_app_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', :'app_password')
+        WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'smarthome_app_login')
+        \gexec
+        SELECT format('ALTER ROLE smarthome_app_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', :'app_password')
+        \gexec
+        GRANT smarthome_app TO smarthome_app_login;
+        SELECT format('CREATE ROLE smarthome_ingest_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', :'iot_password')
+        WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'smarthome_ingest_login')
+        \gexec
+        SELECT format('ALTER ROLE smarthome_ingest_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', :'iot_password')
+        \gexec
+        GRANT smarthome_ingest TO smarthome_ingest_login;
+        SQL
+    networks:
+      - database
+
+  backend:
+    image: ${BACKEND_IMAGE:-ghcr.io/nataliachala1/smarthome-backend}:${BACKEND_IMAGE_TAG:-dev}
+    pull_policy: always
+    restart: unless-stopped
+    expose:
+      - "3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL for the smarthome_app login}
+      DATABASE_IOT_URL: ${DATABASE_IOT_URL:?Set DATABASE_IOT_URL for the smarthome_ingest login}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in Dokploy}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?Set JWT_REFRESH_SECRET in Dokploy}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?Set the public frontend origin}
+      FRONTEND_URL: ${FRONTEND_URL:?Set the primary frontend URL}
+      COOKIE_SECURE: "true"
+      COOKIE_SAME_SITE: ${COOKIE_SAME_SITE:-lax}
+      SWAGGER_ENABLED: "false"
+      MQTT_BROKER_URL: ${MQTT_BROKER_URL:?Set the EMQX Cloud mqtts URL}
+      MQTT_USERNAME: ${MQTT_USERNAME:?Set the EMQX service username}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:?Set the EMQX service password}
+      MQTT_CLIENT_ID: ${MQTT_CLIENT_ID:-smarthome-backend-production}
+      MQTT_STATUS_CLIENT_ID: ${MQTT_STATUS_CLIENT_ID:-smarthome-backend-status-production}
+      MQTT_TOPIC_NAMESPACE: ${MQTT_TOPIC_NAMESPACE:?Set the production MQTT namespace}
+      MQTT_TLS_CA_FILE: ${MQTT_TLS_CA_FILE:-}
+      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-}
+    depends_on:
+      db-roles:
+        condition: service_completed_successfully
+    networks:
+      - database
+      - application
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 8s
+      retries: 3
+      start_period: 45s
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-ghcr.io/nataliachala1/smarthome-frontend-web}:${FRONTEND_IMAGE_TAG:-dev}
+    pull_policy: always
+    restart: unless-stopped
+    expose:
+      - "8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - application
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  backup:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGDATABASE: ${POSTGRES_DB:-smarthome}
+      PGUSER: ${POSTGRES_USER:-smarthome_owner}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in Dokploy}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-30}
+    volumes:
+      - postgres_backups:/backups
+    command:
+      - sh
+      - -ec
+      - |
+        while true; do
+          stamp="$$(date -u +%Y%m%dT%H%M%SZ)"
+          dump="/backups/smarthome-$${stamp}.dump"
+          pg_dump --format=custom --no-owner --file="$${dump}"
+          echo "Backup created: $${dump}"
+          find /backups -type f -name 'smarthome-*.dump' -mtime "+$${BACKUP_RETENTION_DAYS}" -delete
+          sleep 86400
+        done
+    networks:
+      - database
+
+volumes:
+  postgres_data:
+  postgres_backups:
+
+networks:
+  database:
+    internal: true
+  application:
