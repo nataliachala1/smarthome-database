@@ -8,8 +8,9 @@ Configuralas en Dokploy despues de identificar los valores reales en el VPS. El 
 | `DATABASE_NETWORK` | Red Docker existente que permite a Compose acceder a PostgreSQL. |
 | `DOKPLOY_NETWORK` | Red externa que usa Traefik/Dokploy para acceder al frontend. |
 | `LIQUIBASE_DB_USER`, `LIQUIBASE_DB_PASSWORD` | Cuenta de migracion identificada y revisada. |
-| `DATABASE_URL` | URL PostgreSQL del login de aplicacion. |
-| `DATABASE_IOT_URL` | URL PostgreSQL del login de ingesta. |
+| `APP_DB_PASSWORD`, `IOT_DB_PASSWORD` | Contrasenas distintas para los logins limitados que provisiona el servicio `runtime-roles`. |
+| `DATABASE_URL` | URL PostgreSQL del login `smarthome_app_login`, miembro de `smarthome_runtime_app`. |
+| `DATABASE_IOT_URL` | URL PostgreSQL del login `smarthome_ingest_login`, miembro de `smarthome_ingest`. |
 | `JWT_SECRET`, `JWT_REFRESH_SECRET` | Secretos distintos y aleatorios; JWT_SECRET debe tener al menos 32 bytes. |
 | `CORS_ALLOWED_ORIGINS` | Origen HTTPS exacto del frontend, sin rutas ni barra adicional. |
 | `FRONTEND_URL` | URL primaria HTTPS para enlaces de activacion y recuperacion. |

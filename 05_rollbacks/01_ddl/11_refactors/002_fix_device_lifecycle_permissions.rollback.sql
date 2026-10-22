@@ -19,7 +19,7 @@ REVOKE UPDATE (
     connectivity_status
 )
 ON TABLE devices.device
-FROM smarthome_app;
+FROM smarthome_runtime_app;
 
 
 CREATE OR REPLACE FUNCTION devices.fn_device_app_update_allowed(
@@ -125,13 +125,13 @@ ON FUNCTION devices.fn_device_app_update_allowed(
     TEXT,
     TIMESTAMPTZ
 )
-TO smarthome_app;
+TO smarthome_runtime_app;
 
 
 CREATE POLICY device_app_update_policy
 ON devices.device
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     homes.fn_can_manage_home(id_home)
 

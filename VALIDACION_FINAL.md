@@ -14,7 +14,7 @@ Este paquete fue reconstruido a partir de la carpeta nueva entregada y depurado 
 - Se reconstruyeron los índices con nombres y columnas del modelo vigente.
 - Se corrigieron todas las rutas de changelog y rollback activas.
 - Todos los changeSets activos tienen rollback y IDs únicos con formato UUID.
-- Se corrigió la escalación de rol global: `smarthome_app` no puede insertar ni actualizar `auth."user".id_role`; el rol por defecto es `USER`.
+- Se corrigió la escalación de rol global: `smarthome_runtime_app` no puede insertar ni actualizar `auth."user".id_role`; el rol por defecto es `USER`.
 - `auth."user"` usa email único case-insensitive, bloqueo temporal, soft deactivation y hash de contraseña.
 - Se añadieron `voltage_v`, `current_a`, `frequency_hz` y `temperature_c` a las lecturas de consumo.
 - Se reforzó integridad HOME -> ZONE -> DEVICE y DEVICE -> HOME en consumo/notificaciones.
@@ -51,7 +51,7 @@ docker compose run --rm liquibase --defaults-file=liquibase.properties update
 docker compose run --rm liquibase --defaults-file=liquibase.properties history
 ```
 
-Después deben ejecutarse pruebas funcionales RLS con conexiones miembros de `smarthome_app`, `smarthome_ingest` y `smarthome_worker`, y una prueba de rollback sobre una base de prueba sin datos operacionales.
+Después deben ejecutarse pruebas funcionales RLS con conexiones miembros de `smarthome_runtime_app`, `smarthome_ingest` y `smarthome_worker`, y una prueba de rollback sobre una base de prueba sin datos operacionales.
 
 ## Nota de particiones
 

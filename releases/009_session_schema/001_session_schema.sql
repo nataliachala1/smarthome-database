@@ -54,8 +54,8 @@ DO $$ BEGIN
     RAISE EXCEPTION 'Session keys or constraints differ from the expected contract; reconcile before migration';
   END IF;
 END $$;
-GRANT SELECT ON auth.refresh_token TO smarthome_app, smarthome_admin;
-GRANT INSERT (id_user,token_hash,family_id,session_version,expires_at) ON auth.refresh_token TO smarthome_app;
-GRANT UPDATE (revoked_at,replaced_by_token_hash,last_used_at) ON auth.refresh_token TO smarthome_app;
+GRANT SELECT ON auth.refresh_token TO smarthome_runtime_app, smarthome_admin;
+GRANT INSERT (id_user,token_hash,family_id,session_version,expires_at) ON auth.refresh_token TO smarthome_runtime_app;
+GRANT UPDATE (revoked_at,replaced_by_token_hash,last_used_at) ON auth.refresh_token TO smarthome_runtime_app;
 GRANT INSERT,UPDATE ON auth.refresh_token TO smarthome_admin;
-GRANT UPDATE (session_version,updated_at) ON auth."user" TO smarthome_app;
+GRANT UPDATE (session_version,updated_at) ON auth."user" TO smarthome_runtime_app;

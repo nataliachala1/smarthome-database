@@ -99,7 +99,7 @@ SET search_path = pg_catalog, auth, homes AS $$
   END;
 $$;
 REVOKE ALL ON FUNCTION homes.fn_has_permission(UUID, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION homes.fn_has_permission(UUID, TEXT) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION homes.fn_has_permission(UUID, TEXT) TO smarthome_runtime_app;
 
 CREATE FUNCTION devices.fn_has_device_permission(p_device_id UUID, p_permission TEXT)
 RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER
@@ -127,7 +127,7 @@ SET search_path = pg_catalog, auth, homes, devices AS $$
   );
 $$;
 REVOKE ALL ON FUNCTION devices.fn_has_device_permission(UUID, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION devices.fn_has_device_permission(UUID, TEXT) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION devices.fn_has_device_permission(UUID, TEXT) TO smarthome_runtime_app;
 
 CREATE OR REPLACE FUNCTION devices.fn_can_view_device(p_device_id UUID, p_roles TEXT[])
 RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER
@@ -141,7 +141,7 @@ SET search_path = pg_catalog, auth, homes, devices AS $$
   FROM devices.device d WHERE d.id_device = p_device_id;
 $$;
 REVOKE ALL ON FUNCTION devices.fn_can_view_device(UUID, TEXT[]) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION devices.fn_can_view_device(UUID, TEXT[]) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION devices.fn_can_view_device(UUID, TEXT[]) TO smarthome_runtime_app;
 
 CREATE OR REPLACE FUNCTION devices.fn_device_app_update_allowed(
   p_device_id UUID, p_home_id UUID, p_name TEXT, p_status TEXT,
@@ -174,14 +174,14 @@ BEGIN
 END;
 $$;
 REVOKE ALL ON FUNCTION devices.fn_device_app_update_allowed(UUID, UUID, TEXT, TEXT, TEXT, BOOLEAN, TEXT, TEXT, TIMESTAMPTZ) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION devices.fn_device_app_update_allowed(UUID, UUID, TEXT, TEXT, TEXT, BOOLEAN, TEXT, TEXT, TIMESTAMPTZ) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION devices.fn_device_app_update_allowed(UUID, UUID, TEXT, TEXT, TEXT, BOOLEAN, TEXT, TEXT, TIMESTAMPTZ) TO smarthome_runtime_app;
 
 DROP POLICY IF EXISTS device_app_select_policy ON devices.device;
-CREATE POLICY device_app_select_policy ON devices.device FOR SELECT TO smarthome_app
+CREATE POLICY device_app_select_policy ON devices.device FOR SELECT TO smarthome_runtime_app
 USING (homes.fn_is_home_owner(id_home) OR devices.fn_can_view_device(id_device, ARRAY['MEMBER','GUEST']::TEXT[]));
 
 DROP POLICY IF EXISTS device_app_update_policy ON devices.device;
-CREATE POLICY device_app_update_policy ON devices.device FOR UPDATE TO smarthome_app
+CREATE POLICY device_app_update_policy ON devices.device FOR UPDATE TO smarthome_runtime_app
 USING (homes.fn_is_home_owner(id_home) OR devices.fn_has_device_permission(id_device, 'control'))
 WITH CHECK (devices.fn_device_app_update_allowed(id_device,id_home,name,status,connectivity_status,is_on,transport_type,messaging_protocol,deleted_at));
 
@@ -194,7 +194,7 @@ SET search_path = pg_catalog, auth, homes AS $$
           AND homes.fn_has_permission(p_home_id, 'view_consumption'));
 $$;
 REVOKE ALL ON FUNCTION consumption.fn_can_read_detail(UUID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION consumption.fn_can_read_detail(UUID) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION consumption.fn_can_read_detail(UUID) TO smarthome_runtime_app;
 
 CREATE FUNCTION consumption.fn_can_read_device_detail(p_device_id UUID)
 RETURNS BOOLEAN LANGUAGE sql STABLE SECURITY DEFINER
@@ -209,7 +209,7 @@ SET search_path = pg_catalog, devices, consumption AS $$
   );
 $$;
 REVOKE ALL ON FUNCTION consumption.fn_can_read_device_detail(UUID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION consumption.fn_can_read_device_detail(UUID) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION consumption.fn_can_read_device_detail(UUID) TO smarthome_runtime_app;
 
 CREATE OR REPLACE FUNCTION consumption.fn_history_devices(p_home_id UUID, p_device_ids UUID[])
 RETURNS TABLE(id_device UUID, name TEXT, manufacturer_device_id TEXT)
@@ -220,7 +220,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = pg_catalog, auth, homes, 
     AND consumption.fn_can_read_device_detail(d.id_device);
 $$;
 REVOKE ALL ON FUNCTION consumption.fn_history_devices(UUID, UUID[]) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION consumption.fn_history_devices(UUID, UUID[]) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION consumption.fn_history_devices(UUID, UUID[]) TO smarthome_runtime_app;
 
 CREATE OR REPLACE FUNCTION consumption.fn_basic_home_consumption(p_home_id UUID, p_from TIMESTAMPTZ, p_to TIMESTAMPTZ)
 RETURNS TABLE(total_energy_delta_kwh NUMERIC)
@@ -235,7 +235,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = pg_catalog, auth, consump
     AND (p_from IS NULL OR p_to IS NULL OR p_from <= p_to);
 $$;
 REVOKE ALL ON FUNCTION consumption.fn_basic_home_consumption(UUID, TIMESTAMPTZ, TIMESTAMPTZ) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION consumption.fn_basic_home_consumption(UUID, TIMESTAMPTZ, TIMESTAMPTZ) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION consumption.fn_basic_home_consumption(UUID, TIMESTAMPTZ, TIMESTAMPTZ) TO smarthome_runtime_app;
 
 ALTER POLICY consumption_metric_app_select_policy ON consumption.consumption_metric
 USING (consumption.fn_can_read_device_detail(id_device));
@@ -261,7 +261,7 @@ SET search_path = pg_catalog, auth, homes, devices AS $$
       OR devices.fn_has_device_permission(p_device_id, 'control'));
 $$;
 REVOKE ALL ON FUNCTION devices.fn_device_control_target(UUID, UUID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION devices.fn_device_control_target(UUID, UUID) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION devices.fn_device_control_target(UUID, UUID) TO smarthome_runtime_app;
 
 CREATE FUNCTION homes.fn_get_member_permissions(p_home_id UUID, p_member_id UUID)
 RETURNS TABLE(can_view_devices BOOLEAN, can_view_consumption BOOLEAN, can_control_devices BOOLEAN)
@@ -272,7 +272,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = pg_catalog, homes AS $$
     AND hm.id_home_member = p_member_id AND hm.role IN ('MEMBER','GUEST');
 $$;
 REVOKE ALL ON FUNCTION homes.fn_get_member_permissions(UUID, UUID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION homes.fn_get_member_permissions(UUID, UUID) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION homes.fn_get_member_permissions(UUID, UUID) TO smarthome_runtime_app;
 
 CREATE FUNCTION homes.fn_set_member_permissions(
   p_home_id UUID, p_member_id UUID, p_can_view_devices BOOLEAN,
@@ -293,7 +293,7 @@ BEGIN
 END;
 $$;
 REVOKE ALL ON FUNCTION homes.fn_set_member_permissions(UUID, UUID, BOOLEAN, BOOLEAN, BOOLEAN) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION homes.fn_set_member_permissions(UUID, UUID, BOOLEAN, BOOLEAN, BOOLEAN) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION homes.fn_set_member_permissions(UUID, UUID, BOOLEAN, BOOLEAN, BOOLEAN) TO smarthome_runtime_app;
 
 CREATE FUNCTION homes.fn_get_device_permissions(p_home_id UUID, p_member_id UUID, p_device_id UUID)
 RETURNS TABLE(can_view_device BOOLEAN, can_view_consumption BOOLEAN, can_control_device BOOLEAN)
@@ -306,7 +306,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = pg_catalog, homes, device
     AND hm.id_home_member = p_member_id AND hm.role IN ('MEMBER','GUEST');
 $$;
 REVOKE ALL ON FUNCTION homes.fn_get_device_permissions(UUID, UUID, UUID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION homes.fn_get_device_permissions(UUID, UUID, UUID) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION homes.fn_get_device_permissions(UUID, UUID, UUID) TO smarthome_runtime_app;
 
 CREATE FUNCTION homes.fn_set_device_permissions(
   p_home_id UUID, p_member_id UUID, p_device_id UUID,
@@ -335,7 +335,7 @@ BEGIN
 END;
 $$;
 REVOKE ALL ON FUNCTION homes.fn_set_device_permissions(UUID, UUID, UUID, BOOLEAN, BOOLEAN, BOOLEAN) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION homes.fn_set_device_permissions(UUID, UUID, UUID, BOOLEAN, BOOLEAN, BOOLEAN) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION homes.fn_set_device_permissions(UUID, UUID, UUID, BOOLEAN, BOOLEAN, BOOLEAN) TO smarthome_runtime_app;
 
-REVOKE ALL ON homes.home_member_permission FROM PUBLIC, smarthome_app;
-REVOKE ALL ON devices.device_member_permission FROM PUBLIC, smarthome_app;
+REVOKE ALL ON homes.home_member_permission FROM PUBLIC, smarthome_runtime_app;
+REVOKE ALL ON devices.device_member_permission FROM PUBLIC, smarthome_runtime_app;

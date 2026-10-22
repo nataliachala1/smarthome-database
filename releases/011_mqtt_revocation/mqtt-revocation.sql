@@ -47,7 +47,7 @@ CREATE TABLE devices.mqtt_identity (
 CREATE INDEX idx_mqtt_identity_pending ON devices.mqtt_identity(retry_at, id_mqtt_identity)
   WHERE state = 'REVOKE_PENDING';
 ALTER TABLE devices.mqtt_identity ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON devices.mqtt_identity FROM PUBLIC, smarthome_app, smarthome_ingest,
+REVOKE ALL ON devices.mqtt_identity FROM PUBLIC, smarthome_runtime_app, smarthome_ingest,
   smarthome_worker, smarthome_readonly, smarthome_admin, smarthome_mqtt_registrar, smarthome_mqtt_revoke;
 COMMENT ON TABLE devices.mqtt_identity IS
   'HU11 internal broker identity reference and durable revocation; no passwords or verifiers. REGISTERED does not prove possession.';

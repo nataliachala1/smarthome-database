@@ -131,7 +131,7 @@ REVOKE ALL ON FUNCTION devices.fn_is_ingestable_device(UUID) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- Valida el UPDATE propuesto por smarthome_app.
+-- Valida el UPDATE propuesto por smarthome_runtime_app.
 --
 -- OWNER:
 --   puede modificar configuracion y ciclo de vida, pero no

@@ -45,7 +45,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY device_app_select_policy
 ON devices.device
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
 
     homes.fn_is_home_owner(id_home)
@@ -82,7 +82,7 @@ USING (
 CREATE POLICY device_app_insert_policy
 ON devices.device
 FOR INSERT
-TO smarthome_app
+TO smarthome_runtime_app
 WITH CHECK (
 
     homes.fn_can_manage_home(id_home)
@@ -115,7 +115,7 @@ WITH CHECK (
 CREATE POLICY device_app_update_policy
 ON devices.device
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
 
     -- OWNER puede administrar incluso un device DEACTIVATED,
@@ -217,7 +217,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY smart_device_app_select_policy
 ON devices.smart_device
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
 
     devices.fn_is_device_owner(id_device)
@@ -238,7 +238,7 @@ USING (
 CREATE POLICY smart_device_app_insert_policy
 ON devices.smart_device
 FOR INSERT
-TO smarthome_app
+TO smarthome_runtime_app
 WITH CHECK (
     devices.fn_can_manage_device(id_device)
 );
@@ -251,7 +251,7 @@ WITH CHECK (
 CREATE POLICY smart_device_app_update_policy
 ON devices.smart_device
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     devices.fn_can_manage_device(id_device)
 )
@@ -301,7 +301,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY device_schedule_select_policy
 ON devices.device_schedule
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
 
     devices.fn_is_device_owner(id_device)
@@ -327,7 +327,7 @@ USING (
 CREATE POLICY device_schedule_insert_policy
 ON devices.device_schedule
 FOR INSERT
-TO smarthome_app
+TO smarthome_runtime_app
 WITH CHECK (
     devices.fn_can_manage_device(id_device)
     AND deleted_at IS NULL
@@ -343,7 +343,7 @@ WITH CHECK (
 CREATE POLICY device_schedule_update_policy
 ON devices.device_schedule
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     devices.fn_can_manage_device(id_device)
 )

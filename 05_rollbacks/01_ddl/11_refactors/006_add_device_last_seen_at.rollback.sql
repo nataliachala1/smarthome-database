@@ -2,7 +2,7 @@ DROP INDEX IF EXISTS devices.idx_device_connectivity_last_seen;
 
 REVOKE SELECT (last_seen_at)
 ON devices.device
-FROM smarthome_app;
+FROM smarthome_runtime_app;
 
 REVOKE SELECT (last_seen_at), UPDATE (last_seen_at)
 ON devices.device

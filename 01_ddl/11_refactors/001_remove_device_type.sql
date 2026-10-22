@@ -163,7 +163,7 @@ ON FUNCTION devices.fn_device_app_update_allowed(
     TEXT,
     TIMESTAMPTZ
 )
-TO smarthome_app;
+TO smarthome_runtime_app;
 
 
 -- ============================================================
@@ -173,7 +173,7 @@ TO smarthome_app;
 CREATE POLICY device_app_insert_policy
 ON devices.device
 FOR INSERT
-TO smarthome_app
+TO smarthome_runtime_app
 WITH CHECK (
     homes.fn_can_manage_home(id_home)
 
@@ -192,7 +192,7 @@ WITH CHECK (
 CREATE POLICY device_app_update_policy
 ON devices.device
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     homes.fn_can_manage_home(id_home)
 
@@ -235,4 +235,4 @@ GRANT UPDATE (
     deleted_at
 )
 ON TABLE devices.device
-TO smarthome_app;
+TO smarthome_runtime_app;

@@ -14,6 +14,26 @@ services:
     networks:
       - database
 
+  runtime-roles:
+    image: postgres:18-alpine
+    restart: "no"
+    environment:
+      PGHOST: ${POSTGRES_HOST:?Set the verified existing PostgreSQL host}
+      PGPORT: ${POSTGRES_PORT:-5432}
+      PGUSER: ${LIQUIBASE_DB_USER:?Set the audited Liquibase role}
+      PGPASSWORD: ${LIQUIBASE_DB_PASSWORD:?Set the audited Liquibase password}
+      PGDATABASE: ${POSTGRES_DB:?Set the verified existing database}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Set the application login password}
+      IOT_DB_PASSWORD: ${IOT_DB_PASSWORD:?Set the ingestion login password}
+    volumes:
+      - ./scripts/provision-runtime-roles.sql:/scripts/provision-runtime-roles.sql:ro
+    command: ["sh", "-ec", "psql -X -q -v ON_ERROR_STOP=1 --file=/scripts/provision-runtime-roles.sql"]
+    depends_on:
+      liquibase:
+        condition: service_completed_successfully
+    networks:
+      - database
+
   backend:
     image: ${BACKEND_IMAGE:-ghcr.io/nataliachala1/smarthome-backend}:${BACKEND_IMAGE_TAG:-dev}
     pull_policy: always
@@ -23,7 +43,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: "3000"
-      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL for the smarthome_app login}
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL for the smarthome_app_login role}
       DATABASE_IOT_URL: ${DATABASE_IOT_URL:?Set DATABASE_IOT_URL for the smarthome_ingest login}
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in Dokploy}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?Set JWT_REFRESH_SECRET in Dokploy}
@@ -45,7 +65,7 @@ services:
       SMTP_USER: ${SMTP_USER:-}
       SMTP_APP_PASSWORD: ${SMTP_APP_PASSWORD:-}
     depends_on:
-      liquibase:
+      runtime-roles:
         condition: service_completed_successfully
     networks:
       - application

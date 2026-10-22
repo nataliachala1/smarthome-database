@@ -26,7 +26,7 @@
 --   INFRASTRUCTURE
 --
 -- Los eventos INFRASTRUCTURE no se insertan mediante
--- smarthome_app; pertenecen al flujo técnico administrativo.
+-- smarthome_runtime_app; pertenecen al flujo técnico administrativo.
 -- ============================================================
 
 
@@ -42,7 +42,7 @@ ENABLE ROW LEVEL SECURITY;
 -- ============================================================
 -- SELECT — SYSTEM_ADMIN
 --
--- smarthome_app es la conexión utilizada por NestJS.
+-- smarthome_runtime_app es la conexión utilizada por NestJS.
 -- El rol PostgreSQL no distingue usuarios funcionales;
 -- auth.fn_is_system_admin() resuelve si el usuario actual
 -- posee el rol global SYSTEM_ADMIN.
@@ -57,7 +57,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY audit_system_admin_select_policy
 ON identity_audit.audit_log
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     auth.fn_is_system_admin()
 );
@@ -91,13 +91,13 @@ USING (
 --   id_user debe ser NULL.
 --
 --
--- INFRASTRUCTURE no se permite mediante smarthome_app.
+-- INFRASTRUCTURE no se permite mediante smarthome_runtime_app.
 -- ============================================================
 
 CREATE POLICY audit_app_insert_policy
 ON identity_audit.audit_log
 FOR INSERT
-TO smarthome_app
+TO smarthome_runtime_app
 WITH CHECK (
 
     -- ========================================================

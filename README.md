@@ -51,11 +51,11 @@ Las views, materialized views y procedures heredadas fueron retiradas del baseli
 5. Revisar SQL: `docker compose run --rm liquibase --defaults-file=liquibase.properties update-sql`.
 6. Aplicar: `docker compose run --rm liquibase --defaults-file=liquibase.properties update`.
 
-> `smarthome_owner` es el usuario bootstrap/migrador del entorno local. Los roles `smarthome_app`, `smarthome_ingest`, `smarthome_worker`, `smarthome_readonly` y `smarthome_admin` son roles PostgreSQL `NOLOGIN`; las cuentas LOGIN y sus membresías se provisionan fuera de estas migraciones.
+> `smarthome_owner` es el usuario bootstrap/migrador del entorno local. Los roles `smarthome_runtime_app`, `smarthome_ingest`, `smarthome_worker`, `smarthome_readonly` y `smarthome_admin` son roles PostgreSQL `NOLOGIN`; las cuentas LOGIN y sus membresías se provisionan fuera de estas migraciones.
 
 ## Contexto RLS desde Prisma
 
-La conexión funcional debe usar un LOGIN miembro de `smarthome_app`. Cada transacción de aplicación debe establecer el usuario funcional solo para esa transacción:
+La conexión funcional debe usar un LOGIN miembro de `smarthome_runtime_app`. Cada transacción de aplicación debe establecer el usuario funcional solo para esa transacción:
 
 ```sql
 SELECT set_config('app.current_user_id', '<uuid>', true);

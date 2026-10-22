@@ -38,12 +38,12 @@ $$;
 
 DROP POLICY IF EXISTS device_app_update_policy ON devices.device;
 DROP POLICY IF EXISTS device_app_select_policy ON devices.device;
-CREATE POLICY device_app_select_policy ON devices.device FOR SELECT TO smarthome_app
+CREATE POLICY device_app_select_policy ON devices.device FOR SELECT TO smarthome_runtime_app
 USING (homes.fn_is_home_owner(id_home) OR (
   status = 'ACTIVE' AND deleted_at IS NULL AND homes.fn_is_home_active(id_home)
   AND homes.fn_is_home_member(id_home, ARRAY['MEMBER','GUEST']::TEXT[])
 ));
-CREATE POLICY device_app_update_policy ON devices.device FOR UPDATE TO smarthome_app
+CREATE POLICY device_app_update_policy ON devices.device FOR UPDATE TO smarthome_runtime_app
 USING (homes.fn_can_manage_home(id_home) OR (
   status = 'ACTIVE' AND deleted_at IS NULL AND homes.fn_is_home_active(id_home)
   AND homes.fn_is_home_member(id_home, ARRAY['MEMBER']::TEXT[])

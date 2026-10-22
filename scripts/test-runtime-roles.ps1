@@ -17,7 +17,7 @@ function Assert-Audit {
 
   $arguments = @('exec', $testContainer, 'psql', '-X', '-qAt', '-U', $Login,
     '-d', 'postgres', '--set=ON_ERROR_STOP=1', "--set=expected_role=$ExpectedRole")
-  if ($MaskWithAppRole) { $arguments += @('-c', 'SET ROLE smarthome_app') }
+  if ($MaskWithAppRole) { $arguments += @('-c', 'SET ROLE smarthome_runtime_app') }
   $arguments += @('--file=/audit.sql')
   $rows = @(& docker @arguments)
   if ($LASTEXITCODE -ne 0) { throw "SQL audit failed for test case $Login" }
@@ -51,12 +51,12 @@ try {
   if (-not $ready) { throw 'Isolated PostgreSQL did not become ready' }
 
   $fixture = @'
-CREATE ROLE smarthome_app NOLOGIN NOBYPASSRLS;
+CREATE ROLE smarthome_runtime_app NOLOGIN NOBYPASSRLS;
 CREATE ROLE smarthome_ingest NOLOGIN NOBYPASSRLS;
 CREATE ROLE smarthome_admin NOLOGIN BYPASSRLS;
-CREATE ROLE app_test_login LOGIN IN ROLE smarthome_app;
+CREATE ROLE app_test_login LOGIN IN ROLE smarthome_runtime_app;
 CREATE ROLE ingest_test_login LOGIN IN ROLE smarthome_ingest;
-CREATE ROLE unsafe_test_login LOGIN IN ROLE smarthome_app, smarthome_admin;
+CREATE ROLE unsafe_test_login LOGIN IN ROLE smarthome_runtime_app, smarthome_admin;
 CREATE SCHEMA homes;
 CREATE SCHEMA devices;
 CREATE SCHEMA consumption;
@@ -78,18 +78,18 @@ ALTER TABLE consumption.consumption_metric ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications.notification ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications.alert ENABLE ROW LEVEL SECURITY;
 ALTER TABLE identity_audit.audit_log ENABLE ROW LEVEL SECURITY;
-GRANT SELECT ON devices.device TO smarthome_app, smarthome_ingest;
+GRANT SELECT ON devices.device TO smarthome_runtime_app, smarthome_ingest;
 '@
   $fixture | & docker exec -i $testContainer psql -X -q -U postgres -d postgres -v ON_ERROR_STOP=1
   if ($LASTEXITCODE -ne 0) { throw 'Unable to prepare isolated test fixture' }
 
-  Assert-Audit -Login app_test_login -ExpectedRole smarthome_app
+  Assert-Audit -Login app_test_login -ExpectedRole smarthome_runtime_app
   Assert-Audit -Login ingest_test_login -ExpectedRole smarthome_ingest
-  Assert-Audit -Login unsafe_test_login -ExpectedRole smarthome_app `
+  Assert-Audit -Login unsafe_test_login -ExpectedRole smarthome_runtime_app `
     -ExpectedFailures @('cannot_assume_privileged_role')
   Assert-Audit -Login app_test_login -ExpectedRole smarthome_ingest `
     -ExpectedFailures @('expected_role_privileges_active', 'application_and_ingest_memberships_separate')
-  Assert-Audit -Login postgres -ExpectedRole smarthome_app -MaskWithAppRole `
+  Assert-Audit -Login postgres -ExpectedRole smarthome_runtime_app -MaskWithAppRole `
     -ExpectedFailures @('login_and_active_role_not_privileged', 'cannot_assume_privileged_role',
       'application_and_ingest_memberships_separate', 'cannot_assume_protected_table_owner',
       'cannot_assume_database_owner')
@@ -97,7 +97,7 @@ GRANT SELECT ON devices.device TO smarthome_app, smarthome_ingest;
   & docker exec $testContainer psql -X -q -U postgres -d postgres -v ON_ERROR_STOP=1 `
     -c 'ALTER TABLE devices.device DISABLE ROW LEVEL SECURITY'
   if ($LASTEXITCODE -ne 0) { throw 'Unable to prepare negative RLS scenario' }
-  Assert-Audit -Login app_test_login -ExpectedRole smarthome_app `
+  Assert-Audit -Login app_test_login -ExpectedRole smarthome_runtime_app `
     -ExpectedFailures @('protected_tables_present_and_rls_enabled')
   Write-Output 'All six isolated PostgreSQL role-audit scenarios passed.'
 }

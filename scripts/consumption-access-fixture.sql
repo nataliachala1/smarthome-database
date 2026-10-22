@@ -6,7 +6,7 @@ DO $$ BEGIN
 END $$;
 
 CREATE ROLE consumption_app_test LOGIN NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE PASSWORD :'app_password';
-GRANT smarthome_app TO consumption_app_test;
+GRANT smarthome_runtime_app TO consumption_app_test;
 
 INSERT INTO auth."user"(id_user, name, email, password_hash, status, email_verified, deactivated_at)
 SELECT ('10000000-0000-4000-8000-' || lpad(n::text,12,'0'))::uuid,

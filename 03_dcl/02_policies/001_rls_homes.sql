@@ -44,7 +44,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY home_select_policy
 ON homes.home
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     homes.fn_is_home_owner(id_home)
     OR (
@@ -64,7 +64,7 @@ USING (
 CREATE POLICY home_insert_policy
 ON homes.home
 FOR INSERT
-TO smarthome_app
+TO smarthome_runtime_app
 WITH CHECK (
     created_by = auth.fn_current_user_id()
     AND auth.fn_is_active_user(created_by)
@@ -85,7 +85,7 @@ WITH CHECK (
 CREATE POLICY home_update_policy
 ON homes.home
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     homes.fn_is_home_owner(id_home)
 )
@@ -124,7 +124,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY home_member_select_policy
 ON homes.home_member
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     (id_user = auth.fn_current_user_id()
      AND auth.fn_is_active_user(auth.fn_current_user_id()))
@@ -149,7 +149,7 @@ USING (
 CREATE POLICY home_member_insert_policy
 ON homes.home_member
 FOR INSERT
-TO smarthome_app
+TO smarthome_runtime_app
 WITH CHECK (
 
     -- OWNER inicial
@@ -207,7 +207,7 @@ WITH CHECK (
 CREATE POLICY home_member_update_policy
 ON homes.home_member
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
 
     (

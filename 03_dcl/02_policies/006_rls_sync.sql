@@ -16,7 +16,7 @@
 -- Escritura:
 --   smarthome_admin mediante proceso técnico.
 --
--- No existen policies INSERT/UPDATE/DELETE para smarthome_app.
+-- No existen policies INSERT/UPDATE/DELETE para smarthome_runtime_app.
 -- ============================================================
 
 
@@ -32,7 +32,7 @@ ENABLE ROW LEVEL SECURITY;
 -- ------------------------------------------------------------
 -- SELECT — aplicación
 --
--- smarthome_app es utilizado por distintos usuarios funcionales,
+-- smarthome_runtime_app es utilizado por distintos usuarios funcionales,
 -- pero únicamente un usuario global SYSTEM_ADMIN puede consultar
 -- la metadata de respaldos.
 --
@@ -50,7 +50,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY backup_system_admin_select_policy
 ON sync.backup
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     auth.fn_is_system_admin()
 );

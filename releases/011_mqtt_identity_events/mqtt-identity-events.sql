@@ -34,10 +34,10 @@ CREATE TABLE devices.mqtt_identity_event (
 CREATE INDEX idx_mqtt_identity_event_history
   ON devices.mqtt_identity_event(id_mqtt_identity, id_mqtt_identity_event);
 ALTER TABLE devices.mqtt_identity_event ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON devices.mqtt_identity_event FROM PUBLIC, smarthome_app, smarthome_ingest,
+REVOKE ALL ON devices.mqtt_identity_event FROM PUBLIC, smarthome_runtime_app, smarthome_ingest,
   smarthome_worker, smarthome_readonly, smarthome_admin, smarthome_mqtt_registrar, smarthome_mqtt_revoke;
 REVOKE ALL ON SEQUENCE devices.mqtt_identity_event_id_mqtt_identity_event_seq
-  FROM PUBLIC, smarthome_app, smarthome_ingest, smarthome_worker, smarthome_readonly,
+  FROM PUBLIC, smarthome_runtime_app, smarthome_ingest, smarthome_worker, smarthome_readonly,
   smarthome_admin, smarthome_mqtt_registrar, smarthome_mqtt_revoke;
 COMMENT ON TABLE devices.mqtt_identity_event IS
   'HU11 append-only technical transition history, not a broker log or proof of physical state. BASELINE_SNAPSHOT observes migration-time state only.';
@@ -82,7 +82,7 @@ BEGIN
 END;
 $$;
 REVOKE ALL ON FUNCTION devices.fn_capture_mqtt_identity_event() FROM PUBLIC,
-  smarthome_app, smarthome_ingest, smarthome_worker, smarthome_readonly,
+  smarthome_runtime_app, smarthome_ingest, smarthome_worker, smarthome_readonly,
   smarthome_admin, smarthome_mqtt_registrar, smarthome_mqtt_revoke;
 CREATE TRIGGER trg_mqtt_identity_event
   AFTER INSERT OR UPDATE ON devices.mqtt_identity
@@ -96,7 +96,7 @@ BEGIN
 END;
 $$;
 REVOKE ALL ON FUNCTION devices.fn_mqtt_identity_event_append_only() FROM PUBLIC,
-  smarthome_app, smarthome_ingest, smarthome_worker, smarthome_readonly,
+  smarthome_runtime_app, smarthome_ingest, smarthome_worker, smarthome_readonly,
   smarthome_admin, smarthome_mqtt_registrar, smarthome_mqtt_revoke;
 CREATE TRIGGER trg_mqtt_identity_event_append_only
   BEFORE UPDATE OR DELETE OR TRUNCATE ON devices.mqtt_identity_event

@@ -46,7 +46,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY consumption_app_select_policy
 ON consumption.consumption
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
 
     homes.fn_is_home_owner(id_home)
@@ -150,7 +150,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY consumption_metric_app_select_policy
 ON consumption.consumption_metric
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
 
     homes.fn_is_home_owner(id_home)

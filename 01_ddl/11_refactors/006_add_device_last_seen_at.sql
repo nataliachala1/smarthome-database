@@ -7,7 +7,7 @@ ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ NULL;
 
 GRANT SELECT (last_seen_at)
 ON devices.device
-TO smarthome_app;
+TO smarthome_runtime_app;
 
 GRANT SELECT (last_seen_at), UPDATE (last_seen_at)
 ON devices.device

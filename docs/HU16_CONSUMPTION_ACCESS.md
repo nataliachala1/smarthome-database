@@ -24,7 +24,7 @@ Se conserva la excepción histórica anterior para OWNER de un hogar inactivo; M
 
 El script de backend `scripts/test-consumption-access.ps1` crea un PostgreSQL 16 nuevo con red Docker dedicada, datos en memoria y puerto aleatorio solo en loopback. Aplica con Liquibase 4.29.2 los 62 changesets originales y el [puente de sesiones](HU09_SESSION_SCHEMA_BRIDGE.md), excluyendo HU16; después aplica consumo de forma incremental. Total final: **64 changesets**.
 
-La [fixture de consumo](../scripts/consumption-access-fixture.sql) carga únicamente datos sintéticos en `smarthome_consumption_test` y crea un LOGIN separado que hereda `smarthome_app`. Ese LOGIN carece de superusuario, BYPASSRLS, membresías elevadas y pertenencia a propietarios de tablas; la suite comprueba estas condiciones.
+La [fixture de consumo](../scripts/consumption-access-fixture.sql) carga únicamente datos sintéticos en `smarthome_consumption_test` y crea un LOGIN separado que hereda `smarthome_runtime_app`. Ese LOGIN carece de superusuario, BYPASSRLS, membresías elevadas y pertenencia a propietarios de tablas; la suite comprueba estas condiciones.
 
 Resultado: **28 casos aprobados** con HTTP, JWT firmado, Prisma, políticas RLS y Socket.IO reales. Se cubren OWNER/MEMBER/GUEST, pendientes/revocados/terminados, ajenos, cuenta inactiva, creador sin membresía, dispositivo cruzado, históricos retirados, datos W/kWh conocidos y aislamiento al reutilizar una única conexión física. Los accesos SQL directos prueban lecturas, métricas y metadata, incluidos casos positivos. La suite comprueba que PUBLIC no pueda ejecutar los helpers y que una revocación confirmada quite detalle HTTP y realtime.
 

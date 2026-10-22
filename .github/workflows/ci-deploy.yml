@@ -55,6 +55,24 @@ jobs:
           psql -h 127.0.0.1 -U smarthome_app -d smarthome_ci -Atc
           "SELECT rolsuper FROM pg_roles WHERE rolname='smarthome_app'"
           | grep -qx t
+      - name: Audit unprivileged runtime logins and RLS permissions
+        shell: bash
+        run: |
+          docker run --rm --network host -e PGPASSWORD=ci-only-password postgres:18-alpine \
+            psql -h 127.0.0.1 -U smarthome_app -d smarthome_ci -v ON_ERROR_STOP=1 \
+            -c "CREATE ROLE ci_app_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOREPLICATION NOBYPASSRLS PASSWORD 'ci-only-password'; GRANT smarthome_runtime_app TO ci_app_login; CREATE ROLE ci_ingest_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOREPLICATION NOBYPASSRLS PASSWORD 'ci-only-password'; GRANT smarthome_ingest TO ci_ingest_login;"
+          for login_role in "ci_app_login smarthome_runtime_app" "ci_ingest_login smarthome_ingest"; do
+            read -r login expected_role <<< "$login_role"
+            output=$(docker run --rm --network host \
+              -e PGPASSWORD=ci-only-password \
+              -v "$PWD/scripts/audit-runtime-roles.sql:/audit.sql:ro" \
+              postgres:18-alpine psql -h 127.0.0.1 -U "$login" -d smarthome_ci \
+              -X -qAt --set="expected_role=$expected_role" --file=/audit.sql)
+            printf '%s\n' "$output"
+            if grep -q '|FAIL' <<< "$output"; then
+              exit 1
+            fi
+          done
       - name: Confirm no changesets remain pending
         run: >-
           docker run --rm --network host

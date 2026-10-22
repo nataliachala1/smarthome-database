@@ -138,19 +138,19 @@ FOR EACH ROW EXECUTE FUNCTION devices.fn_guard_pairing_session_transition();
 ALTER TABLE devices.device_pairing_session ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY device_pairing_session_app_select
-ON devices.device_pairing_session FOR SELECT TO smarthome_app
+ON devices.device_pairing_session FOR SELECT TO smarthome_runtime_app
 USING (id_user = auth.fn_current_user_id() AND homes.fn_can_manage_home(id_home));
 
 CREATE POLICY device_pairing_session_app_insert
-ON devices.device_pairing_session FOR INSERT TO smarthome_app
+ON devices.device_pairing_session FOR INSERT TO smarthome_runtime_app
 WITH CHECK (id_user = auth.fn_current_user_id() AND homes.fn_can_manage_home(id_home));
 
 CREATE POLICY device_pairing_session_app_update
-ON devices.device_pairing_session FOR UPDATE TO smarthome_app
+ON devices.device_pairing_session FOR UPDATE TO smarthome_runtime_app
 USING (id_user = auth.fn_current_user_id() AND homes.fn_can_manage_home(id_home))
 WITH CHECK (id_user = auth.fn_current_user_id() AND homes.fn_can_manage_home(id_home));
 
-GRANT SELECT, INSERT, UPDATE ON devices.device_pairing_session TO smarthome_app;
+GRANT SELECT, INSERT, UPDATE ON devices.device_pairing_session TO smarthome_runtime_app;
 GRANT SELECT ON devices.device_pairing_session TO smarthome_admin;
 
 COMMENT ON TABLE devices.device_pairing_session IS
@@ -210,4 +210,4 @@ BEGIN
 END;
 $$;
 REVOKE ALL ON FUNCTION devices.fn_claim_pairing_identity(UUID, TEXT, TEXT, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION devices.fn_claim_pairing_identity(UUID, TEXT, TEXT, TEXT) TO smarthome_app;
+GRANT EXECUTE ON FUNCTION devices.fn_claim_pairing_identity(UUID, TEXT, TEXT, TEXT) TO smarthome_runtime_app;

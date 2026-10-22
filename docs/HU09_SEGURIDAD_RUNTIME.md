@@ -52,7 +52,7 @@ Ejecutar únicamente en el entorno autorizado, una vez por conexión:
 
 ```powershell
 # Conexión de aplicación ya configurada externamente para psql:
-psql -X --set=ON_ERROR_STOP=1 --set=expected_role=smarthome_app --file=scripts/audit-runtime-roles.sql
+psql -X --set=ON_ERROR_STOP=1 --set=expected_role=smarthome_runtime_app --file=scripts/audit-runtime-roles.sql
 
 # Conexión de ingesta configurada por separado:
 psql -X --set=ON_ERROR_STOP=1 --set=expected_role=smarthome_ingest --file=scripts/audit-runtime-roles.sql

@@ -44,7 +44,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY alert_rule_app_select_policy
 ON notifications.alert_rule
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     devices.fn_is_device_owner(id_device)
 );
@@ -59,7 +59,7 @@ USING (
 CREATE POLICY alert_rule_app_insert_policy
 ON notifications.alert_rule
 FOR INSERT
-TO smarthome_app
+TO smarthome_runtime_app
 WITH CHECK (
     devices.fn_can_manage_device(id_device)
     AND deleted_at IS NULL
@@ -78,7 +78,7 @@ WITH CHECK (
 CREATE POLICY alert_rule_app_update_policy
 ON notifications.alert_rule
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     devices.fn_can_manage_device(id_device)
 )
@@ -173,7 +173,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY notification_app_select_policy
 ON notifications.notification
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     id_user = auth.fn_current_user_id()
 );
@@ -192,7 +192,7 @@ USING (
 CREATE POLICY notification_app_update_policy
 ON notifications.notification
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     id_user = auth.fn_current_user_id()
 )

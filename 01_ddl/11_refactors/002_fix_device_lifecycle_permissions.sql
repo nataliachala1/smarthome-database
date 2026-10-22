@@ -1,7 +1,7 @@
 -- ============================================================
 -- DEVICE LIFECYCLE PERMISSIONS
 --
--- smarthome_app necesita modificar connectivity_status durante
+-- smarthome_runtime_app necesita modificar connectivity_status durante
 -- activate/deactivate/delete.
 --
 -- MEMBER puede controlar is_on, pero no debe poder modificar
@@ -177,7 +177,7 @@ ON FUNCTION devices.fn_device_app_update_allowed(
     TEXT,
     TIMESTAMPTZ
 )
-TO smarthome_app;
+TO smarthome_runtime_app;
 
 
 -- ============================================================
@@ -187,7 +187,7 @@ TO smarthome_app;
 CREATE POLICY device_app_update_policy
 ON devices.device
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     homes.fn_can_manage_home(id_home)
 
@@ -226,4 +226,4 @@ GRANT UPDATE (
     connectivity_status
 )
 ON TABLE devices.device
-TO smarthome_app;
+TO smarthome_runtime_app;

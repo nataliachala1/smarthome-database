@@ -1,5 +1,5 @@
 -- HU 09-dev / BD-02. Execute with the actual application OR ingestion LOGIN.
--- psql parameter expected_role must be smarthome_app or smarthome_ingest.
+-- psql parameter expected_role must be smarthome_runtime_app or smarthome_ingest.
 -- This script only reads PostgreSQL catalogs; it never changes roles or schemas.
 BEGIN TRANSACTION READ ONLY;
 
@@ -28,7 +28,7 @@ relations AS (
 ),
 checks(check_name, passed) AS (
   SELECT 'expected_runtime_role',
-    role_name IN ('smarthome_app', 'smarthome_ingest') AND role_id IS NOT NULL
+    role_name IN ('smarthome_runtime_app', 'smarthome_ingest') AND role_id IS NOT NULL
   FROM expected
   UNION ALL
   SELECT 'expected_role_privileges_active',
@@ -53,14 +53,14 @@ checks(check_name, passed) AS (
   SELECT 'application_and_ingest_memberships_separate',
     NOT COALESCE(pg_has_role(
       session_user,
-      to_regrole(CASE WHEN role_name = 'smarthome_app'
-                     THEN 'smarthome_ingest' ELSE 'smarthome_app' END),
+      to_regrole(CASE WHEN role_name = 'smarthome_runtime_app'
+                     THEN 'smarthome_ingest' ELSE 'smarthome_runtime_app' END),
       'MEMBER'
     ), true)
     AND NOT COALESCE(pg_has_role(
       current_user,
-      to_regrole(CASE WHEN role_name = 'smarthome_app'
-                     THEN 'smarthome_ingest' ELSE 'smarthome_app' END),
+      to_regrole(CASE WHEN role_name = 'smarthome_runtime_app'
+                     THEN 'smarthome_ingest' ELSE 'smarthome_runtime_app' END),
       'MEMBER'
     ), true)
   FROM expected

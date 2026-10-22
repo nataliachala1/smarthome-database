@@ -27,7 +27,7 @@ ENABLE ROW LEVEL SECURITY;
 CREATE POLICY user_preference_select_policy
 ON config.user_preference
 FOR SELECT
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     id_user = auth.fn_current_user_id()
 );
@@ -42,7 +42,7 @@ USING (
 CREATE POLICY user_preference_insert_policy
 ON config.user_preference
 FOR INSERT
-TO smarthome_app
+TO smarthome_runtime_app
 WITH CHECK (
     id_user = auth.fn_current_user_id()
 );
@@ -56,7 +56,7 @@ WITH CHECK (
 CREATE POLICY user_preference_update_policy
 ON config.user_preference
 FOR UPDATE
-TO smarthome_app
+TO smarthome_runtime_app
 USING (
     id_user = auth.fn_current_user_id()
 )

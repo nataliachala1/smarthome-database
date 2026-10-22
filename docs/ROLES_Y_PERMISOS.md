@@ -10,6 +10,6 @@
 
 El permiso de consulta no concede control y el control no concede lectura. Las excepciones por dispositivo reemplazan la base del hogar para consultar información del dispositivo, consultar su consumo detallado o controlarlo. Los valores heredados usan la base del hogar. Para `GUEST`, una excepción jamás habilita lecturas o históricos de consumo por dispositivo.
 
-Las bases iniciales se crean automáticamente al insertar una membresía `MEMBER` o `GUEST`. Un cambio de rol reinicia los valores base del rol y elimina excepciones anteriores. `OWNER` gestiona permisos con las funciones SQL protegidas `homes.fn_get_member_permissions`, `homes.fn_set_member_permissions`, `homes.fn_get_device_permissions` y `homes.fn_set_device_permissions`; las tablas internas no conceden DML directo a `smarthome_app`.
+Las bases iniciales se crean automáticamente al insertar una membresía `MEMBER` o `GUEST`. Un cambio de rol reinicia los valores base del rol y elimina excepciones anteriores. `OWNER` gestiona permisos con las funciones SQL protegidas `homes.fn_get_member_permissions`, `homes.fn_set_member_permissions`, `homes.fn_get_device_permissions` y `homes.fn_set_device_permissions`; las tablas internas no conceden DML directo a `smarthome_runtime_app`.
 
 La base filtra dispositivos, consumo e historial con RLS y funciones de autorización. Las operaciones de control usan una función `SECURITY DEFINER` que entrega únicamente la fila necesaria si el usuario cuenta con permiso de control, sin ampliar el `SELECT` general.
