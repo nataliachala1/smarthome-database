@@ -32,16 +32,18 @@ services:
       COOKIE_SECURE: "true"
       COOKIE_SAME_SITE: ${COOKIE_SAME_SITE:-lax}
       SWAGGER_ENABLED: "false"
-      MQTT_BROKER_URL: ${MQTT_BROKER_URL:?Set the EMQX Cloud mqtts URL}
-      MQTT_USERNAME: ${MQTT_USERNAME:?Set the EMQX service username}
-      MQTT_PASSWORD: ${MQTT_PASSWORD:?Set the EMQX service password}
+      MQTT_BROKER_URL: ${MQTT_BROKER_URL:-}
+      MQTT_USERNAME: ${MQTT_USERNAME:-}
+      MQTT_PASSWORD: ${MQTT_PASSWORD:-}
+      MQTT_ENABLED: ${MQTT_ENABLED:-false}
       MQTT_CLIENT_ID: ${MQTT_CLIENT_ID:-smarthome-backend-production}
       MQTT_STATUS_CLIENT_ID: ${MQTT_STATUS_CLIENT_ID:-smarthome-backend-status-production}
-      MQTT_TOPIC_NAMESPACE: ${MQTT_TOPIC_NAMESPACE:?Set the production MQTT namespace}
+      MQTT_TOPIC_NAMESPACE: ${MQTT_TOPIC_NAMESPACE:-}
       MQTT_TLS_CA_FILE: ${MQTT_TLS_CA_FILE:-}
       TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-}
-      SMTP_USER: ${SMTP_USER:?Set the Gmail account used to send authentication email}
-      SMTP_APP_PASSWORD: ${SMTP_APP_PASSWORD:?Set its Gmail app password}
+      EMAIL_ENABLED: ${EMAIL_ENABLED:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_APP_PASSWORD: ${SMTP_APP_PASSWORD:-}
     depends_on:
       liquibase:
         condition: service_completed_successfully
