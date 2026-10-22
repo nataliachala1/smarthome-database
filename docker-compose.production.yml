@@ -1,75 +1,16 @@
 services:
-  postgres:
-    image: postgres:18-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-smarthome}
-      POSTGRES_USER: ${POSTGRES_USER:-smarthome_owner}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in Dokploy}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - database
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 20s
-    stop_grace_period: 1m
-
   liquibase:
     image: liquibase/liquibase:4.29
     restart: "no"
-    depends_on:
-      postgres:
-        condition: service_healthy
     working_dir: /liquibase/project
     volumes:
       - ./:/liquibase/project:ro
     environment:
-      LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-smarthome}
-      LIQUIBASE_COMMAND_USERNAME: ${POSTGRES_USER:-smarthome_owner}
-      LIQUIBASE_COMMAND_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in Dokploy}
+      LIQUIBASE_COMMAND_URL: jdbc:postgresql://${POSTGRES_HOST:?Set the verified existing PostgreSQL host}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:?Set the verified existing database}
+      LIQUIBASE_COMMAND_USERNAME: ${LIQUIBASE_DB_USER:?Set the audited Liquibase role}
+      LIQUIBASE_COMMAND_PASSWORD: ${LIQUIBASE_DB_PASSWORD:?Set the audited Liquibase password}
       LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog/changelog-master.yaml
     command: ["--defaults-file=liquibase.properties", "update"]
-    networks:
-      - database
-
-  db-roles:
-    image: postgres:18-alpine
-    restart: "no"
-    depends_on:
-      liquibase:
-        condition: service_completed_successfully
-    environment:
-      PGHOST: postgres
-      PGPORT: "5432"
-      PGDATABASE: ${POSTGRES_DB:-smarthome}
-      PGUSER: ${POSTGRES_USER:-smarthome_owner}
-      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in Dokploy}
-      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Set APP_DB_PASSWORD in Dokploy}
-      IOT_DB_PASSWORD: ${IOT_DB_PASSWORD:?Set IOT_DB_PASSWORD in Dokploy}
-    command:
-      - sh
-      - -ec
-      - |
-        psql -v ON_ERROR_STOP=1 \
-          -v app_password="$${APP_DB_PASSWORD}" \
-          -v iot_password="$${IOT_DB_PASSWORD}" <<'SQL'
-        SELECT format('CREATE ROLE smarthome_app_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', :'app_password')
-        WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'smarthome_app_login')
-        \gexec
-        SELECT format('ALTER ROLE smarthome_app_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', :'app_password')
-        \gexec
-        GRANT smarthome_app TO smarthome_app_login;
-        SELECT format('CREATE ROLE smarthome_ingest_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', :'iot_password')
-        WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'smarthome_ingest_login')
-        \gexec
-        SELECT format('ALTER ROLE smarthome_ingest_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L', :'iot_password')
-        \gexec
-        GRANT smarthome_ingest TO smarthome_ingest_login;
-        SQL
     networks:
       - database
 
@@ -100,11 +41,11 @@ services:
       MQTT_TLS_CA_FILE: ${MQTT_TLS_CA_FILE:-}
       TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-}
     depends_on:
-      db-roles:
+      liquibase:
         condition: service_completed_successfully
     networks:
-      - database
       - application
+      - database
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
@@ -123,6 +64,7 @@ services:
         condition: service_healthy
     networks:
       - application
+      - dokploy
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/ || exit 1"]
       interval: 30s
@@ -130,41 +72,11 @@ services:
       retries: 3
       start_period: 15s
 
-  backup:
-    image: postgres:18-alpine
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      PGHOST: postgres
-      PGPORT: "5432"
-      PGDATABASE: ${POSTGRES_DB:-smarthome}
-      PGUSER: ${POSTGRES_USER:-smarthome_owner}
-      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in Dokploy}
-      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-30}
-    volumes:
-      - postgres_backups:/backups
-    command:
-      - sh
-      - -ec
-      - |
-        while true; do
-          stamp="$$(date -u +%Y%m%dT%H%M%SZ)"
-          dump="/backups/smarthome-$${stamp}.dump"
-          pg_dump --format=custom --no-owner --file="$${dump}"
-          echo "Backup created: $${dump}"
-          find /backups -type f -name 'smarthome-*.dump' -mtime "+$${BACKUP_RETENTION_DAYS}" -delete
-          sleep 86400
-        done
-    networks:
-      - database
-
-volumes:
-  postgres_data:
-  postgres_backups:
-
 networks:
-  database:
-    internal: true
   application:
+  database:
+    name: ${DATABASE_NETWORK:?Set the verified existing PostgreSQL network}
+    external: true
+  dokploy:
+    name: ${DOKPLOY_NETWORK:?Set the verified Dokploy proxy network}
+    external: true

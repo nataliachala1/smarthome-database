@@ -1,25 +1,23 @@
 # Backup y restauración
 
-El servicio `backup` hace un `pg_dump` diario en formato custom después de que PostgreSQL esté saludable. Conserva por defecto 30 días en el volumen Docker `postgres_backups`; configura `BACKUP_RETENTION_DAYS` en Dokploy. El backup está en el mismo VPS y no protege contra pérdida del VPS: copia los dumps a un almacenamiento externo y restringe quién puede leerlos.
+El VPS reporta un backup pequeño frente al volumen PostgreSQL conocido. No se ha demostrado que ese archivo contenga una copia completa y restaurable; no debe usarse como punto de recuperación hasta probarlo.
 
-## Comprobar un dump
+## Crear un backup verificado
+
+Durante la auditoría, identifica la instancia, su base y su usuario de mantenimiento antes de ejecutar `pg_dump`. Guarda el dump fuera del volumen de PostgreSQL y, preferiblemente, fuera del VPS. Conserva permisos restrictivos y registra fecha, versión del servidor, tamaño y checksum.
+
+Ejemplo para ejecutar con los valores identificados, sin guardar contraseñas en el historial del shell:
 
 ```sh
-docker compose -f docker-compose.production.yml exec backup sh -ec 'ls -lh /backups && pg_restore --list "$(ls -1t /backups/smarthome-*.dump | head -n 1)" >/dev/null'
+pg_dump --format=custom --no-owner --file=smarthome-YYYYMMDDTHHMMSSZ.dump "$DATABASE_URL"
+pg_restore --list smarthome-YYYYMMDDTHHMMSSZ.dump >/dev/null
+sha256sum smarthome-YYYYMMDDTHHMMSSZ.dump
 ```
 
 ## Prueba de restauración
 
-Restaura periódicamente en un PostgreSQL aislado que no sea el servicio de producción. Crea una base de prueba vacía, restaura ahí el dump con `pg_restore --exit-on-error`, y verifica tablas clave y conteos de control. No uses `--clean`, no apuntes esta prueba a la base de producción y no elimines el dump usado.
-
-Ejemplo con un servicio PostgreSQL aislado llamado `restore-postgres` en una red temporal:
-
-```sh
-pg_restore --verbose --exit-on-error --no-owner --dbname=smarthome_restore_test /backups/smarthome-YYYYMMDDTHHMMSSZ.dump
-```
-
-El usuario operador debe crear la base aislada antes. Mantén el resultado de la prueba y fecha junto al registro operativo.
+Restaura el dump en una base PostgreSQL aislada que no sea la producción. Usa `pg_restore --exit-on-error`, valida tablas y conteos de control y conserva el resultado de la prueba junto al registro operativo. No uses `--clean`, no apuntes la prueba a la base de producción y no elimines el dump original.
 
 ## Recuperación
 
-Para recuperar, detén escrituras de la aplicación, conserva el volumen original, restaura el dump en una base aparte y verifica los datos antes de cambiar el endpoint. Coordina el procedimiento con el cambio de `DATABASE_URL`/`DATABASE_IOT_URL`. Una restauración de datos no se automatiza con el despliegue.
+Antes de recuperar, detén escrituras de la aplicación y conserva el volumen original. Restaura en una base aparte, valida los datos y coordina cualquier cambio de endpoint. La restauración no se automatiza con el despliegue.

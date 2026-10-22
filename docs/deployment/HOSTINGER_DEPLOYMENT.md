@@ -1,28 +1,19 @@
-# Preparar Hostinger y Dokploy
+# Hostinger y Dokploy
 
-## Requisitos
+El VPS tiene Ubuntu 24.04 con Docker y Dokploy. La integración de Hostinger no permite inspeccionar contenedores en este sistema operativo y el acceso SSH desde este entorno aún no autentica. Por ahora, no se debe crear un proyecto ni activar un despliegue desde Dokploy.
 
-- VPS Ubuntu 24.04 con Docker, Dokploy y espacio libre para imágenes y dumps.
-- Acceso desde Dokploy a los repositorios GitHub y al paquete GHCR de cada aplicación.
-- Un dominio frontend con DNS A/AAAA apuntando al VPS.
-- Una instancia EMQX Cloud con endpoint TLS, usuario de servicio, ACL y namespace configurados.
+## Auditoría requerida antes de conectar Dokploy
 
-## Dokploy
+1. Accede al VPS por SSH desde una sesión de VS Code Remote-SSH usando la clave local ya registrada en Hostinger.
+2. Inspecciona los servicios, contenedores, redes, volúmenes y la instancia de PostgreSQL 18 que ya existe. No modifiques los directorios internos de Dokploy.
+3. Identifica el host de PostgreSQL, base, usuarios, red compartida, esquema, tabla `databasechangelog` y último changeset aplicado.
+4. Crea un `pg_dump` completo y guárdalo fuera del VPS. Restaura una copia en una instancia aislada y verifica tablas y conteos.
+5. Compara los changesets pendientes con la base restaurada. No ejecutes cambios destructivos ni migres producción mientras existan dudas sobre el historial.
 
-1. Crea un servicio **Docker Compose** y conecta `nataliachala1/smarthome-database`, rama `dev`, archivo `docker-compose.production.yml`.
-2. Configura la lectura de los dos paquetes GHCR. Si los paquetes son privados, autoriza el registry en Dokploy.
-3. Añade las variables de [ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md) en el entorno de Compose de Dokploy.
-4. Configura el dominio del frontend en el puerto interno `8080` desde la pestaña Domains de Dokploy y habilita TLS/Let's Encrypt.
-5. Usa el webhook de deploy de ese servicio como secreto `DOKPLOY_DEPLOY_WEBHOOK` en los tres repositorios.
-6. Añade en cada repositorio `DEPLOYMENT_HEALTH_URL` con la URL HTTPS pública `https://<dominio>/health/live`.
-7. Configura Actions para permitir publicar paquetes en GHCR. Los workflows usan `GITHUB_TOKEN` y necesitan `packages: write`.
+## Configuración después de la auditoría
 
-Dokploy permite auto deploy para aplicaciones y servicios Compose; la rama configurada debe ser exactamente `dev`. Revisa **Preview Compose** antes de activar el servicio y confirma que únicamente el frontend está conectado a la red de routing pública.
+El Compose de este repositorio no crea un servidor PostgreSQL. Completa las variables de [ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md) con los nombres reales de la base existente y las redes identificadas. Revisa **Preview Compose** para confirmar que Liquibase y el backend llegan a la base existente y solo el frontend recibe el dominio público de Dokploy.
 
-## Orden inicial seguro
+Configura acceso a los paquetes GHCR, dominio frontend, TLS y secretos en Dokploy. Mantén deshabilitado el job de despliegue de GitHub Actions hasta terminar estas comprobaciones y crear un único workflow coordinador que serialice las publicaciones de los tres repositorios.
 
-No inicies una primera aplicación contra una base existente sin revisar la instalación. Confirma versión de PostgreSQL, volúmenes, esquema, tabla `databasechangelog` y último changeset. Guarda un `pg_dump` en ubicación externa y prueba restaurarlo en una base aislada. El changelog principal está pensado para desplegar el baseline; una base existente sin historial Liquibase podría rechazarlo.
-
-Primero configura y valida el endpoint de salud, dominio, TLS, acceso a GHCR y variables; luego realiza la primera ejecución en una ventana de mantenimiento. Mantén disponible la versión anterior de las imágenes GHCR etiquetada por SHA.
-
-La configuración del firewall, DNS, certificados, secretos, registry y panel de Dokploy solo puede completarse con acceso a las cuentas del propietario. No se han realizado cambios en el VPS desde esta carpeta local.
+La IP del VPS y el DNS del dominio ya se habían comprobado en la cuenta. No se han realizado cambios de despliegue en el VPS desde este repositorio.
