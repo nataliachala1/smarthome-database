@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-state-guards-audit-20261021
+      author: smarthome
+      labels: 'HU16,HU11,mqtt,transitions,audit'
+      comment: Guards structural pairing state transitions and records append-only history. Never verifies external broker outcomes or grants transition permission.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_pairing_state_guards.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_pairing_state_guards.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

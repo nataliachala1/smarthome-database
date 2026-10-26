@@ -3,6 +3,8 @@ name: Validate migrations and deploy dev
 on:
   push:
     branches: [dev]
+  pull_request:
+    branches: [dev]
 permissions:
   contents: read
 
@@ -88,6 +90,7 @@ jobs:
           docker compose --env-file .env.production.example -f docker-compose.production.yml config --quiet
 
   deploy:
+    if: ${{ false }} # Despliegue pausado durante auditoria Shelly
     needs: validate-migrations
     runs-on: ubuntu-latest
     steps:

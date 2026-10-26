@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-enable-fencing-20261026
+      author: smarthome
+      labels: hu16,mqtt,broker-enable,lease-fencing
+      comments: Activacion MQTT con lease y estado AWAITING_AUTH; sin autenticar ni registrar el dispositivo.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_enable_fencing.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+            stripComments: false

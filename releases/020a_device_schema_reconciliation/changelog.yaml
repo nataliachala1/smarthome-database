@@ -1,0 +1,15 @@
+﻿databaseChangeLog:
+  - changeSet:
+      id: reconcile-device-home-integrity-20261021
+      author: smarthome
+      comment: Enforce device-home referential integrity without changing device history.
+      changes:
+        - sqlFile:
+            path: 001_device_home_integrity.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_device_home_integrity.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false
