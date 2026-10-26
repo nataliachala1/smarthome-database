@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-pairing-operation-reservation-20261021
+      author: smarthome
+      labels: 'HU16,HU11,mqtt,broker,identity,reservation'
+      comment: Adds private pre-registration identity reservations. No passwords, broker mutations, or pairing completion; blocks uncertain legacy re-pairing.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_pairing_operation.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_pairing_operation.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

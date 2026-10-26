@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-bootstrap-authorization-20261026
+      author: smarthome
+      labels: hu16,mqtt,bootstrap,owner-fenced
+      comments: Recuperacion autorizada de sobre cifrado tras SQL028; no habilita MQTT ni entrega plaintext desde PostgreSQL.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_bootstrap_authorization.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+            stripComments: false

@@ -32,3 +32,41 @@ databaseChangeLog:
   - include:
       file: ../releases/020_lan_pairing_method/changelog.yaml
       relativeToChangelogFile: true
+  - include:
+      file: ../releases/020a_device_schema_reconciliation/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/021_shelly_device_repairing/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/022_mqtt_pairing_operation/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/023_mqtt_identity_repairing/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/024_mqtt_pairing_state_guards/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/025_mqtt_lease_fencing/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/026_mqtt_rpc_challenge/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/027_mqtt_pairing_prepared_confirmation/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/028_mqtt_preparation_secret/changelog.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: ../releases/029_mqtt_authenticated_pairing/changelog.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: ../releases/030_mqtt_enable_fencing/changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../releases/031_mqtt_bootstrap_authorization/changelog.yaml
+      relativeToChangelogFile: true

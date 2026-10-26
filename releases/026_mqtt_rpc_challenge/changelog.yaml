@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-rpc-challenge-20261022
+      author: smarthome
+      labels: 'HU16,mqtt,rpc,challenge,one-time,fail-closed'
+      comment: Durable one-use 15-second RPC correlation challenge in AWAITING_AUTH; no auth proof, broker calls or positive state transitions.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_rpc_challenge.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_rpc_challenge.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false
