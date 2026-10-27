@@ -1,4 +1,4 @@
--- HU11 read-only audit. Run with the actual revocation LOGIN, without SET ROLE.
+-- HU11/HU16 read-only audit. Run with the actual revocation LOGIN, without SET ROLE.
 WITH
 runtime AS (
   SELECT pg_catalog.to_regrole('smarthome_mqtt_revoke') AS role_id,
@@ -11,9 +11,14 @@ business_schemas AS (
 functions AS (
   SELECT signature, allowed, pg_catalog.to_regprocedure(signature) AS oid
   FROM (VALUES
-    ('devices.fn_claim_mqtt_revocation()', true),
-    ('devices.fn_finish_mqtt_revocation(uuid,uuid,text)', true),
+    ('devices.fn_claim_mqtt_revocation()', false),
+    ('devices.fn_finish_mqtt_revocation(uuid,uuid,text)', false),
+    ('devices.fn_claim_mqtt_pairing_revocation(integer)', true),
+    ('devices.fn_finish_mqtt_pairing_revocation(uuid,uuid,text,text)', true),
+    ('devices.fn_claim_mqtt_revocation_with_binding()', true),
+    ('devices.fn_finish_mqtt_revocation_evidenced(uuid,uuid,text,text)', true),
     ('devices.fn_register_mqtt_identity(uuid,uuid,text)', false),
+    ('devices.fn_guard_mqtt_pairing_revoked_evidence()', false),
     ('devices.fn_mqtt_identity_device_update()', false),
     ('devices.fn_capture_mqtt_identity_event()', false),
     ('devices.fn_mqtt_identity_event_append_only()', false)
@@ -87,6 +92,35 @@ checks(check_name, passed) AS (
     FROM pg_catalog.pg_class h
     WHERE h.oid = pg_catalog.to_regclass('devices.mqtt_identity_event')
   ), false)
+  UNION ALL
+  SELECT 'pairing_revocation_evidence_rls', COALESCE((
+    SELECT c.relkind='r' AND c.relrowsecurity
+    FROM pg_catalog.pg_class c
+    WHERE c.oid=pg_catalog.to_regclass('devices.mqtt_pairing_revocation_attestation')
+  ),false)
+  UNION ALL
+  SELECT 'pairing_revocation_evidence_append_only', EXISTS (
+    SELECT 1 FROM pg_catalog.pg_trigger t
+    WHERE t.tgrelid=pg_catalog.to_regclass('devices.mqtt_pairing_revocation_attestation')
+      AND t.tgname='trg_guard_mqtt_pairing_revocation_attestation'
+      AND t.tgfoid=pg_catalog.to_regprocedure('devices.fn_guard_mqtt_pairing_revocation_attestation()')
+      AND t.tgtype=58 AND t.tgenabled='O' AND NOT t.tgisinternal
+      AND t.tgqual IS NULL AND t.tgnargs=0 AND t.tgattr=''::pg_catalog.int2vector
+  )
+  UNION ALL
+  SELECT 'revoked_requires_evidence_guard', EXISTS (
+    SELECT 1 FROM pg_catalog.pg_trigger t
+    WHERE t.tgrelid=pg_catalog.to_regclass('devices.mqtt_pairing_operation')
+      AND t.tgname='trg_guard_mqtt_pairing_revoked_evidence'
+      AND t.tgfoid=pg_catalog.to_regprocedure('devices.fn_guard_mqtt_pairing_revoked_evidence()')
+      AND t.tgenabled='O' AND NOT t.tgisinternal
+  )
+  UNION ALL
+  SELECT 'no_direct_unverified_identity_functions',
+    NOT pg_catalog.has_function_privilege(current_user,
+      'devices.fn_claim_mqtt_revocation()', 'EXECUTE')
+    AND NOT pg_catalog.has_function_privilege(current_user,
+      'devices.fn_finish_mqtt_revocation(uuid,uuid,text)', 'EXECUTE')
   UNION ALL
   SELECT 'no_schema_create', NOT EXISTS (
     SELECT 1 FROM business_schemas n WHERE pg_catalog.has_schema_privilege(current_user,n.oid,'CREATE')
