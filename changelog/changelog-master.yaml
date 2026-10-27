@@ -70,3 +70,6 @@ databaseChangeLog:
   - include:
       file: ../releases/031_mqtt_bootstrap_authorization/changelog.yaml
       relativeToChangelogFile: true
+  - include:
+      file: ../releases/032_mqtt_pairing_revocation/changelog.yaml
+      relativeToChangelogFile: true

@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-pairing-revocation-reconciliation-20261027
+      author: smarthome
+      labels: 'HU16,HU11,mqtt,revocation,reconciliation,lease-fencing'
+      comment: Adds broker-evidenced revocation for unbound pairing operations and bridges the existing SQL011 identity queue to attached pairing operations.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_pairing_revocation.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_pairing_revocation.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false
