@@ -1,3 +1,4 @@
+-- SEGURIDAD: el rollback NO restaura privilegios SELECT directos sobre homes.
 REVOKE EXECUTE ON FUNCTION
 homes.fn_mqtt_realtime_recipients(UUID, UUID)
 FROM smarthome_ingest;

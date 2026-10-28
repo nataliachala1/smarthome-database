@@ -1,3 +1,6 @@
+-- SEGURIDAD: negar lecturas directas de hogares a la ingesta MQTT.
+-- Unicamente se consulta destinatarios con la funcion SECURITY DEFINER.
+REVOKE SELECT ON TABLE homes.home, homes.home_member FROM smarthome_ingest;
 -- SQL033: permisos mínimos para ingesta MQTT y eventos realtime.
 -- Requiere revisión y validación Liquibase antes de su aplicación.
 
