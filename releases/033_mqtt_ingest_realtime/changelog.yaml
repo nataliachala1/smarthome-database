@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-ingest-realtime-20261028
+      author: smarthome
+      labels: 'HU16,HU11,mqtt,consumption,realtime,security'
+      comment: Minimal MQTT ingestion privilege and restricted realtime recipients.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_ingest_realtime.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_ingest_realtime.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false
