@@ -76,3 +76,6 @@ databaseChangeLog:
   - include:
       file: ../releases/033_mqtt_ingest_realtime/changelog.yaml
       relativeToChangelogFile: true
+  - include:
+      file: ../releases/034_energy_tariff_budget/changelog.yaml
+      relativeToChangelogFile: true
