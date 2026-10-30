@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: smarthome-sql035-flespi-mqtt-ingest-dedup-20261030
+      author: smarthome
+      labels: 'BD-035,iot,flespi,mqtt,idempotency,rls'
+      comment: Add durable single-device MQTT event ledger under smarthome_ingest RLS without changing the partitioned consumption table.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_ingest_dedup.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_ingest_dedup.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

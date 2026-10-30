@@ -79,3 +79,6 @@ databaseChangeLog:
   - include:
       file: ../releases/034_energy_tariff_budget/changelog.yaml
       relativeToChangelogFile: true
+  - include:
+      file: ../releases/035_flespi_mqtt_ingest_idempotency/changelog.yaml
+      relativeToChangelogFile: true
