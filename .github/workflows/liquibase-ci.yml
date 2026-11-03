@@ -1,0 +1,70 @@
+﻿name: Database Liquibase CI
+
+on:
+  push:
+    branches: [09-dev, 10-dev, 11-dev, 12-dev, 13-dev, 14-dev, 15-dev, 16-dev]
+  pull_request:
+    branches: [09-dev, 10-dev, 11-dev, 12-dev, 13-dev, 14-dev, 15-dev, 16-dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: database-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  liquibase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: smarthome_ci
+          POSTGRES_PASSWORD: disposable-ci-only
+          POSTGRES_DB: smarthome
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U smarthome_ci -d smarthome"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Validate Liquibase changelogs
+        run: |
+          docker run --rm --network host \
+            -v "$GITHUB_WORKSPACE:/liquibase/project:ro" \
+            -w /liquibase/project \
+            -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome \
+            -e LIQUIBASE_COMMAND_USERNAME=smarthome_ci \
+            -e LIQUIBASE_COMMAND_PASSWORD=disposable-ci-only \
+            -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml \
+            liquibase/liquibase:4.29 --defaults-file=liquibase.properties validate
+
+      - name: Apply all changesets to disposable PostgreSQL
+        run: |
+          docker run --rm --network host \
+            -v "$GITHUB_WORKSPACE:/liquibase/project:ro" \
+            -w /liquibase/project \
+            -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome \
+            -e LIQUIBASE_COMMAND_USERNAME=smarthome_ci \
+            -e LIQUIBASE_COMMAND_PASSWORD=disposable-ci-only \
+            -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml \
+            liquibase/liquibase:4.29 --defaults-file=liquibase.properties update
+
+      - name: Verify database is up to date
+        run: |
+          docker run --rm --network host \
+            -v "$GITHUB_WORKSPACE:/liquibase/project:ro" \
+            -w /liquibase/project \
+            -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome \
+            -e LIQUIBASE_COMMAND_USERNAME=smarthome_ci \
+            -e LIQUIBASE_COMMAND_PASSWORD=disposable-ci-only \
+            -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml \
+            liquibase/liquibase:4.29 --defaults-file=liquibase.properties status --verbose

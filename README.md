@@ -1,3 +1,5 @@
+HU15: [CI de base de datos](docs/HU15_CICD_STAGING.md). Valida y aplica Liquibase solo sobre PostgreSQL desechable; sin DDL nuevo ni despliegue externo.
+
 # Smart Home Database
 
 HU14: [observabilidad del backend](docs/HU14_OBSERVABILITY_METRICS.md). Incremento sin DDL ni consultas persistidas; la salud y metricas se exportan desde NestJS.
