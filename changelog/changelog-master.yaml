@@ -85,3 +85,6 @@ databaseChangeLog:
   - include:
       file: ../releases/036_flespi_mqtt_event_order/changelog.yaml
       relativeToChangelogFile: true
+  - include:
+      file: ../releases/037_mqtt_lease_quarantine_least_privilege/changelog.yaml
+      relativeToChangelogFile: true
