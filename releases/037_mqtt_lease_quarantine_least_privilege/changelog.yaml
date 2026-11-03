@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: smarthome-sql037-mqtt-lease-quarantine-least-privilege-20261103
+      author: smarthome
+      labels: 'BD-037,mqtt,least-privilege,security'
+      comment: Remove unused expired-lease quarantine execution from the preparation lease worker.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_lease_quarantine_least_privilege.sql
+            relativeToChangelogFile: true
+            splitStatements: false
