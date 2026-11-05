@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: b1ef8cee-c201-4e68-bc25-bf6e2e7ea028
+      author: natalia chala
+      labels: "BD-01-dev,ddl,extension"
+      comment: Enables the pgcrypto extension for UUID generation.
+      changes:
+        - sqlFile:
+            path: 001_enable_uuid_extension.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/00_extensions/001_enable_uuid_extension.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+
+  - changeSet:
+      id: 5d2b7897-01d2-4f32-8a38-9d9ae1d0d4dd
+      author: natalia chala
+      labels: "BD-01-dev,ddl,extension"
+      comment: Enables btree_gist for temporal exclusion constraints and overlap checks.
+      changes:
+        - sqlFile:
+            path: 002_enable_btree_gist_extension.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/00_extensions/002_enable_btree_gist_extension.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+

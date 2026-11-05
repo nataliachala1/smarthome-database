@@ -1,0 +1,16 @@
+﻿databaseChangeLog:
+  - changeSet:
+      id: hu16-shelly-device-repairing-20261020
+      author: smarthome
+      labels: 'HU16,pairing,repairing'
+      comment: Allows pairing a previously soft-deleted physical device while preserving its historical records.
+      changes:
+        - sqlFile:
+            path: 001_shelly_device_repairing.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_shelly_device_repairing.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

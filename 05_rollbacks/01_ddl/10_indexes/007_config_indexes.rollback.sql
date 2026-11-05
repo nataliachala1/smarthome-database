@@ -1,0 +1,1 @@
+-- No hay índices activos de configuración en la fase actual.

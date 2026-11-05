@@ -1,0 +1,43 @@
+
+# SmartHome Database
+# PostgreSQL existente - inspeccion de migraciones
+#
+# Este archivo NO despliega backend ni frontend.
+# NO crea bases de datos, volumenes ni usuarios.
+# NO aplica migraciones automaticamente.
+#
+# Requiere una instancia PostgreSQL existente
+# y una configuracion de conexion previamente auditada.
+
+services:
+  liquibase:
+    image: liquibase/liquibase:4.29
+    restart: "no"
+
+    profiles:
+      - database-inspection
+
+    working_dir: /liquibase/project
+
+    volumes:
+      - ./:/liquibase/project:ro
+
+    environment:
+      LIQUIBASE_COMMAND_URL: jdbc:postgresql://${POSTGRES_HOST:?POSTGRES_HOST requerido}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:?POSTGRES_DB requerido}
+      LIQUIBASE_COMMAND_USERNAME: ${LIQUIBASE_DB_USER:?LIQUIBASE_DB_USER requerido}
+      LIQUIBASE_COMMAND_PASSWORD: ${LIQUIBASE_DB_PASSWORD:?LIQUIBASE_DB_PASSWORD requerido}
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog/changelog-master.yaml
+
+    # Operacion predeterminada: validacion.
+    # No realizar update automaticamente.
+    command:
+      - --defaults-file=liquibase.properties
+      - validate
+
+    networks:
+      - database
+
+networks:
+  database:
+    external: true
+    name: ${DATABASE_NETWORK:?DATABASE_NETWORK requerido}

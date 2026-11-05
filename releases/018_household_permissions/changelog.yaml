@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-household-permissions-20261016
+      author: smarthome
+      labels: "HU16,roles,permissions,rls"
+      comment: Adds role-based household permission defaults and owner-managed device exceptions.
+      changes:
+        - sqlFile:
+            path: 001_household_permissions.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_household_permissions.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

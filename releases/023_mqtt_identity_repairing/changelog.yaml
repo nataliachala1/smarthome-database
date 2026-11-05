@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-identity-repairing-20261021
+      author: smarthome
+      labels: 'HU16,HU11,mqtt,repairing,identity'
+      comment: Preserves REVOKED identity history while allowing a new identity for the same Shelly; forbids unrevoked duplicates and terminal-state reversal.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_identity_repairing.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_identity_repairing.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

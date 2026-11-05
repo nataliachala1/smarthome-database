@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-preparation-secret-envelope-fencing-20261023
+      author: smarthome
+      labels: 'HU16,mqtt,secret,aes-gcm,fail-closed,fencing'
+      comment: Guarded read and insert of an immutable AES-GCM envelope with active lease token; pending isolated lab test.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_preparation_secret.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_preparation_secret.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

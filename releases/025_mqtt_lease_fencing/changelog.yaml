@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-lease-fencing-20261022
+      author: smarthome
+      labels: 'HU16,HU11,mqtt,lease,cas,fail-closed'
+      comment: Grants NOLOGIN lease worker only first preparation claims and fail-closed quarantine. No success broker transitions, no worker table DML.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_lease_fencing.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_lease_fencing.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: smarthome-sql034-energy-tariff-budget-20261029
+      author: smarthome
+      labels: 'BD-034,energy,tariff,budget,security,rls'
+      comment: Add effective-dated COP/kWh tariff and home monthly energy goals with owner writes and consumption-scoped reads.
+      changes:
+        - sqlFile:
+            path: 001_energy_tariff_budget.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_energy_tariff_budget.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+  - changeSet:
+      id: smarthome-sql034-energy-goal-optional-budget-20261029
+      author: smarthome
+      labels: 'BD-034,energy,budget,goal,optional,rls'
+      comment: Allow monthly kWh-only goals while requiring at least one positive budget or kWh target.
+      changes:
+        - sqlFile:
+            path: 002_energy_goal_optional_budget.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 002_energy_goal_optional_budget.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false
