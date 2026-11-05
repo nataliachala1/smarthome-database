@@ -1,106 +1,43 @@
+
+# SmartHome Database
+# PostgreSQL existente - inspeccion de migraciones
+#
+# Este archivo NO despliega backend ni frontend.
+# NO crea bases de datos, volumenes ni usuarios.
+# NO aplica migraciones automaticamente.
+#
+# Requiere una instancia PostgreSQL existente
+# y una configuracion de conexion previamente auditada.
+
 services:
   liquibase:
     image: liquibase/liquibase:4.29
     restart: "no"
+
+    profiles:
+      - database-inspection
+
     working_dir: /liquibase/project
+
     volumes:
       - ./:/liquibase/project:ro
+
     environment:
-      LIQUIBASE_COMMAND_URL: jdbc:postgresql://${POSTGRES_HOST:?Set the verified existing PostgreSQL host}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:?Set the verified existing database}
-      LIQUIBASE_COMMAND_USERNAME: ${LIQUIBASE_DB_USER:?Set the audited Liquibase role}
-      LIQUIBASE_COMMAND_PASSWORD: ${LIQUIBASE_DB_PASSWORD:?Set the audited Liquibase password}
+      LIQUIBASE_COMMAND_URL: jdbc:postgresql://${POSTGRES_HOST:?POSTGRES_HOST requerido}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:?POSTGRES_DB requerido}
+      LIQUIBASE_COMMAND_USERNAME: ${LIQUIBASE_DB_USER:?LIQUIBASE_DB_USER requerido}
+      LIQUIBASE_COMMAND_PASSWORD: ${LIQUIBASE_DB_PASSWORD:?LIQUIBASE_DB_PASSWORD requerido}
       LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog/changelog-master.yaml
-    command: ["--defaults-file=liquibase.properties", "update"]
+
+    # Operacion predeterminada: validacion.
+    # No realizar update automaticamente.
+    command:
+      - --defaults-file=liquibase.properties
+      - validate
+
     networks:
       - database
-
-  runtime-roles:
-    image: postgres:18-alpine
-    restart: "no"
-    environment:
-      PGHOST: ${POSTGRES_HOST:?Set the verified existing PostgreSQL host}
-      PGPORT: ${POSTGRES_PORT:-5432}
-      PGUSER: ${LIQUIBASE_DB_USER:?Set the audited Liquibase role}
-      PGPASSWORD: ${LIQUIBASE_DB_PASSWORD:?Set the audited Liquibase password}
-      PGDATABASE: ${POSTGRES_DB:?Set the verified existing database}
-      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Set the application login password}
-      IOT_DB_PASSWORD: ${IOT_DB_PASSWORD:?Set the ingestion login password}
-    volumes:
-      - ./scripts/provision-runtime-roles.sql:/scripts/provision-runtime-roles.sql:ro
-    command: ["sh", "-ec", "psql -X -q -v ON_ERROR_STOP=1 --file=/scripts/provision-runtime-roles.sql"]
-    depends_on:
-      liquibase:
-        condition: service_completed_successfully
-    networks:
-      - database
-
-  backend:
-    image: ${BACKEND_IMAGE:-ghcr.io/nataliachala1/smarthome-backend}:${BACKEND_IMAGE_TAG:-dev}
-    pull_policy: always
-    restart: unless-stopped
-    expose:
-      - "3000"
-    environment:
-      NODE_ENV: production
-      PORT: "3000"
-      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL for the smarthome_app_login role}
-      DATABASE_IOT_URL: ${DATABASE_IOT_URL:?Set DATABASE_IOT_URL for the smarthome_ingest login}
-      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in Dokploy}
-      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?Set JWT_REFRESH_SECRET in Dokploy}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?Set the public frontend origin}
-      FRONTEND_URL: ${FRONTEND_URL:?Set the primary frontend URL}
-      COOKIE_SECURE: "true"
-      COOKIE_SAME_SITE: ${COOKIE_SAME_SITE:-lax}
-      SWAGGER_ENABLED: "false"
-      MQTT_BROKER_URL: ${MQTT_BROKER_URL:-}
-      MQTT_USERNAME: ${MQTT_USERNAME:-}
-      MQTT_PASSWORD: ${MQTT_PASSWORD:-}
-      MQTT_ENABLED: ${MQTT_ENABLED:-false}
-      MQTT_CLIENT_ID: ${MQTT_CLIENT_ID:-smarthome-backend-production}
-      MQTT_STATUS_CLIENT_ID: ${MQTT_STATUS_CLIENT_ID:-smarthome-backend-status-production}
-      MQTT_TOPIC_NAMESPACE: ${MQTT_TOPIC_NAMESPACE:-}
-      MQTT_TLS_CA_FILE: ${MQTT_TLS_CA_FILE:-}
-      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-}
-      EMAIL_ENABLED: ${EMAIL_ENABLED:-false}
-      SMTP_USER: ${SMTP_USER:-}
-      SMTP_APP_PASSWORD: ${SMTP_APP_PASSWORD:-}
-    depends_on:
-      runtime-roles:
-        condition: service_completed_successfully
-    networks:
-      - application
-      - database
-    healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
-      interval: 30s
-      timeout: 8s
-      retries: 3
-      start_period: 45s
-
-  frontend:
-    image: ${FRONTEND_IMAGE:-ghcr.io/nataliachala1/smarthome-frontend-web}:${FRONTEND_IMAGE_TAG:-dev}
-    pull_policy: always
-    restart: unless-stopped
-    expose:
-      - "8080"
-    depends_on:
-      backend:
-        condition: service_healthy
-    networks:
-      - application
-      - dokploy
-    healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/ || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
 
 networks:
-  application:
   database:
-    name: ${DATABASE_NETWORK:?Set the verified existing PostgreSQL network}
     external: true
-  dokploy:
-    name: ${DOKPLOY_NETWORK:?Set the verified Dokploy proxy network}
-    external: true
+    name: ${DATABASE_NETWORK:?DATABASE_NETWORK requerido}

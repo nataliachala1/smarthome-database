@@ -1,5 +1,22 @@
+
 \set ON_ERROR_STOP on
+
+-- PROTECCION DE ENTORNO
+-- Pruebas exclusivas de PostgreSQL desechable.
+-- No ejecutar sobre bases compartidas ni persistentes.
+
+DO $safety$
+BEGIN
+    IF current_database() <> 'smarthome_sql034_test' THEN
+        RAISE EXCEPTION
+            'SQL034_OPTIONAL_BUDGET_TEST_BLOCKED: requiere smarthome_sql034_test. Base actual: %',
+            current_database();
+    END IF;
+END
+$safety$;
+
 \echo 'SQL034 | budget/goal optionality tests: one of two fields must be set'
+
 \echo 'Local-only fixture. All changes rolled back.'
 BEGIN;
 
