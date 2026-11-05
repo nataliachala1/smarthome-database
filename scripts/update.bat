@@ -1,12 +1,21 @@
+
 @echo off
 setlocal
 
-echo [1/2] Validando changelogs...
-docker compose run --rm liquibase --defaults-file=liquibase.properties validate
-if errorlevel 1 exit /b %errorlevel%
+echo ==========================================
+echo   SmartHome Database - Liquibase
+echo ==========================================
+echo.
+echo Las migraciones no se aplican por defecto.
+echo.
 
-echo [2/2] Aplicando migraciones...
-docker compose run --rm liquibase --defaults-file=liquibase.properties update
-if errorlevel 1 exit /b %errorlevel%
+powershell.exe -NoProfile -File "%~dp0update.ps1" %*
 
-endlocal
+set "EXIT_CODE=%ERRORLEVEL%"
+
+if not "%EXIT_CODE%"=="0" (
+    echo.
+    echo ERROR: La operacion no finalizo correctamente.
+)
+
+endlocal & exit /b %EXIT_CODE%

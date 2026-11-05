@@ -1,7 +1,15 @@
--- Runs only against the verified existing SmartHome database after Liquibase.
--- The passwords are read from the container environment and never printed.
+
+-- SmartHome Database
+-- Aprovisionamiento de roles de ejecucion.
+-- Ejecutar solamente mediante procedimiento autorizado.
+-- No ejecutar automaticamente desde QA o produccion.
+
+\set ON_ERROR_STOP on
+
 \getenv app_password APP_DB_PASSWORD
 \getenv ingest_password IOT_DB_PASSWORD
+
+BEGIN;
 
 SELECT format(
   'CREATE ROLE smarthome_app_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOREPLICATION NOBYPASSRLS PASSWORD %L',
@@ -40,3 +48,4 @@ REVOKE smarthome_runtime_app, smarthome_admin, smarthome_worker,
 
 GRANT smarthome_runtime_app TO smarthome_app_login;
 GRANT smarthome_ingest TO smarthome_ingest_login;
+COMMIT;

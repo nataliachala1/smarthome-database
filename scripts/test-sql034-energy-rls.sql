@@ -1,5 +1,22 @@
+
 \set ON_ERROR_STOP on
+
+-- PROTECCION DE ENTORNO
+-- Este script solo puede ejecutarse sobre una base desechable.
+-- Nunca ejecutar directamente sobre DEV, QA o Produccion.
+
+DO $safety$
+BEGIN
+    IF current_database() <> 'smarthome_sql034_test' THEN
+        RAISE EXCEPTION
+            'SQL034_TEST_BLOCKED: requiere la base desechable smarthome_sql034_test. Base actual: %',
+            current_database();
+    END IF;
+END
+$safety$;
+
 \echo 'SQL034 | bateria completa de RLS, restricciones, permisos y revocacion'
+
 \echo 'No deja datos persistentes: BEGIN ... ROLLBACK'
 
 BEGIN;
