@@ -386,7 +386,7 @@ La documentaci처n funcional y arquitect처nica se administra separadamente del c�
 
 Repositorio de documentaci처n de referencia:
 
-https://github.com/Kevin-Stiven-Lopez-Amaya404/smart-home-doc
+https://github.com/Kevin-Stiven-Lopez-Amaya404/smart-home-docs
 
 La documentaci처n retirada de este repositorio se entreg처 al responsable correspondiente para su revisi처n y organizaci처n.
 

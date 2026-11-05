@@ -165,4 +165,126 @@ WHERE LOWER(c.relname) = 'databasechangelog'
 
 ORDER BY n.nspname;
 
+-- 4. Fallar si las identidades MQTT no cumplen el contrato esperado.
+-- Cada LOGIN solo puede pertenecer a su rol funcional, sin privilegios
+-- administrativos ni membresías que amplíen el acceso.
+DO $audit$
+DECLARE
+    v_expected RECORD;
+    v_login_oid OID;
+    v_functional_oid OID;
+    v_function_oid OID;
+BEGIN
+    FOR v_expected IN
+        SELECT *
+        FROM (VALUES
+            ('smarthome_mqtt_reserver_dev_login', 'smarthome_mqtt_reserver'),
+            ('smarthome_mqtt_lease_dev_login', 'smarthome_mqtt_lease_worker'),
+            ('smarthome_mqtt_confirmer_dev_login', 'smarthome_mqtt_prepare_confirmer'),
+            ('smarthome_mqtt_secret_dev_login', 'smarthome_mqtt_secret_worker'),
+            ('smarthome_mqtt_rpc_dev_login', 'smarthome_mqtt_rpc_worker'),
+            ('smarthome_mqtt_auth_dev_login', 'smarthome_mqtt_auth_confirmer'),
+            ('smarthome_mqtt_revoke_dev_login', 'smarthome_mqtt_revoke')
+        ) AS expected(login_name, functional_role)
+    LOOP
+        v_login_oid := pg_catalog.to_regrole(v_expected.login_name);
+        IF v_login_oid IS NULL THEN
+            RAISE EXCEPTION 'SQL037_REQUIRED_LOGIN_MISSING: %', v_expected.login_name;
+        END IF;
+
+        v_functional_oid := pg_catalog.to_regrole(v_expected.functional_role);
+        IF v_functional_oid IS NULL THEN
+            RAISE EXCEPTION 'SQL037_REQUIRED_ROLE_MISSING: %', v_expected.functional_role;
+        END IF;
+
+        IF NOT EXISTS (
+            SELECT 1
+            FROM pg_catalog.pg_roles
+            WHERE oid = v_login_oid
+              AND rolcanlogin
+              AND rolinherit
+              AND NOT rolsuper
+              AND NOT rolcreatedb
+              AND NOT rolcreaterole
+              AND NOT rolreplication
+              AND NOT rolbypassrls
+        ) THEN
+            RAISE EXCEPTION 'SQL037_INVALID_LOGIN_SECURITY: %', v_expected.login_name;
+        END IF;
+
+        IF NOT EXISTS (
+            SELECT 1
+            FROM pg_catalog.pg_roles
+            WHERE oid = v_functional_oid
+              AND NOT rolcanlogin
+              AND NOT rolsuper
+              AND NOT rolcreatedb
+              AND NOT rolcreaterole
+              AND NOT rolreplication
+              AND NOT rolbypassrls
+        ) THEN
+            RAISE EXCEPTION 'SQL037_INVALID_FUNCTIONAL_ROLE_SECURITY: %', v_expected.functional_role;
+        END IF;
+
+        IF NOT EXISTS (
+            SELECT 1
+            FROM pg_catalog.pg_auth_members m
+            WHERE m.member = v_login_oid
+              AND m.roleid = v_functional_oid
+              AND NOT m.admin_option
+        ) THEN
+            RAISE EXCEPTION
+                'SQL037_REQUIRED_MEMBERSHIP_MISSING_OR_ADMIN_OPTION: % -> %',
+                v_expected.login_name,
+                v_expected.functional_role;
+        END IF;
+
+        IF EXISTS (
+            SELECT 1
+            FROM pg_catalog.pg_auth_members m
+            WHERE m.member = v_login_oid
+              AND m.roleid <> v_functional_oid
+        ) THEN
+            RAISE EXCEPTION 'SQL037_ADDITIONAL_LOGIN_MEMBERSHIP: %', v_expected.login_name;
+        END IF;
+
+        IF EXISTS (
+            SELECT 1
+            FROM pg_catalog.pg_auth_members m
+            WHERE m.member = v_functional_oid
+        ) THEN
+            RAISE EXCEPTION
+                'SQL037_ADDITIONAL_FUNCTIONAL_ROLE_MEMBERSHIP: %',
+                v_expected.functional_role;
+        END IF;
+    END LOOP;
+
+    v_function_oid := pg_catalog.to_regprocedure(
+        'devices.fn_quarantine_expired_mqtt_pairing_lease(uuid)'
+    );
+
+    IF v_function_oid IS NULL THEN
+        RAISE EXCEPTION 'SQL037_REQUIRED_FUNCTION_MISSING';
+    END IF;
+
+    IF pg_catalog.to_regrole('smarthome_mqtt_lease_dev_login') IS NULL
+       OR pg_catalog.to_regrole('smarthome_mqtt_lease_worker') IS NULL THEN
+        RAISE EXCEPTION 'SQL037_REQUIRED_ROLE_MISSING';
+    END IF;
+
+    IF pg_catalog.has_function_privilege(
+        'smarthome_mqtt_lease_dev_login',
+        v_function_oid,
+        'EXECUTE'
+    )
+    OR pg_catalog.has_function_privilege(
+        'smarthome_mqtt_lease_worker',
+        v_function_oid,
+        'EXECUTE'
+    ) THEN
+        RAISE EXCEPTION 'SQL037_FORBIDDEN_EXECUTE_PRIVILEGE';
+    END IF;
+END
+$audit$;
+
 ROLLBACK;
