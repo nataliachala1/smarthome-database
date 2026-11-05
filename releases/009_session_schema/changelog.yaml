@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu09-session-schema-bridge-20261014
+      author: smarthome
+      labels: "HU09,BD-03,session"
+      comment: Add the session objects required by Prisma while preserving compatible preexisting data.
+      changes:
+        - sqlFile:
+            path: 001_session_schema.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sql:
+            sql: "SELECT 1; -- Compatibility rollback retains session tables, data, column and grants intentionally."

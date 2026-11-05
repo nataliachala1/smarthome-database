@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-mqtt-authenticated-session-fence-20261026
+      author: smarthome
+      labels: 'HU16,mqtt,broker-auth,session-guard,fail-closed'
+      comment: Restrict CONNECTED and COMPLETED to auditable authenticated MQTT operations. The SQL confirmer must only be called by a trusted broker-proof worker; no broker authentication occurs in PostgreSQL.
+      changes:
+        - sqlFile:
+            path: 001_mqtt_authenticated_pairing.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_authenticated_pairing.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

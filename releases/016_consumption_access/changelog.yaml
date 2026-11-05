@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-consumption-detail-access-20261014
+      author: smarthome
+      labels: "HU16,BD-04,BD-05,rls"
+      comment: Restrict consumption detail and expose authorized historical device metadata.
+      changes:
+        - sqlFile:
+            path: 001_consumption_access.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_consumption_access.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

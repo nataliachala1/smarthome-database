@@ -1,0 +1,16 @@
+databaseChangeLog:
+- changeSet:
+    id: b1a9bf66-fe75-4bd3-82db-f2ed4a262dbf
+    author: natalia chala
+    labels: BD-01-dev,ddl,trigger
+    comment: Creates technical updated_at triggers only.
+    changes:
+    - sqlFile:
+        path: 001_update_triggers.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/01_ddl/09_triggers/001_update_triggers.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false

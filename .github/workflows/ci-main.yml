@@ -1,0 +1,149 @@
+name: Database CI - MAIN
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smarthome-database-ci-main-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-main-migrations:
+    name: Database MAIN - Liquibase RLS MQTT
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: smarthome_ci
+          POSTGRES_USER: smarthome_app
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U smarthome_app -d smarthome_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate and apply all Liquibase changesets to a clean database
+        run: >-
+          docker run --rm --network host
+          -v "$PWD:/liquibase/project:ro" -w /liquibase/project
+          -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome_ci
+          -e LIQUIBASE_COMMAND_USERNAME=smarthome_app
+          -e LIQUIBASE_COMMAND_PASSWORD=ci-only-password
+          -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml
+          liquibase/liquibase:4.29
+          --defaults-file=liquibase.properties validate
+      - name: Apply migrations to the disposable CI database
+        run: >-
+          docker run --rm --network host
+          -v "$PWD:/liquibase/project:ro" -w /liquibase/project
+          -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome_ci
+          -e LIQUIBASE_COMMAND_USERNAME=smarthome_app
+          -e LIQUIBASE_COMMAND_PASSWORD=ci-only-password
+          -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml
+          liquibase/liquibase:4.29
+          --defaults-file=liquibase.properties update
+      - name: Confirm migrations preserved the PostgreSQL bootstrap superuser
+        run: >-
+          docker run --rm --network host -e PGPASSWORD=ci-only-password postgres:18-alpine
+          psql -h 127.0.0.1 -U smarthome_app -d smarthome_ci -Atc
+          "SELECT rolsuper FROM pg_roles WHERE rolname='smarthome_app'"
+          | grep -qx t
+      - name: Audit unprivileged runtime logins and RLS permissions
+        shell: bash
+        run: |
+          docker run --rm --network host -e PGPASSWORD=ci-only-password postgres:18-alpine \
+            psql -h 127.0.0.1 -U smarthome_app -d smarthome_ci -v ON_ERROR_STOP=1 \
+            -c "CREATE ROLE ci_app_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOREPLICATION NOBYPASSRLS PASSWORD 'ci-only-password'; GRANT smarthome_runtime_app TO ci_app_login; CREATE ROLE ci_ingest_login LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOREPLICATION NOBYPASSRLS PASSWORD 'ci-only-password'; GRANT smarthome_ingest TO ci_ingest_login;"
+          for login_role in "ci_app_login smarthome_runtime_app" "ci_ingest_login smarthome_ingest"; do
+            read -r login expected_role <<< "$login_role"
+            output=$(docker run --rm --network host \
+              -e PGPASSWORD=ci-only-password \
+              -v "$PWD/scripts/audit-runtime-roles.sql:/audit.sql:ro" \
+              postgres:18-alpine psql -h 127.0.0.1 -U "$login" -d smarthome_ci \
+              -X -qAt --set="expected_role=$expected_role" --file=/audit.sql)
+            printf '%s\n' "$output"
+            if grep -q '|FAIL' <<< "$output"; then
+              exit 1
+            fi
+          done
+      - name: Audit MQTT synthetic roles and SQL037 on disposable PostgreSQL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Crear usuarios sinteticos, sin contrasena,
+          # solo en la base desechable del CI.
+          docker run --rm -i --network host \
+            -e PGPASSWORD=ci-only-password \
+            postgres:18-alpine \
+            psql -X -v ON_ERROR_STOP=1 \
+              -h 127.0.0.1 \
+              -U smarthome_app \
+              -d smarthome_ci <<'SQL'
+          DO $fixture$
+          DECLARE
+              r RECORD;
+          BEGIN
+              FOR r IN
+                  SELECT *
+                  FROM (VALUES
+                      ('smarthome_mqtt_reserver_dev_login', 'smarthome_mqtt_reserver'),
+                      ('smarthome_mqtt_lease_dev_login', 'smarthome_mqtt_lease_worker'),
+                      ('smarthome_mqtt_confirmer_dev_login', 'smarthome_mqtt_prepare_confirmer'),
+                      ('smarthome_mqtt_secret_dev_login', 'smarthome_mqtt_secret_worker'),
+                      ('smarthome_mqtt_rpc_dev_login', 'smarthome_mqtt_rpc_worker'),
+                      ('smarthome_mqtt_auth_dev_login', 'smarthome_mqtt_auth_confirmer'),
+                      ('smarthome_mqtt_revoke_dev_login', 'smarthome_mqtt_revoke')
+                  ) AS x(login_name, functional_role)
+              LOOP
+                  EXECUTE format(
+                      'CREATE ROLE %I LOGIN INHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS',
+                      r.login_name
+                  );
+
+                  EXECUTE format(
+                      'GRANT %I TO %I',
+                      r.functional_role,
+                      r.login_name
+                  );
+              END LOOP;
+          END
+          $fixture$;
+          SQL
+
+          # Ejecutar auditoria estricta de solo lectura.
+          # Cualquier excepcion SQL detiene el workflow.
+          docker run --rm --network host \
+            -e PGPASSWORD=ci-only-password \
+            -v "$PWD/scripts/audit-mqtt-dev-readiness.sql:/audit.sql:ro" \
+            postgres:18-alpine \
+            psql -X -v ON_ERROR_STOP=1 \
+              -h 127.0.0.1 \
+              -U smarthome_app \
+              -d smarthome_ci \
+              -f /audit.sql
+
+      - name: Confirm no changesets remain pending
+        run: >-
+          docker run --rm --network host
+          -v "$PWD:/liquibase/project:ro" -w /liquibase/project
+          -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome_ci
+          -e LIQUIBASE_COMMAND_USERNAME=smarthome_app
+          -e LIQUIBASE_COMMAND_PASSWORD=ci-only-password
+          -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml
+          liquibase/liquibase:4.29
+          --defaults-file=liquibase.properties status --verbose
+      - name: Validate production Compose syntax
+        run: >-
+          docker compose --env-file .env.production.example -f docker-compose.production.yml config --quiet
