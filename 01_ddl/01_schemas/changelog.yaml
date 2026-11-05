@@ -1,0 +1,121 @@
+databaseChangeLog:
+  - changeSet:
+      id: b2373da2-a937-455a-a350-976ab989e275
+      author: natalia chala
+      labels: "BD-01-dev,ddl,schema"
+      comment: Creates the auth schema.
+      changes:
+        - sqlFile:
+            path: 001_create_schemas_auth.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/01_schemas/001_create_schemas_rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: a1a4c984-d259-48a3-b749-e42cc0327891
+      author: natalia chala
+      labels: "BD-01-dev,ddl,schema"
+      comment: Creates the homes schema.
+      changes:
+        - sqlFile:
+            path: 002_create_schemas_homes.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/01_schemas/002_create_schemas_rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: c1c4d984-e259-48a3-b749-e42cc0327892
+      author: natalia chala
+      labels: "BD-01-dev,ddl,schema"
+      comment: Creates the devices schema.
+      changes:
+        - sqlFile:
+            path: 003_create_schemas_devices.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/01_schemas/003_create_schemas.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: 15cfe1a2-86fc-4c88-8dae-100c4da9ec9d
+      author: natalia chala
+      labels: "BD-01-dev,ddl,schema"
+      comment: Creates the consumption schema.
+      changes:
+        - sqlFile:
+            path: 004_create_schemas_consumption.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/01_schemas/004_create_schemas.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: f0380626-7e8f-42ce-9ff2-7027ee92562a
+      author: natalia chala
+      labels: "BD-01-dev,ddl,schema"
+      comment: Creates the notifications schema.
+      changes:
+        - sqlFile:
+            path: 005_create_schemas_notifications.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/01_schemas/005_create_schemas.rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: 8e108faf-d126-4a30-b772-6cb84b3be342
+      author: natalia chala
+      labels: "BD-01-dev,ddl,schema"
+      comment: Creates the sync schema.
+      changes:
+        - sqlFile:
+            path: 006_create_schemas_sync.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/01_schemas/006_create_schemas_rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: 3f14d2cd-2266-45ea-9b16-ea54a3d00cb3
+      author: natalia chala
+      labels: "BD-01-dev,ddl,schema"
+      comment: Creates the config schema.
+      changes:
+        - sqlFile:
+            path: 007_create_schemas_config.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/01_schemas/007_create_schemas_rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false
+  - changeSet:
+      id: b1e8f3a2-4c5d-4e6b-9f3a-2c1e4d5f6a7b
+      author: natalia chala
+      labels: "BD-01-dev,ddl,schema"
+      comment: Creates the identity_audit schema.
+      changes:
+        - sqlFile:
+            path: 008_create_schemas_identity_audit.sql
+            relativeToChangelogFile: true
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: ../../05_rollbacks/01_ddl/01_schemas/008_create_schemas_rollback.sql
+            relativeToChangelogFile: true
+            stripComments: false

@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: smarthome-sql036-flespi-mqtt-event-order-20261030
+      author: smarthome
+      labels: 'BD-036,iot,flespi,mqtt,event-order,rls'
+      comment: Allow ingestion to read device origin timestamps without granting broad table SELECT; add per-device timestamp index.
+      changes:
+        - sqlFile:
+            path: 001_flespi_event_order.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_flespi_event_order.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false

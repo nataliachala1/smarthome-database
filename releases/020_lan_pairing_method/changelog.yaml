@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu16-lan-pairing-method-20261019
+      author: smarthome
+      labels: 'HU16,pairing,LAN'
+      comment: Allows LAN pairing sessions without changing existing AP sessions or enabling BLE in the API.
+      changes:
+        - sqlFile:
+            path: 001_lan_pairing_method.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_lan_pairing_method.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false
