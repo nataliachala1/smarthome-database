@@ -14,7 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate-migrations:
+  validate-main-migrations:
+    name: Database MAIN - Liquibase RLS MQTT
     runs-on: ubuntu-latest
     services:
       postgres:
