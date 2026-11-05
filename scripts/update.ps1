@@ -32,7 +32,7 @@ try {
         throw 'No existe .env local. Configure primero el entorno de pruebas.'
     }
 
-    $composeConfig = & docker compose config --format json
+    $composeConfig = & docker compose --profile migration-tools config --format json
 
     if ($LASTEXITCODE -ne 0) {
         throw 'No se pudo validar la configuracion Docker Compose.'
