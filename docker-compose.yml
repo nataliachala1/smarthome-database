@@ -1,7 +1,7 @@
 
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: smarthome_db
     restart: unless-stopped
 
@@ -39,7 +39,7 @@ services:
     image: liquibase/liquibase:4.29
     container_name: liquibase_runner
 
-    # No iniciar Liquibase con un docker compose up general.
+    # Do not start Liquibase with a general docker compose up.
     profiles:
       - migration-tools
 
@@ -58,8 +58,8 @@ services:
       LIQUIBASE_COMMAND_PASSWORD: ${POSTGRES_PASSWORD}
       LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog/changelog-master.yaml
 
-    # Operacion predeterminada no destructiva.
-    # Las migraciones requieren una orden explicita.
+    # Default operation is non-destructive.
+    # Migrations require an explicit command.
     command:
       - --defaults-file=liquibase.properties
       - validate
