@@ -1,5 +1,5 @@
--- Por seguridad, nunca revertir automaticamente una operacion autenticada
--- ni los eventos de transicion auditados. Ejecutar revision DBA explicita.
+-- For safety, never automatically revert an authenticated operation
+-- or the audited transition events. Run an explicit DBA review.
 DO $$
 BEGIN
   RAISE EXCEPTION USING ERRCODE='55000',

@@ -1,2 +1,2 @@
--- Preferencias globales del usuario y preferencias por hogar.
+-- Global user preferences and per-home preferences.
 CREATE SCHEMA IF NOT EXISTS config;

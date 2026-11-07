@@ -1,17 +1,17 @@
 -- ============================================================
--- INSERT — Roles del sistema
--- Archivo: 02_dml/00_inserts/001_insert_roles.sql
--- Descripción: Inserta los dos roles globales del sistema
---              definidos en el SRS (RF1.3). Estos roles
---              determinan el nivel de acceso de cada usuario.
--- Autor: Karen Daniela Holguín Cruz, Natalia Chala Chala,
---        Kevin Stiven López Amaya
--- Institución: SENA — Análisis y Desarrollo de Software
--- Ficha: 3145555
--- Versión: 1.0.0
--- Fecha: 2025
--- Referencia SRS: RF1.3
--- Dependencias: 01_ddl/03_tables/001_create_auth_tables.sql
+-- INSERT — System roles
+-- File: 02_dml/00_inserts/001_insert_roles.sql
+-- Description: Inserts the two global system roles
+--              defined in the SRS (RF1.3). These roles
+--              determine each user's access level.
+-- Authors: Karen Daniela Holguín Cruz, Natalia Chala Chala,
+--          Kevin Stiven López Amaya
+-- Institution: SENA — Análisis y Desarrollo de Software
+-- Training group (ficha): 3145555
+-- Version: 1.0.0
+-- Date: 2025
+-- SRS reference: RF1.3
+-- Dependencies: 01_ddl/03_tables/001_create_auth_tables.sql
 -- ============================================================
 
 INSERT INTO auth.role (id_role, name, description, created_at)

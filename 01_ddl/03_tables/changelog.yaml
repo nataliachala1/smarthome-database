@@ -1,6 +1,9 @@
 databaseChangeLog:
   - changeSet:
       id: 19a23933-46d0-4909-8d3d-e94a7aec1689
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:4cece16580954aaf18692afb157ed6f2"
       author: natalia chala
       labels: "BD-01-dev,ddl,table"
       comment: Creates the auth domain tables.
@@ -16,6 +19,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: c77d2fbc-0a83-4f79-b089-424452cc3cc8
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:1c55b1d8801cb4aed0f3bea358078941"
       author: natalia chala
       labels: "BD-01-dev,ddl,table"
       comment: Creates the homes domain tables.
@@ -31,6 +37,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: 305b5430-ab58-4512-8682-933181e31ec9
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:ad396dfa44dbd54fba2865b0a73f45dc"
       author: natalia chala
       labels: "BD-01-dev,ddl,table"
       comment: Creates the devices domain tables.
@@ -46,6 +55,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: 406c6541-bc69-4623-9793-044292f42fd0
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:94de5b77457eb97529b5ed399db0e000"
       author: natalia chala
       labels: "BD-01-dev,ddl,table"
       comment: Creates the consumption domain tables.
@@ -61,6 +73,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: c4f5e16e-82a7-43b0-86d7-7aad33a158b9
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:d4e607723b9aa655aff811f7cd67d2dc"
       author: natalia chala
       labels: "BD-01-dev,ddl,table"
       comment: Creates the notifications domain tables.
@@ -76,6 +91,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: 507d7652-cd7a-4784-9894-1553a4c56d0e
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:bb217919fa8dacd0560118ea6d9d182d"
       author: natalia chala
       labels: "BD-01-dev,ddl,table"
       comment: Creates the sync domain tables.
@@ -91,6 +109,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: 608e8763-de8b-4895-aa96-2664a5d77e1f
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:f410a754762e54d4e758d391f81ac58b"
       author: natalia chala
       labels: "BD-01-dev,ddl,table"
       comment: Creates the config domain tables.
@@ -106,6 +127,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: 2af62fe1-5bc2-4e7f-93b6-7b9860c56a21
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:35903f3660674960942dec33bf1615df"
       author: natalia chala
       labels: "BD-01-dev,ddl,table"
       comment: Creates the identity_audit domain tables.

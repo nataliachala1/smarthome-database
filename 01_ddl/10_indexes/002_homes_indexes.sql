@@ -1,4 +1,4 @@
--- Índices de homes y reglas de unicidad contextual.
+-- homes indexes and contextual uniqueness rules.
 CREATE INDEX IF NOT EXISTS idx_home_created_by_status
   ON homes.home(created_by, status);
 

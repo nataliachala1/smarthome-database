@@ -1,12 +1,12 @@
 -- ============================================================
--- FUNCIONES TECNICAS - updated_at
--- Archivo: 01_ddl/07_functions/001_update_functions.sql
+-- TECHNICAL FUNCTIONS - updated_at
+-- File: 01_ddl/07_functions/001_update_functions.sql
 --
--- Responsabilidad:
---   Mantener updated_at mediante triggers tecnicos.
+-- Responsibility:
+--   Maintain updated_at through technical triggers.
 --
--- No contiene logica de negocio.
--- No utiliza SECURITY DEFINER.
+-- Contains no business logic.
+-- Does not use SECURITY DEFINER.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION public.fn_set_updated_at()

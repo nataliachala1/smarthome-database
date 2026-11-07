@@ -1,26 +1,26 @@
 -- ============================================================
--- RLS — Esquema notifications
--- Archivo: 03_dcl/02_policies/004_rls_notifications.sql
+-- RLS — notifications schema
+-- File: 03_dcl/02_policies/004_rls_notifications.sql
 --
--- Tablas:
+-- Tables:
 --   notifications.alert_rule
 --   notifications.alert
 --   notifications.notification
 --
--- Reglas:
+-- Rules:
 --
 -- alert_rule:
---   OWNER -> consultar/configurar.
+--   OWNER -> read/configure.
 --
 -- alert:
---   sistema/ingest -> generar.
+--   system/ingest -> generate.
 --
 -- notification:
---   cada usuario -> consultar únicamente las propias.
+--   each user -> reads only their own.
 --   ingest -> ALERT.
 --   worker -> SYSTEM.
 --
--- No existen policies DELETE.
+-- There are no DELETE policies.
 -- ============================================================
 
 
@@ -34,11 +34,11 @@ ENABLE ROW LEVEL SECURITY;
 
 
 -- ------------------------------------------------------------
--- SELECT — aplicación
+-- SELECT — application
 --
--- Una regla de umbral es configuración operativa.
--- OWNER puede consultarla incluso si el dispositivo está
--- desactivado.
+-- A threshold rule is operational configuration.
+-- The OWNER can read it even if the device is
+-- deactivated.
 -- ------------------------------------------------------------
 
 CREATE POLICY alert_rule_app_select_policy
@@ -51,9 +51,9 @@ USING (
 
 
 -- ------------------------------------------------------------
--- INSERT — aplicación
+-- INSERT — application
 --
--- Solo OWNER y hogar operativo.
+-- OWNER only and an operational home.
 -- ------------------------------------------------------------
 
 CREATE POLICY alert_rule_app_insert_policy
@@ -67,12 +67,12 @@ WITH CHECK (
 
 
 -- ------------------------------------------------------------
--- UPDATE — aplicación
+-- UPDATE — application
 --
--- Solo OWNER.
+-- OWNER only.
 --
--- El GRANT por columnas impide cambiar id_device.
--- Permite activar/desactivar o hacer soft delete de la regla.
+-- The column-level GRANT prevents changing id_device.
+-- Allows enabling/disabling or soft deleting the rule.
 -- ------------------------------------------------------------
 
 CREATE POLICY alert_rule_app_update_policy
@@ -88,10 +88,10 @@ WITH CHECK (
 
 
 -- ------------------------------------------------------------
--- SELECT — ingesta
+-- SELECT — ingest
 --
--- Solo reglas activas, no eliminadas y de dispositivos
--- pertenecientes a hogares operativos.
+-- Only active, non-deleted rules of devices
+-- that belong to operational homes.
 -- ------------------------------------------------------------
 
 CREATE POLICY alert_rule_ingest_select_policy
@@ -124,16 +124,16 @@ ENABLE ROW LEVEL SECURITY;
 
 
 -- ------------------------------------------------------------
--- INSERT — ingesta
+-- INSERT — ingest
 --
 -- No WITH CHECK(TRUE).
 --
--- Valida:
+-- Validates:
 --   alert type
---   rule cuando corresponda
+--   rule when applicable
 --   device
 --   home
---   home operativo
+--   operational home
 -- ------------------------------------------------------------
 
 CREATE POLICY alert_ingest_insert_policy
@@ -161,13 +161,13 @@ ENABLE ROW LEVEL SECURITY;
 
 
 -- ------------------------------------------------------------
--- SELECT — usuario
+-- SELECT — user
 --
--- Cada usuario ve exclusivamente sus propias notificaciones.
+-- Each user sees only their own notifications.
 --
--- No comprobamos membresía actual del hogar porque una
--- notificación histórica debe seguir perteneciendo al usuario
--- incluso si posteriormente sale del hogar.
+-- Current home membership is not checked because a
+-- historical notification must keep belonging to the user
+-- even if they later leave the home.
 -- ------------------------------------------------------------
 
 CREATE POLICY notification_app_select_policy
@@ -180,13 +180,13 @@ USING (
 
 
 -- ------------------------------------------------------------
--- UPDATE — usuario
+-- UPDATE — user
 --
--- El GRANT limita físicamente el UPDATE a:
+-- The GRANT physically limits the UPDATE to:
 --   status
 --   updated_at
 --
--- Además impedimos transiciones arbitrarias.
+-- Arbitrary transitions are also prevented.
 -- ------------------------------------------------------------
 
 CREATE POLICY notification_app_update_policy
@@ -206,18 +206,18 @@ WITH CHECK (
 
 
 -- ------------------------------------------------------------
--- INSERT — ingesta
+-- INSERT — ingest
 --
--- Alertas del flujo IoT.
+-- Alerts from the IoT flow.
 --
--- OWNER / MEMBER / GUEST pueden ser destinatarios.
--- La FK compuesta garantiza que:
+-- OWNER / MEMBER / GUEST can be recipients.
+-- The composite FK guarantees that:
 --
 -- notification.alert
 -- notification.home
 -- notification.device
 --
--- pertenecen al mismo contexto.
+-- belong to the same context.
 -- ------------------------------------------------------------
 
 CREATE POLICY notification_ingest_insert_policy
@@ -251,7 +251,7 @@ WITH CHECK (
 -- INSERT — worker
 --
 -- SYSTEM
---   puede ser global para un usuario o contextual al hogar.
+--   can be global for a user or scoped to a home.
 -- ------------------------------------------------------------
 
 CREATE POLICY notification_worker_insert_policy

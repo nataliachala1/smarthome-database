@@ -1,6 +1,6 @@
 -- ============================================================
 -- ROLLBACK — RLS identity_audit
--- Archivo:
+-- File:
 -- 05_rollbacks/03_dcl/02_policies/
 -- 007_rls_identity_audit.rollback.sql
 -- ============================================================

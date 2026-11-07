@@ -1,2 +1,2 @@
--- Autenticación, usuarios y roles globales mínimos.
+-- Authentication, users and minimal global roles.
 CREATE SCHEMA IF NOT EXISTS auth;

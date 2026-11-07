@@ -27,7 +27,7 @@ BEGIN
         RETURN FALSE;
     END IF;
 
-    -- El dispositivo no puede moverse a otro hogar.
+    -- The device cannot move to another home.
     IF p_home_id <> v_old.id_home THEN
         RETURN FALSE;
     END IF;
@@ -43,13 +43,13 @@ BEGIN
             RETURN FALSE;
         END IF;
 
-        -- ACTIVE nunca puede estar eliminado.
+        -- ACTIVE can never be deleted.
         IF p_status = 'ACTIVE'
            AND p_deleted_at IS NOT NULL THEN
             RETURN FALSE;
         END IF;
 
-        -- Estados soportados por el ciclo de vida.
+        -- States supported by the lifecycle.
         IF p_status NOT IN ('ACTIVE', 'DEACTIVATED') THEN
             RETURN FALSE;
         END IF;
@@ -61,7 +61,7 @@ BEGIN
     END IF;
 
     -- ========================================================
-    -- MEMBER: exclusivamente control ON/OFF
+    -- MEMBER: ON/OFF control only
     -- ========================================================
     IF v_old.status = 'ACTIVE'
        AND v_old.deleted_at IS NULL

@@ -1,6 +1,9 @@
 ﻿databaseChangeLog:
   - changeSet:
       id: reconcile-device-home-integrity-20261021
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:1a22dc7166a40f541a824c2fd98dae32"
       author: smarthome
       comment: Enforce device-home referential integrity without changing device history.
       changes:

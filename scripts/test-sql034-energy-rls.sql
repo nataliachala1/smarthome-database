@@ -1,9 +1,9 @@
 
 \set ON_ERROR_STOP on
 
--- PROTECCION DE ENTORNO
--- Este script solo puede ejecutarse sobre una base desechable.
--- Nunca ejecutar directamente sobre DEV, QA o Produccion.
+-- ENVIRONMENT PROTECTION
+-- This script may only run against a disposable database.
+-- Never run it directly against DEV, QA or Production.
 
 DO $safety$
 BEGIN
@@ -21,14 +21,14 @@ $safety$;
 
 BEGIN;
 
--- Cada identificador es efimero y exclusivo para esta ejecucion.
+-- Each identifier is ephemeral and exclusive to this run.
 SELECT gen_random_uuid() AS owner_id,
        gen_random_uuid() AS member_id,
        gen_random_uuid() AS guest_id,
        gen_random_uuid() AS outsider_id,
        gen_random_uuid() AS home_id \gset
 
--- Preparar identidades funcionales con el usuario administrativo local.
+-- Prepare functional identities with the local administrative user.
 INSERT INTO auth."user" (id_user, id_role, name, email, password_hash, status, email_verified)
 SELECT :'owner_id'::uuid, id_role, 'SQL034 OWNER', :'owner_id' || '@sql034.example.invalid',
        'INACTIVE_TEST_HASH_ONLY', 'ACTIVE', TRUE
@@ -46,7 +46,7 @@ SELECT :'outsider_id'::uuid, id_role, 'SQL034 OUTSIDER', :'outsider_id' || '@sql
        'INACTIVE_TEST_HASH_ONLY', 'ACTIVE', TRUE
 FROM auth.role WHERE name = 'USER';
 
--- Si faltara el rol USER, estas FK fallan: no continuar con un fixture incompleto.
+-- If the USER role were missing, these FKs fail: do not continue with an incomplete fixture.
 INSERT INTO homes.home (id_home, created_by, name, status)
 VALUES (:'home_id'::uuid, :'owner_id'::uuid, 'SQL034 RLS isolated test home', 'ACTIVE');
 
@@ -57,14 +57,14 @@ VALUES
   (:'home_id'::uuid, :'member_id'::uuid, 'MEMBER', 'ACTIVE', now(), :'owner_id'::uuid),
   (:'home_id'::uuid, :'guest_id'::uuid, 'GUEST', 'ACTIVE', now(), :'owner_id'::uuid);
 
--- Contexto de prueba guardado solo dentro de esta transaccion.
+-- Test context stored only inside this transaction.
 SELECT set_config('app.sql034_test_home_id', :'home_id', true);
 
--- IMPORTANTISIMO: validar RLS con el rol normal, nunca con superusuario.
+-- CRITICAL: validate RLS with the regular role, never with a superuser.
 SET LOCAL ROLE smarthome_runtime_app;
 SELECT current_user AS role_bajo_prueba, current_setting('row_security') AS rls_setting;
 
--- OWNER: puede insertar, leer y actualizar el presupuesto.
+-- OWNER: can insert, read and update the budget.
 SELECT set_config('app.current_user_id', :'owner_id', true);
 INSERT INTO config.home_energy_tariff (id_home, unit_price_cop_kwh, effective_from)
 VALUES (current_setting('app.sql034_test_home_id')::uuid, 850.2500, DATE '2026-10-01');
@@ -84,7 +84,7 @@ END;
 $$;
 \echo 'PASS: OWNER puede insertar, leer y actualizar presupuesto'
 
--- OWNER: constraints positivos y primer dia del mes.
+-- OWNER: positive constraints and first day of the month.
 DO $$
 DECLARE v_denied boolean;
 BEGIN
@@ -123,7 +123,7 @@ END;
 $$;
 \echo 'PASS: CHECK y UNIQUE rechazan entradas invalidas'
 
--- MEMBER activo con permiso por defecto: puede leer, no insertar.
+-- Active MEMBER with the default permission: can read, cannot insert.
 SELECT set_config('app.current_user_id', :'member_id', true);
 DO $$
 DECLARE v_denied boolean := false;
@@ -142,7 +142,7 @@ END;
 $$;
 \echo 'PASS: MEMBER autorizado lee ambas tablas, no inserta tarifa'
 
--- GUEST activo: no puede leer configuraciones energeticas.
+-- Active GUEST: cannot read energy configuration.
 SELECT set_config('app.current_user_id', :'guest_id', true);
 DO $$
 BEGIN
@@ -154,7 +154,7 @@ END;
 $$;
 \echo 'PASS: GUEST no lee configuraciones energeticas'
 
--- Usuario externo al hogar: no puede leer ni escribir.
+-- User outside the home: cannot read or write.
 SELECT set_config('app.current_user_id', :'outsider_id', true);
 DO $$
 DECLARE v_denied boolean := false;
@@ -173,7 +173,7 @@ END;
 $$;
 \echo 'PASS: usuario externo no lee ni escribe'
 
--- El rol de aplicacion no puede cambiar claves de identidad por UPDATE.
+-- The application role cannot change identity keys through UPDATE.
 DO $$
 BEGIN
   IF has_column_privilege('smarthome_runtime_app', 'config.home_energy_goal', 'id_home', 'UPDATE') OR
@@ -185,11 +185,11 @@ END;
 $$;
 \echo 'PASS: columnas id_home y month_start no son modificables por runtime'
 
--- SQL034: pruebas complementarias de permiso de consumo y revocacion.
--- Se reutilizan los usuarios y el hogar temporales del mismo BEGIN.
+-- SQL034: additional tests for the consumption permission and revocation.
+-- The temporary users and home of the same BEGIN are reused.
 
--- Recuperar la membresia exacta: fn_set_member_permissions recibe id_home_member.
--- El rol de aplicacion continua activo; OWNER puede consultar a sus miembros.
+-- Retrieve the exact membership: fn_set_member_permissions receives id_home_member.
+-- The application role stays active; the OWNER can read its members.
 SELECT set_config('app.current_user_id', :'owner_id', true);
 SELECT set_config(
   'app.sql034_test_member_membership_id',
@@ -204,8 +204,8 @@ SELECT set_config(
   true
 );
 
--- El OWNER retira unicamente view_consumption usando la funcion publica
--- autorizada, no mediante UPDATE directo a una tabla protegida.
+-- The OWNER removes only view_consumption through the authorized public
+-- function, not through a direct UPDATE on a protected table.
 DO $$
 BEGIN
   IF NOT homes.fn_set_member_permissions(
@@ -218,7 +218,7 @@ BEGIN
 END;
 $$;
 
--- MEMBER sigue siendo ACTIVE pero pierde acceso a tarifas y metas.
+-- The MEMBER stays ACTIVE but loses access to tariffs and goals.
 SELECT set_config('app.current_user_id', :'member_id', true);
 DO $$
 BEGIN
@@ -232,7 +232,7 @@ END;
 $$;
 \echo 'PASS: MEMBER sin view_consumption no puede leer tarifas ni presupuestos'
 
--- Reponer el permiso dentro de la transaccion; debe restaurar la lectura.
+-- Restore the permission inside the transaction; reading must work again.
 SELECT set_config('app.current_user_id', :'owner_id', true);
 DO $$
 BEGIN
@@ -258,7 +258,7 @@ END;
 $$;
 \echo 'PASS: MEMBER recupera lectura al restaurarse view_consumption'
 
--- El OWNER revoca la membresia por el flujo protegido de homes.home_member.
+-- The OWNER revokes the membership through the protected homes.home_member flow.
 SELECT set_config('app.current_user_id', :'owner_id', true);
 DO $$
 DECLARE v_rows INTEGER;
@@ -275,8 +275,8 @@ BEGIN
 END;
 $$;
 
--- Incluso con permiso view_consumption = TRUE en la tabla de permisos,
--- una membresia REVOKED no puede consultar informacion economica.
+-- Even with view_consumption = TRUE in the permissions table,
+-- a REVOKED membership cannot read economic information.
 SELECT set_config('app.current_user_id', :'member_id', true);
 DO $$
 BEGIN
@@ -290,6 +290,6 @@ END;
 $$;
 \echo 'PASS: membresia REVOKED bloquea la lectura de tarifas y presupuestos'
 
--- Todas las inserciones y cambios de prueba se revierten.
+-- Every test insert and change is rolled back.
 ROLLBACK;
 \echo 'EXITO: pruebas SQL034 completas, transaccion revertida; sin datos de prueba persistentes.'

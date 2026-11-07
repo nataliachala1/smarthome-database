@@ -1,27 +1,27 @@
 -- ============================================================
--- ROLES PostgreSQL - Smart Home
+-- PostgreSQL ROLES - Smart Home
 -- ============================================================
--- Estos roles son tecnicos y son independientes de:
+-- These roles are technical and independent of:
 --
 --   auth.role:
 --     SYSTEM_ADMIN
 --     USER
 --
--- y de homes.home_member.role:
+-- and of homes.home_member.role:
 --     OWNER
 --     MEMBER
 --     GUEST
 --
--- Ninguno de estos roles contiene credenciales.
--- Los usuarios LOGIN se provisionan fuera de las migraciones.
+-- None of these roles holds credentials.
+-- LOGIN users are provisioned outside the migrations.
 -- ============================================================
 
 
 -- ============================================================
 -- smarthome_admin
--- Administracion tecnica de base de datos.
--- Puede atravesar RLS para tareas administrativas.
--- Nunca debe utilizarse como conexion normal de NestJS.
+-- Technical database administration.
+-- Can bypass RLS for administrative tasks.
+-- Must never be used as the regular NestJS connection.
 -- ============================================================
 
 DO $$
@@ -51,9 +51,9 @@ COMMENT ON ROLE smarthome_admin IS
 
 -- ============================================================
 -- smarthome_runtime_app
--- Rol de grupo utilizado por NestJS. Se mantiene separado del
--- usuario bootstrap POSTGRES_USER, que puede ser superusuario.
--- RLS siempre debe aplicarse.
+-- Group role used by NestJS. It is kept separate from the
+-- bootstrap user POSTGRES_USER, which may be a superuser.
+-- RLS must always apply.
 -- ============================================================
 
 DO $$
@@ -144,8 +144,8 @@ COMMENT ON ROLE smarthome_ingest IS
 
 -- ============================================================
 -- smarthome_worker
--- Jobs controlados: agregaciones, mantenimiento de particiones
--- y tareas internas controladas.
+-- Controlled jobs: aggregations, partition maintenance
+-- and controlled internal tasks.
 -- ============================================================
 
 DO $$

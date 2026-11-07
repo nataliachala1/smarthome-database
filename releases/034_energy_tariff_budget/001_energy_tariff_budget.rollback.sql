@@ -1,5 +1,5 @@
--- Rollback solo cuando NO existen configuraciones de usuarios.
--- Evita eliminar presupuestos y tarifas reales por accidente.
+-- Roll back only when NO user configurations exist.
+-- Prevents deleting real budgets and tariffs by accident.
 DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM config.home_energy_goal)

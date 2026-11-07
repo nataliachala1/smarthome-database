@@ -1,6 +1,6 @@
--- SmartHome SQL031: recuperacion autorizada del sobre cifrado YA preparado.
--- No contiene plaintext, contrasenas, claves, DML directo por runtime ni habilitacion MQTT.
--- SOLO con JWT OWNER validado en NestJS + hash del X-Pairing-Token.
+-- SmartHome SQL031: authorized retrieval of the ALREADY prepared encrypted envelope.
+-- Contains no plaintext, passwords, keys, direct runtime DML or MQTT enabling.
+-- ONLY with an OWNER JWT validated in NestJS + hash of the X-Pairing-Token.
 DO $$ BEGIN
  IF to_regclass('devices.mqtt_preparation_secret') IS NULL
     OR to_regprocedure('devices.fn_load_mqtt_preparation_secret(uuid,uuid)') IS NULL
@@ -10,7 +10,7 @@ DO $$ BEGIN
  THEN RAISE EXCEPTION USING ERRCODE='55000', MESSAGE='MQTT_031_PREREQUISITES_NOT_MET'; END IF;
 END $$;
 
--- Solo almacena metadatos de entregas, no tokens ni secretos. No acceso cliente.
+-- Stores only delivery metadata, no tokens or secrets. No client access.
 CREATE TABLE devices.mqtt_bootstrap_delivery_audit (
   id_mqtt_pairing_operation uuid PRIMARY KEY
      REFERENCES devices.mqtt_pairing_operation(id_mqtt_pairing_operation) ON DELETE RESTRICT,
@@ -72,7 +72,7 @@ BEGIN
       WHERE s.id_mqtt_pairing_operation=p_operation) THEN
     RAISE EXCEPTION USING ERRCODE='23514', MESSAGE='MQTT_BOOTSTRAP_SECRET_MISSING';
   END IF;
-  -- Auditar el acceso EN LA MISMA transaccion y limitar recuperaciones.
+  -- Audit the access IN THE SAME transaction and limit retrievals.
   INSERT INTO devices.mqtt_bootstrap_delivery_audit(id_mqtt_pairing_operation,delivery_count,
       first_delivered_at,last_delivered_at) VALUES(p_operation,1,v_now,v_now)
     ON CONFLICT(id_mqtt_pairing_operation) DO UPDATE SET
