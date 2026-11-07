@@ -1,0 +1,15 @@
+databaseChangeLog:
+- changeSet:
+    id: smarthome-demo-001-users-home-device
+    author: smarthome team
+    labels: demo,dml,insert
+    changes:
+    - sqlFile:
+        path: 001_insert_demo_users.sql
+        relativeToChangelogFile: true
+        stripComments: false
+    rollback:
+    - sqlFile:
+        path: ../../05_rollbacks/02_dml/90_demo/001_insert_demo_users.rollback.sql
+        relativeToChangelogFile: true
+        stripComments: false
