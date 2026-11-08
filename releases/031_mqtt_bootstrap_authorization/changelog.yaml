@@ -1,12 +1,21 @@
 databaseChangeLog:
   - changeSet:
       id: hu16-mqtt-bootstrap-authorization-20261026
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:3072e6769ed5d4188a42d9882511bfd1"
       author: smarthome
       labels: hu16,mqtt,bootstrap,owner-fenced
-      comments: Recuperacion autorizada de sobre cifrado tras SQL028; no habilita MQTT ni entrega plaintext desde PostgreSQL.
+      comments: Authorized retrieval of the encrypted envelope after SQL028; does not enable MQTT or deliver plaintext from PostgreSQL.
       changes:
         - sqlFile:
             path: 001_mqtt_bootstrap_authorization.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_bootstrap_authorization.rollback.sql
             relativeToChangelogFile: true
             splitStatements: false
             stripComments: false

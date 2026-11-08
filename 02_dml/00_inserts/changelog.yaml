@@ -1,6 +1,9 @@
 databaseChangeLog:
 - changeSet:
     id: 91bbf5f6-bb17-45f4-a4b6-63b885ec5308
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:cd188b60b00972672a7c0cdcb156c468"
     author: natalia chala
     labels: BD-01-dev,dml,insert
     changes:
@@ -15,15 +18,18 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: dd406ee7-34c0-416d-befe-52254f5cab75
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:a04bf59cbd478ae441aff12e0f03bf0c"
     author: natalia chala
     labels: BD-01-dev,dml,insert
     changes:
     - sqlFile:
-        path: 004_insert_tipos_dispositivos.sql
+        path: 004_insert_device_types.sql
         relativeToChangelogFile: true
         stripComments: false
     rollback:
     - sqlFile:
-        path: ../../05_rollbacks/02_dml/00_inserts/004_insert_tipos_dispositivos.rollback.sql
+        path: ../../05_rollbacks/02_dml/00_inserts/004_insert_device_types.rollback.sql
         relativeToChangelogFile: true
         stripComments: false

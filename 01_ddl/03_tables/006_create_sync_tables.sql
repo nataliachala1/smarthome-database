@@ -1,6 +1,6 @@
 -- ============================================================
--- TABLAS - sync
--- Modelo vigente: únicamente metadata de backups.
+-- TABLES - sync
+-- Current model: backup metadata only.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS sync.backup (

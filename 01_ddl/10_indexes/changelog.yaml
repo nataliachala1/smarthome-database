@@ -1,6 +1,9 @@
 databaseChangeLog:
 - changeSet:
     id: d9647530-11fb-4b7e-a92c-f6ee620f8c3a
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:e528ca5ebf8571f9ad87843bb0848ce6"
     author: natalia chala
     labels: BD-01-dev,ddl,index
     changes:
@@ -15,6 +18,9 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: b25b47f8-2951-4383-9107-7b578c81d76d
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:d6e31751a9d7d54dc2becf55fb5daeb3"
     author: natalia chala
     labels: BD-01-dev,ddl,index
     changes:
@@ -43,6 +49,9 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: 748c900a-68b2-4a8a-b76f-408764691e5d
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:d8e90e4d5f8c97b02075fb4235be41f5"
     author: natalia chala
     labels: BD-01-dev,ddl,index
     changes:

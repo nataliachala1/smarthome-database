@@ -1,6 +1,9 @@
 databaseChangeLog:
   - changeSet:
       id: 99445118-5508-4610-9bd6-3b55658e78a6
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:739fc20e9e77dcc398a0ccd4118303db"
       author: natalia chala
       labels: "BD-01-dev,dcl,rls"
       comment: Configures row-level security for homes.
@@ -17,6 +20,9 @@ databaseChangeLog:
 
   - changeSet:
       id: 99445118-5508-4610-9bd6-3b55658e78a7
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:7e8d95582d74e88f41b3d897d95b9b81"
       author: natalia chala
       labels: "BD-01-dev,dcl,rls"
       comment: Configures row-level security for devices.
@@ -33,6 +39,9 @@ databaseChangeLog:
 
   - changeSet:
       id: 99445118-5508-4610-9bd6-3b55658e78a8
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:a730097b733f2e6d91bc13459f914c07"
       author: natalia chala
       labels: "BD-01-dev,dcl,rls"
       comment: Configures row-level security for consumption.
@@ -49,6 +58,9 @@ databaseChangeLog:
 
   - changeSet:
       id: 99445118-5508-4610-9bd6-3b55658e78a9
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:45eaf9e6660c7c4b86961dbfe8d392b1"
       author: natalia chala
       labels: "BD-01-dev,dcl,rls"
       comment: Configures row-level security for notifications.
@@ -65,6 +77,9 @@ databaseChangeLog:
 
   - changeSet:
       id: 2f1cd769-315a-4039-b44a-35d27e88a298
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:fdc87aafbd96fb25657caeaff269e94f"
       author: natalia chala
       labels: "BD-01-dev,dcl,rls"
       comment: Configures row-level security for config.
@@ -81,6 +96,9 @@ databaseChangeLog:
 
   - changeSet:
       id: b053d59f-26a1-4116-925e-6c7f090c996b
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:e0162455dfb3763d08abf74046c27d13"
       author: natalia chala
       labels: "BD-01-dev,dcl,rls"
       comment: Configures SYSTEM_ADMIN row-level access to backup metadata.
@@ -97,6 +115,9 @@ databaseChangeLog:
 
   - changeSet:
       id: 99445118-5508-4610-9bd6-3b55658e78aa
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:8a35f0211f779c97e68024fdbdcd9c4e"
       author: natalia chala
       labels: "BD-01-dev,dcl,rls"
       comment: Configures immutable semantic audit row-level security.

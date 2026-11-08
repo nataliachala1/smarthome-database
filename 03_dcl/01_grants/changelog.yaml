@@ -113,6 +113,9 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: 3e4aa5d3-c3a8-4115-837b-7faa7b187f47
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:48e589077131acd6912b3f50ff5cb818"
     author: natalia chala
     labels: BD-01-dev,dcl,grant,rls-helper
     changes:

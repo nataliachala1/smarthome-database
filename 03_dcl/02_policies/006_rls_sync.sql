@@ -1,22 +1,22 @@
 -- ============================================================
--- RLS — Esquema sync
--- Archivo: 03_dcl/02_policies/006_rls_sync.sql
+-- RLS — sync schema
+-- File: 03_dcl/02_policies/006_rls_sync.sql
 --
--- Tabla protegida:
+-- Protected table:
 --   sync.backup
 --
--- sync.backup contiene únicamente metadata de respaldos.
--- Los backups/restauraciones reales pertenecen a
--- infraestructura/PostgreSQL.
+-- sync.backup only holds backup metadata.
+-- Actual backups/restores belong to the
+-- infrastructure/PostgreSQL.
 --
--- Acceso funcional:
+-- Functional access:
 --   SYSTEM_ADMIN -> SELECT
---   USER         -> sin acceso
+--   USER         -> no access
 --
--- Escritura:
---   smarthome_admin mediante proceso técnico.
+-- Writes:
+--   smarthome_admin through a technical process.
 --
--- No existen policies INSERT/UPDATE/DELETE para smarthome_runtime_app.
+-- There are no INSERT/UPDATE/DELETE policies for smarthome_runtime_app.
 -- ============================================================
 
 
@@ -30,20 +30,20 @@ ENABLE ROW LEVEL SECURITY;
 
 
 -- ------------------------------------------------------------
--- SELECT — aplicación
+-- SELECT — application
 --
--- smarthome_runtime_app es utilizado por distintos usuarios funcionales,
--- pero únicamente un usuario global SYSTEM_ADMIN puede consultar
--- la metadata de respaldos.
+-- smarthome_runtime_app is used by different functional users,
+-- but only a global SYSTEM_ADMIN user can read
+-- backup metadata.
 --
--- La policy no depende de id_user porque un SYSTEM_ADMIN debe
--- poder consultar todos los respaldos:
+-- The policy does not depend on id_user because a SYSTEM_ADMIN must
+-- be able to read every backup:
 --
---   automaticos
---   manuales
---   completados
---   fallidos
---   en proceso
+--   automatic
+--   manual
+--   completed
+--   failed
+--   in progress
 --
 -- ------------------------------------------------------------
 

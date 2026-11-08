@@ -1,5 +1,5 @@
-﻿-- Reconciliacion de integridad dispositivo-hogar.
--- No modifica ni elimina dispositivos existentes.
+﻿-- Device-home integrity reconciliation.
+-- Does not modify or delete existing devices.
 
 DO $$
 BEGIN

@@ -1,23 +1,23 @@
 -- ============================================================
--- FUNCIONES TECNICAS DE SEGURIDAD - auth
--- Archivo: 01_ddl/07_functions/004_auth_security_functions.sql
+-- TECHNICAL SECURITY FUNCTIONS - auth
+-- File: 01_ddl/07_functions/004_auth_security_functions.sql
 --
--- Estas funciones son helpers para RLS.
--- La logica de login, hash, bloqueo y recuperacion pertenece
--- a NestJS + Prisma.
+-- These functions are RLS helpers.
+-- Login, hashing, lockout and recovery logic belongs
+-- to NestJS + Prisma.
 -- ============================================================
 
 -- ------------------------------------------------------------
--- Usuario actual de la transaccion.
+-- Current user of the transaction.
 --
--- Prisma/NestJS debe establecer, dentro de la transaccion:
+-- Prisma/NestJS must set, inside the transaction:
 --   SET LOCAL app.current_user_id = '<uuid>';
 --
--- current_setting(..., true) evita error si la variable no fue
--- definida. En ese caso la funcion devuelve NULL.
+-- current_setting(..., true) avoids an error if the variable was not
+-- defined. In that case the function returns NULL.
 --
--- Esta funcion NO es SECURITY DEFINER y se mantiene ejecutable
--- por PUBLIC porque no consulta tablas ni eleva privilegios.
+-- This function is NOT SECURITY DEFINER and stays executable
+-- by PUBLIC because it reads no tables and elevates no privileges.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION auth.fn_current_user_id()
 RETURNS UUID
@@ -37,7 +37,7 @@ IS 'Devuelve app.current_user_id de la transaccion actual o NULL si no existe co
 
 
 -- ------------------------------------------------------------
--- Usuario funcional activo.
+-- Active functional user.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION auth.fn_is_active_user(
     p_user_id UUID
@@ -65,12 +65,12 @@ IS 'Comprueba que un usuario de Smart Home exista y se encuentre ACTIVE.';
 
 
 -- ------------------------------------------------------------
--- Rol global SYSTEM_ADMIN.
+-- Global SYSTEM_ADMIN role.
 --
--- Modelo esperado del baseline actual:
+-- Expected model of the current baseline:
 --   auth."user".id_role -> auth.role.id_role
 --
--- Los roles de hogar OWNER/MEMBER/GUEST NO se consultan aqui.
+-- The home roles OWNER/MEMBER/GUEST are NOT checked here.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION auth.fn_is_system_admin()
 RETURNS BOOLEAN

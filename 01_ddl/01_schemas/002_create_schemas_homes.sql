@@ -1,2 +1,2 @@
--- Hogares, membresías contextuales y relaciones del hogar.
+-- Homes, contextual memberships and home relationships.
 CREATE SCHEMA IF NOT EXISTS homes;

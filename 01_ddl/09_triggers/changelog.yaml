@@ -1,6 +1,9 @@
 databaseChangeLog:
 - changeSet:
     id: b1a9bf66-fe75-4bd3-82db-f2ed4a262dbf
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:ca558b671402173d06efc0738e086c27"
     author: natalia chala
     labels: BD-01-dev,ddl,trigger
     comment: Creates technical updated_at triggers only.

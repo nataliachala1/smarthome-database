@@ -1,0 +1,9 @@
+# Local/demo entry point: the full schema plus fictitious demo users.
+# Never use this file in production; production uses changelog-master.yaml.
+databaseChangeLog:
+  - include:
+      file: changelog-master.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: ../02_dml/90_demo/changelog.yaml
+      relativeToChangelogFile: true

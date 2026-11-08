@@ -1,11 +1,11 @@
 -- ============================================================
--- HELPERS RLS - devices
--- Archivo: 01_ddl/07_functions/007_rls_device_security_functions.sql
+-- RLS HELPERS - devices
+-- File: 01_ddl/07_functions/007_rls_device_security_functions.sql
 -- ============================================================
 
 -- ------------------------------------------------------------
--- device_type es un catalogo global. En el baseline actual no
--- se presupone una columna de soft delete en el catalogo.
+-- device_type is a global catalog. The current baseline does not
+-- assume a soft delete column in the catalog.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION devices.fn_is_active_device_type(
     p_device_type_id UUID
@@ -28,9 +28,9 @@ REVOKE ALL ON FUNCTION devices.fn_is_active_device_type(UUID) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- OWNER del hogar al que pertenece el dispositivo.
--- Puede reconocer tambien dispositivos DEACTIVATED para tareas
--- administrativas/reactivacion.
+-- OWNER of the home the device belongs to.
+-- Also recognizes DEACTIVATED devices for administrative
+-- tasks/reactivation.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION devices.fn_is_device_owner(
     p_device_id UUID
@@ -53,9 +53,9 @@ REVOKE ALL ON FUNCTION devices.fn_is_device_owner(UUID) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- Dispositivo visible para roles de hogar indicados.
--- MEMBER/GUEST solo deben atravesar este helper sobre devices
--- operativos de hogares operativos.
+-- Device visible to the given home roles.
+-- MEMBER/GUEST must only pass this helper for operational
+-- devices of operational homes.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION devices.fn_can_view_device(
     p_device_id UUID,
@@ -82,8 +82,8 @@ REVOKE ALL ON FUNCTION devices.fn_can_view_device(UUID, TEXT[]) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- El usuario actual puede administrar el dispositivo si es
--- OWNER de un hogar operativo.
+-- The current user can manage the device if they are the
+-- OWNER of an operational home.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION devices.fn_can_manage_device(
     p_device_id UUID
@@ -106,7 +106,7 @@ REVOKE ALL ON FUNCTION devices.fn_can_manage_device(UUID) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- Dispositivo valido para recibir/procesar telemetria.
+-- Device valid to receive/process telemetry.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION devices.fn_is_ingestable_device(
     p_device_id UUID
@@ -131,15 +131,15 @@ REVOKE ALL ON FUNCTION devices.fn_is_ingestable_device(UUID) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- Valida el UPDATE propuesto por smarthome_runtime_app.
+-- Validates the UPDATE proposed by smarthome_runtime_app.
 --
 -- OWNER:
---   puede modificar configuracion y ciclo de vida, pero no
---   mover el dispositivo a otro hogar.
+--   can modify configuration and lifecycle, but cannot
+--   move the device to another home.
 --
 -- MEMBER:
---   solo puede cambiar is_on; el GRANT por columnas y esta
---   funcion bloquean cambios de configuracion.
+--   can only change is_on; the column-level GRANT and this
+--   function block configuration changes.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION devices.fn_device_app_update_allowed(
     p_device_id UUID,
@@ -170,7 +170,7 @@ BEGIN
        RETURN FALSE;
     END IF;
 
-    -- id_home no puede cambiar por esta operacion.
+    -- id_home cannot change through this operation.
     IF p_home_id <> v_old.id_home THEN
        RETURN FALSE;
     END IF;
@@ -184,7 +184,7 @@ BEGIN
            RETURN FALSE;
        END IF;
 
-       -- Ciclo de vida coherente.
+       -- Consistent lifecycle.
        IF p_status = 'ACTIVE' AND p_deleted_at IS NOT NULL THEN
            RETURN FALSE;
        END IF;
@@ -197,7 +197,7 @@ BEGIN
     END IF;
 
     -- ========================================================
-    -- MEMBER: exclusivamente control ON/OFF
+    -- MEMBER: ON/OFF control only
     -- ========================================================
     IF v_old.status = 'ACTIVE'
        AND v_old.deleted_at IS NULL

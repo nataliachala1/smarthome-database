@@ -1,6 +1,9 @@
 databaseChangeLog:
   - changeSet:
       id: hu16-mqtt-ingest-realtime-20261028
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:1670dffc59f4c75e252c323fe6412215"
       author: smarthome
       labels: 'HU16,HU11,mqtt,consumption,realtime,security'
       comment: Minimal MQTT ingestion privilege and restricted realtime recipients.

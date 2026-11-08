@@ -1,1 +1,1 @@
--- No hay índices activos de configuración en la fase actual.
+-- There are no active configuration indexes in the current phase.

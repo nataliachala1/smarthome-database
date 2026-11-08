@@ -1,12 +1,12 @@
 -- ============================================================
--- RLS — Esquema homes
--- Archivo: 03_dcl/02_policies/001_rls_homes.sql
+-- RLS — homes schema
+-- File: 03_dcl/02_policies/001_rls_homes.sql
 --
--- Modelo:
+-- Model:
 --   homes.home
 --   homes.home_member
 --
--- Fuente de autorización contextual:
+-- Source of contextual authorization:
 --   homes.home_member
 --
 -- Roles:
@@ -14,7 +14,7 @@
 --   MEMBER
 --   GUEST
 --
--- No existen policies DELETE.
+-- There are no DELETE policies.
 -- ============================================================
 
 
@@ -31,14 +31,14 @@ ENABLE ROW LEVEL SECURITY;
 -- SELECT
 --
 -- ACTIVE:
---   OWNER / MEMBER / GUEST pueden consultar.
+--   OWNER / MEMBER / GUEST can read.
 --
 -- PENDING:
---   El usuario invitado puede consultar la información básica
---   del hogar necesaria para decidir si acepta la invitación.
+--   The invited user can read the basic home information
+--   needed to decide whether to accept the invitation.
 --
--- No filtramos deleted_at aquí porque el OWNER debe poder
--- recuperar/reactivar un hogar DEACTIVATED.
+-- deleted_at is not filtered here because the OWNER must be able
+-- to recover/reactivate a DEACTIVATED home.
 -- ------------------------------------------------------------
 
 CREATE POLICY home_select_policy
@@ -57,8 +57,8 @@ USING (
 -- ------------------------------------------------------------
 -- INSERT
 --
--- El usuario autenticado solo puede crear hogares cuyo
--- created_by sea él mismo.
+-- The authenticated user can only create homes whose
+-- created_by is that same user.
 -- ------------------------------------------------------------
 
 CREATE POLICY home_insert_policy
@@ -76,10 +76,10 @@ WITH CHECK (
 -- ------------------------------------------------------------
 -- UPDATE
 --
--- Solo OWNER activo.
+-- Active OWNER only.
 --
--- No exigimos home.status = ACTIVE en USING porque el OWNER
--- debe poder reactivar un hogar DEACTIVATED.
+-- home.status = ACTIVE is not required in USING because the OWNER
+-- must be able to reactivate a DEACTIVATED home.
 -- ------------------------------------------------------------
 
 CREATE POLICY home_update_policy
@@ -96,8 +96,8 @@ WITH CHECK (
 -- ------------------------------------------------------------
 -- UPDATE
 --
--- Únicamente OWNER.
--- Incluye soft delete del hogar.
+-- OWNER only.
+-- Includes the soft delete of the home.
 -- ------------------------------------------------------------
 
 -- ============================================================
@@ -112,13 +112,13 @@ ENABLE ROW LEVEL SECURITY;
 -- ------------------------------------------------------------
 -- SELECT
 --
--- El OWNER puede consultar todas las membresías de su hogar.
+-- The OWNER can read every membership of the home.
 --
--- Cada usuario puede consultar su propia membresía en cualquier
--- estado, incluido PENDING para poder aceptar una invitación.
+-- Each user can read their own membership in any state,
+-- including PENDING so that an invitation can be accepted.
 --
--- MEMBER/GUEST no obtienen automáticamente el listado completo
--- de miembros del hogar.
+-- MEMBER/GUEST do not automatically get the full list
+-- of home members.
 -- ------------------------------------------------------------
 
 CREATE POLICY home_member_select_policy
@@ -138,12 +138,12 @@ USING (
 -- ------------------------------------------------------------
 -- INSERT
 --
--- Caso A:
---   crear la membresía OWNER inicial después de registrar
---   un hogar.
+-- Case A:
+--   create the initial OWNER membership after registering
+--   a home.
 --
--- Caso B:
---   OWNER invita MEMBER/GUEST en estado PENDING.
+-- Case B:
+--   the OWNER invites a MEMBER/GUEST in PENDING state.
 -- ------------------------------------------------------------
 
 CREATE POLICY home_member_insert_policy
@@ -168,7 +168,7 @@ WITH CHECK (
 
     OR
 
-    -- Invitación de MEMBER/GUEST
+    -- MEMBER/GUEST invitation
     (
         homes.fn_can_manage_home(id_home)
 
@@ -188,20 +188,20 @@ WITH CHECK (
 -- ------------------------------------------------------------
 -- UPDATE
 --
--- Caso A:
+-- Case A:
 -- OWNER:
---   - cambia MEMBER <-> GUEST;
---   - revoca PENDING;
---   - revoca ACTIVE.
+--   - switches MEMBER <-> GUEST;
+--   - revokes PENDING;
+--   - revokes ACTIVE.
 --
--- Caso B:
--- El propio MEMBER/GUEST:
---   - acepta PENDING;
---   - rechaza PENDING;
---   - abandona ACTIVE.
+-- Case B:
+-- The MEMBER/GUEST themself:
+--   - accepts PENDING;
+--   - rejects PENDING;
+--   - leaves ACTIVE.
 --
--- La membresía OWNER no puede modificarse mediante esta
--- operación genérica.
+-- The OWNER membership cannot be modified through this
+-- generic operation.
 -- ------------------------------------------------------------
 
 CREATE POLICY home_member_update_policy

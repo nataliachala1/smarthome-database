@@ -1,13 +1,13 @@
 
 # SmartHome Database
-# PostgreSQL existente - inspeccion de migraciones
+# Existing PostgreSQL - migration inspection
 #
-# Este archivo NO despliega backend ni frontend.
-# NO crea bases de datos, volumenes ni usuarios.
-# NO aplica migraciones automaticamente.
+# This file does NOT deploy the backend or the frontend.
+# It does NOT create databases, volumes or users.
+# It does NOT apply migrations automatically.
 #
-# Requiere una instancia PostgreSQL existente
-# y una configuracion de conexion previamente auditada.
+# Requires an existing PostgreSQL instance
+# and a previously audited connection configuration.
 
 services:
   liquibase:

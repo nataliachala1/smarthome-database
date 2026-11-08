@@ -1,5 +1,5 @@
 -- ============================================================
--- TABLAS - consumption
+-- TABLES - consumption
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS consumption.consumption (

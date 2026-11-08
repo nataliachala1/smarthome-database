@@ -1,5 +1,5 @@
--- Solo ejecutar DESPUÉS de instalar SQL035 en una BD de prueba.
--- Validación estructural, sin inserciones ni modificaciones de datos.
+-- Run only AFTER installing SQL035 on a test DB.
+-- Structural validation, without inserting or modifying data.
 DO $check$
 DECLARE
     enabled BOOLEAN;

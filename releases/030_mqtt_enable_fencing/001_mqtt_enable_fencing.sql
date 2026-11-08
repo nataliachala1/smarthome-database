@@ -1,6 +1,6 @@
--- SmartHome 030: fase de activación MQTT delimitada por token y lease.
--- No cambia SQL019..029. Nunca prueba conexión ni concede acceso al cliente HTTP.
--- Aplicar solo tras vista previa Liquibase y respaldo; no se aplica al instalar el parche.
+-- SmartHome 030: MQTT enable phase bounded by token and lease.
+-- Does not change SQL019..029. Never tests a connection or grants access to the HTTP client.
+-- Apply only after a Liquibase preview and a backup; it is not applied when installing the patch.
 DO $$ BEGIN
   IF to_regclass('devices.mqtt_pairing_operation') IS NULL OR
      to_regclass('devices.mqtt_preparation_secret') IS NULL OR
@@ -13,9 +13,9 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- Solo el proceso de pairing que autenticó un OWNER puede solicitar la activación.
--- El rol SQL025 no tiene SELECT/DML en estas tablas. El token hash procede de
--- SHA256 del X-Pairing-Token en NestJS; nunca exponer esta función a HTTP directo.
+-- Only the pairing process that authenticated an OWNER may request enabling.
+-- The SQL025 role has no SELECT/DML on these tables. The token hash comes from
+-- SHA256 of the X-Pairing-Token in NestJS; never expose this function to direct HTTP.
 CREATE FUNCTION devices.fn_request_mqtt_enable(
   p_operation UUID, p_actor UUID, p_token_hash TEXT
 ) RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER
@@ -50,7 +50,7 @@ BEGIN
      ) THEN
     RAISE EXCEPTION USING ERRCODE='23514', MESSAGE='MQTT_ENABLE_NOT_AUTHORIZED';
   END IF;
-  -- Mantener la sesión WAITING_FOR_MQTT incluso si el móvil ya la avanzó.
+  -- Keep the session WAITING_FOR_MQTT even if the mobile app already advanced it.
   UPDATE devices.device_pairing_session SET status='WAITING_FOR_MQTT'
     WHERE id_device_pairing_session=v_op.id_device_pairing_session
       AND status='DEVICE_IDENTIFIED' AND expires_at>clock_timestamp();
@@ -66,7 +66,7 @@ REVOKE ALL ON FUNCTION devices.fn_request_mqtt_enable(uuid,uuid,text) FROM PUBLI
 GRANT EXECUTE ON FUNCTION devices.fn_request_mqtt_enable(uuid,uuid,text)
   TO smarthome_mqtt_lease_worker;
 
--- Reclamar UNA sola activación; timeouts no permiten volver a reclamar.
+-- Claim a SINGLE enable; timeouts do not allow claiming again.
 CREATE FUNCTION devices.fn_claim_mqtt_enable(p_operation UUID,p_seconds INTEGER DEFAULT 60)
 RETURNS TABLE(operation_id UUID, lease_token UUID, lease_until TIMESTAMPTZ,
   identity_id UUID, username TEXT,client_id TEXT,role_name TEXT)
@@ -112,8 +112,8 @@ REVOKE ALL ON FUNCTION devices.fn_claim_mqtt_enable(uuid,integer) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION devices.fn_claim_mqtt_enable(uuid,integer)
   TO smarthome_mqtt_lease_worker;
 
--- El broker debe haberse consultado y verificado fuera de PostgreSQL.
--- Confirma solo estado AWAITING_AUTH, nunca AUTH_VERIFIED/CONNECTED.
+-- The broker must have been queried and verified outside PostgreSQL.
+-- Confirms only the AWAITING_AUTH state, never AUTH_VERIFIED/CONNECTED.
 CREATE FUNCTION devices.fn_confirm_mqtt_enabled(
   p_operation UUID,p_token UUID,p_username TEXT,p_client_id TEXT,p_role_name TEXT
 ) RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER

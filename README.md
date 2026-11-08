@@ -19,7 +19,7 @@ La base de datos proporciona persistencia a los módulos de autenticación, hoga
 | Prisma | Integración del esquema con el backend NestJS |
 | Git y GitHub | Versionamiento, revisión e integración de cambios |
 
-El entorno local declarado en `docker-compose.yml` utiliza PostgreSQL 16 Alpine.
+El entorno local declarado en `docker-compose.yml` utiliza PostgreSQL 18 Alpine, la misma versión del CI.
 
 ## 2. Arquitectura
 
@@ -88,6 +88,8 @@ Los elementos aplicados dependen de los changesets activos del historial Liquiba
 La carpeta `02_dml/` contiene los datos iniciales y catálogos requeridos para el funcionamiento del sistema.
 
 Incluye catálogos determinísticos vinculados con los roles y tipos de dispositivos.
+
+`02_dml/90_demo/` contiene **datos de demostración ficticios** (usuarios de prueba, un hogar y un dispositivo). Solo se aplican con `changelog/changelog-demo.yaml`; `changelog/changelog-master.yaml`, que es el que se usa en QA y producción, no los incluye.
 
 ### 3.3. Control de acceso — DCL
 
@@ -278,6 +280,32 @@ docker compose up -d --wait postgres
 Este comando debe utilizarse exclusivamente en un entorno de pruebas identificado y aislado.
 
 No debe ejecutarse contra los contenedores ni volúmenes del VPS sin una revisión específica.
+
+### Base local con usuarios de prueba
+
+Para una instalación de evaluación o desarrollo, aplicar el esquema completo más los datos de demostración:
+
+```powershell
+docker compose up -d --wait postgres
+docker compose run --rm liquibase --defaults-file=liquibase.properties --changelog-file=changelog/changelog-demo.yaml update
+```
+
+Usuarios creados (contraseña común: `SmartHome#2026`). Son ficticios y usan el dominio reservado `example.com`:
+
+| Correo | Rol global | Rol en «Casa Demo» |
+|---|---|---|
+| `admin@example.com` | SYSTEM_ADMIN | — |
+| `owner@example.com` | USER | OWNER |
+| `member@example.com` | USER | MEMBER |
+| `guest@example.com` | USER | GUEST |
+
+Para retirarlos: `... --changelog-file=changelog/changelog-demo.yaml rollback-count --count=1`.
+
+**Nunca** usar `changelog-demo.yaml` en QA ni en producción.
+
+### Checksums y comentarios traducidos
+
+El 2026-11-07 los comentarios SQL se tradujeron al inglés. Los changesets afectados declaran su checksum anterior en `validCheckSum`, de modo que las bases ya migradas siguen validando sin ejecutar `clear-checksums` ni volver a aplicar cambios.
 
 ## 8. Validación de migraciones
 
