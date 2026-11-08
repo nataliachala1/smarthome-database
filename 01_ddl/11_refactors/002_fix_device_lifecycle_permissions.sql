@@ -1,16 +1,16 @@
 -- ============================================================
 -- DEVICE LIFECYCLE PERMISSIONS
 --
--- smarthome_runtime_app necesita modificar connectivity_status durante
+-- smarthome_runtime_app needs to modify connectivity_status during
 -- activate/deactivate/delete.
 --
--- MEMBER puede controlar is_on, pero no debe poder modificar
--- connectivity_status ni configuración del dispositivo.
+-- A MEMBER can control is_on, but must not be able to modify
+-- connectivity_status or the device configuration.
 -- ============================================================
 
 
 -- ============================================================
--- 1. Eliminar policy dependiente de la función anterior
+-- 1. Drop the policy that depends on the previous function
 -- ============================================================
 
 DROP POLICY IF EXISTS device_app_update_policy
@@ -18,7 +18,7 @@ ON devices.device;
 
 
 -- ============================================================
--- 2. Eliminar helper anterior
+-- 2. Drop the previous helper
 -- ============================================================
 
 DROP FUNCTION IF EXISTS devices.fn_device_app_update_allowed(
@@ -34,7 +34,7 @@ DROP FUNCTION IF EXISTS devices.fn_device_app_update_allowed(
 
 
 -- ============================================================
--- 3. Crear helper incluyendo connectivity_status
+-- 3. Create the helper including connectivity_status
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION devices.fn_device_app_update_allowed(
@@ -66,7 +66,7 @@ BEGIN
         RETURN FALSE;
     END IF;
 
-    -- Un dispositivo no puede trasladarse de hogar mediante UPDATE.
+    -- A device cannot be moved to another home through UPDATE.
     IF p_home_id <> v_old.id_home THEN
         RETURN FALSE;
     END IF;
@@ -97,13 +97,13 @@ BEGIN
             RETURN FALSE;
         END IF;
 
-        -- Un dispositivo ACTIVE no puede estar eliminado.
+        -- An ACTIVE device cannot be deleted.
         IF p_status = 'ACTIVE'
            AND p_deleted_at IS NOT NULL THEN
             RETURN FALSE;
         END IF;
 
-        -- Un dispositivo desactivado debe quedar apagado y offline.
+        -- A deactivated device must end up switched off and offline.
         IF p_status = 'DEACTIVATED'
            AND (
                p_connectivity_status <> 'OFFLINE'
@@ -119,9 +119,9 @@ BEGIN
     -- ========================================================
     -- MEMBER
     --
-    -- Puede cambiar únicamente is_on.
-    -- connectivity_status y demás atributos deben permanecer
-    -- exactamente iguales.
+    -- Can change is_on only.
+    -- connectivity_status and every other attribute must remain
+    -- exactly the same.
     -- ========================================================
 
     IF v_old.status = 'ACTIVE'
@@ -181,7 +181,7 @@ TO smarthome_runtime_app;
 
 
 -- ============================================================
--- 4. Nueva policy UPDATE
+-- 4. New UPDATE policy
 -- ============================================================
 
 CREATE POLICY device_app_update_policy
@@ -219,7 +219,7 @@ WITH CHECK (
 
 
 -- ============================================================
--- 5. Permiso necesario para lifecycle
+-- 5. Permission required for the lifecycle
 -- ============================================================
 
 GRANT UPDATE (

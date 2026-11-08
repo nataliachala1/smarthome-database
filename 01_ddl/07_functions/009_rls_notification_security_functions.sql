@@ -1,11 +1,11 @@
 -- ============================================================
--- HELPERS RLS - notifications
--- Archivo: 01_ddl/07_functions/009_rls_notification_security_functions.sql
+-- RLS HELPERS - notifications
+-- File: 01_ddl/07_functions/009_rls_notification_security_functions.sql
 -- ============================================================
 
 -- ------------------------------------------------------------
--- Comprueba que un destinatario sea usuario activo y tenga una
--- membresia del hogar con los roles/estados permitidos.
+-- Checks that a recipient is an active user and has a
+-- membership of the home with the allowed roles/states.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION notifications.fn_recipient_has_home_role(
     p_user_id UUID,
@@ -43,18 +43,18 @@ FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- Valida el contexto de una alerta antes de que el rol de
--- ingesta pueda insertarla.
+-- Validates the context of an alert before the ingest
+-- role can insert it.
 --
--- Regla general:
---   * hogar operativo;
---   * dispositivo operativo;
---   * dispositivo perteneciente al hogar;
---   * si se informa una regla, debe existir, estar activa,
---     no eliminada y pertenecer al mismo dispositivo.
+-- General rule:
+--   * operational home;
+--   * operational device;
+--   * device that belongs to the home;
+--   * if a rule is given, it must exist, be active,
+--     not deleted and belong to the same device.
 --
--- La evaluacion del umbral/anomalia continua en NestJS; esta
--- funcion solo protege consistencia/autorizacion de datos.
+-- Threshold/anomaly evaluation stays in NestJS; this
+-- function only protects data consistency/authorization.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION notifications.fn_can_generate_alert(
     p_alert_rule_id UUID,
@@ -107,14 +107,14 @@ FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- Transiciones permitidas para una notificacion del propio
--- usuario:
+-- Allowed transitions for a notification of the user
+-- themself:
 --   UNREAD -> READ
 --   UNREAD -> DISMISSED
 --   READ   -> DISMISSED
 --
--- Repetir el mismo estado es idempotente.
--- No permite volver a UNREAD ni modificar notificaciones ajenas.
+-- Repeating the same state is idempotent.
+-- Does not allow returning to UNREAD or modifying other users' notifications.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION notifications.fn_notification_status_transition_allowed(
     p_notification_id UUID,

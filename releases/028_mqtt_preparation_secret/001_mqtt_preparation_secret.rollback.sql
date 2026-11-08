@@ -1,4 +1,4 @@
--- SOLO laboratorio y previa revision. NUNCA borrar secretos cifrados activos.
+-- LAB ONLY and after review. NEVER delete active encrypted secrets.
 DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM devices.mqtt_preparation_secret) THEN

@@ -1,8 +1,8 @@
--- SQL034 | SmartHome | tarifa COP/kWh y objetivos mensuales por hogar
--- Migracion ADITIVA. No modifica changesets previos ni datos de consumo.
--- Tarifa efectiva desde fecha local (America/Bogota); usar la ultima
--- effective_from <= fecha del consumo para calcular estimaciones.
--- No almacena importes calculados ni modifica lecturas previas.
+-- SQL034 | SmartHome | COP/kWh tariff and monthly goals per home
+-- ADDITIVE migration. Does not modify previous changesets or consumption data.
+-- Tariff effective from a local date (America/Bogota); use the latest
+-- effective_from <= consumption date to compute estimates.
+-- Stores no computed amounts and does not modify previous readings.
 
 CREATE TABLE config.home_energy_tariff (
   id_home_energy_tariff UUID NOT NULL DEFAULT gen_random_uuid(),
@@ -48,24 +48,24 @@ COMMENT ON TABLE config.home_energy_goal IS
 COMMENT ON COLUMN config.home_energy_goal.target_kwh IS
   'Limite objetivo de consumo del mes en kWh; NULL significa que no se configuro meta energetica.';
 
--- No permitir acceso por PUBLIC ni por los roles de ingesta/worker.
+-- Do not allow access through PUBLIC or the ingest/worker roles.
 REVOKE ALL ON TABLE config.home_energy_tariff, config.home_energy_goal FROM PUBLIC;
 
--- Aplicacion: acceso bajo RLS; solo owner escribe; MEMBER autorizado consulta.
+-- Application: access under RLS; only the owner writes; an authorized MEMBER reads.
 GRANT SELECT, INSERT ON TABLE config.home_energy_tariff TO smarthome_runtime_app;
 GRANT SELECT, INSERT ON TABLE config.home_energy_goal TO smarthome_runtime_app;
 GRANT UPDATE (monthly_budget_cop, target_kwh)
   ON TABLE config.home_energy_goal TO smarthome_runtime_app;
 
--- Rol administrativo tecnico, nunca utilizado como LOGIN habitual de NestJS.
+-- Technical administrative role, never used as the regular NestJS LOGIN.
 GRANT SELECT, INSERT, UPDATE ON TABLE
   config.home_energy_tariff, config.home_energy_goal TO smarthome_admin;
 
 ALTER TABLE config.home_energy_tariff ENABLE ROW LEVEL SECURITY;
 ALTER TABLE config.home_energy_goal ENABLE ROW LEVEL SECURITY;
 
--- El helper ya restringe detalle de consumo a OWNER o MEMBER activo
--- autorizado. GUEST no obtiene automaticamente tarifas/presupuestos.
+-- The helper already restricts consumption detail to an OWNER or an authorized
+-- active MEMBER. A GUEST does not automatically get tariffs/budgets.
 CREATE POLICY home_energy_tariff_select_policy
 ON config.home_energy_tariff FOR SELECT TO smarthome_runtime_app
 USING (consumption.fn_can_read_detail(id_home));
@@ -87,5 +87,5 @@ ON config.home_energy_goal FOR UPDATE TO smarthome_runtime_app
 USING (homes.fn_can_manage_home(id_home))
 WITH CHECK (homes.fn_can_manage_home(id_home));
 
--- Sin policy DELETE ni permisos UPDATE de tarifas: historico inmutable.
--- Para cambios de tarifa agregar nueva vigencia (INSERT).
+-- No DELETE policy and no UPDATE permission on tariffs: immutable history.
+-- To change a tariff, add a new effective period (INSERT).

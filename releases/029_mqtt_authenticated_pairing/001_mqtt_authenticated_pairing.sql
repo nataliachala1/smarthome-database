@@ -1,8 +1,8 @@
--- SmartHome HU16 / SQL029 (propuesta, NO ejecutada).
--- Confirmación limitada tras prueba MQTT validada por un WORKER DE CONFIANZA.
--- La BD no observa el broker; los argumentos NO son evidencia por si mismos.
--- No instalar hasta que exista la infraestructura para gestionar el nuevo rol.
--- No modifica las migraciones 019-028, ni contraseñas MQTT ni identidades.
+-- SmartHome HU16 / SQL029 (proposal, NOT executed).
+-- Limited confirmation after an MQTT proof validated by a TRUSTED WORKER.
+-- The DB does not observe the broker; the arguments are NOT evidence on their own.
+-- Do not install until the infrastructure to manage the new role exists.
+-- Does not modify migrations 019-028, MQTT passwords or identities.
 
 DO $$
 BEGIN
@@ -24,9 +24,9 @@ BEGIN
 END;
 $$;
 
--- Nueva identidad de base de datos sin posibilidad de LOGIN propia.
--- NUNCA se añade este permiso a smarthome_runtime_app, smarthome_worker o
--- a los roles SQL022/025/026/027/028.
+-- New database identity without its own LOGIN capability.
+-- This permission is NEVER added to smarthome_runtime_app, smarthome_worker or
+-- to the SQL022/025/026/027/028 roles.
 CREATE ROLE smarthome_mqtt_auth_confirmer NOLOGIN NOINHERIT
   NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
 GRANT USAGE ON SCHEMA devices TO smarthome_mqtt_auth_confirmer;
@@ -63,10 +63,10 @@ CREATE TRIGGER trg_block_mqtt_auth_attestation_mutation
   BEFORE UPDATE OR DELETE ON devices.mqtt_broker_auth_attestation
   FOR EACH ROW EXECUTE FUNCTION devices.fn_block_mqtt_auth_attestation_mutation();
 
--- Los permisos de UPDATE que SQL019 otorgó a smarthome_runtime_app NO pueden
--- por si solos convertir WAITING_FOR_MQTT en CONNECTED ni cerrar COMPLETED.
--- ATTACHED es requisito para completar; evita crear un device sin asociar
--- devices.mqtt_identity y mqtt_pairing_operation al registro definitivo.
+-- The UPDATE permissions that SQL019 granted to smarthome_runtime_app CANNOT
+-- on their own turn WAITING_FOR_MQTT into CONNECTED or close COMPLETED.
+-- ATTACHED is required to complete; it prevents creating a device without linking
+-- devices.mqtt_identity and mqtt_pairing_operation to the final record.
 CREATE FUNCTION devices.fn_guard_mqtt_pairing_session_verified()
 RETURNS TRIGGER LANGUAGE plpgsql
 SET search_path=pg_catalog,pg_temp AS $$
@@ -107,13 +107,13 @@ CREATE TRIGGER trg_guard_mqtt_pairing_session_verified
   BEFORE UPDATE ON devices.device_pairing_session
   FOR EACH ROW EXECUTE FUNCTION devices.fn_guard_mqtt_pairing_session_verified();
 
--- La función solo verifica hechos SQL y registra el aval del worker aislado.
--- OBLIGACIÓN EXTERNA del worker ANTES de invocar:
---   1. broker TLS verificado + getClient autenticado/fresco;
---   2. respuesta RPC del Shelly correcta, no retenida y vinculada a rpc_id;
---   3. broker clientId/username/ACL iguales a la reserva;
---   4. sesión de propietario vigente y prueba sin resultado incierto.
--- La función NO recibe contraseñas y NO crea devices.device.
+-- The function only verifies SQL facts and records the isolated worker's endorsement.
+-- EXTERNAL OBLIGATION of the worker BEFORE invoking it:
+--   1. verified TLS broker + authenticated/fresh getClient;
+--   2. correct, non-retained Shelly RPC response bound to rpc_id;
+--   3. broker clientId/username/ACL equal to the reservation;
+--   4. current owner session and a proof without an uncertain result.
+-- The function receives NO passwords and does NOT create devices.device.
 CREATE FUNCTION devices.fn_confirm_mqtt_broker_authentication(
   p_operation UUID, p_rpc_id UUID,
   p_username TEXT, p_client_id TEXT, p_role_name TEXT
@@ -204,12 +204,12 @@ COMMENT ON FUNCTION devices.fn_confirm_mqtt_broker_authentication(UUID,UUID,TEXT
   'Transaccion atomica AWAITING_AUTH -> AUTH_VERIFIED + WAITING_FOR_MQTT -> CONNECTED solo para un worker de confianza. PostgreSQL no observa ni autentica MQTT: el worker debe probarlo antes y no exponer el EXECUTE al HTTP.';
 
 
--- Completa en una sola transaccion existente de Prisma:
---   1) device se crea previamente en la misma transaccion;
---   2) esta funcion registra mqtt_identity, asocia operacion y cierra sesion;
---   3) cualquier error deshace la creacion previa de device.
--- La funcion NO confia en un userId procedente del movil. El propietario
--- proviene del contexto de RLS que establece PrismaRlsService.
+-- Completes inside a single existing Prisma transaction:
+--   1) the device is created beforehand in the same transaction;
+--   2) this function registers mqtt_identity, links the operation and closes the session;
+--   3) any error undoes the earlier device creation.
+-- The function does NOT trust a userId coming from the mobile app. The owner
+-- comes from the RLS context set by PrismaRlsService.
 CREATE FUNCTION devices.fn_finish_verified_pairing(
   p_session UUID, p_device UUID
 ) RETURNS BOOLEAN
@@ -286,8 +286,8 @@ BEGIN
 END;
 $$;
 REVOKE ALL ON FUNCTION devices.fn_finish_verified_pairing(UUID,UUID) FROM PUBLIC;
--- smarthome_runtime_app puede ejecutar SOLO esta operacion acotada, bajo contexto RLS;
--- no recibe permiso sobre mqtt_identity, pairing_operation ni attestation.
+-- smarthome_runtime_app may run ONLY this bounded operation, under RLS context;
+-- it receives no permission on mqtt_identity, pairing_operation or attestation.
 GRANT EXECUTE ON FUNCTION devices.fn_finish_verified_pairing(UUID,UUID)
   TO smarthome_runtime_app;
 COMMENT ON FUNCTION devices.fn_finish_verified_pairing(UUID,UUID) IS

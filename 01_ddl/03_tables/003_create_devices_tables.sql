@@ -1,5 +1,5 @@
 -- ============================================================
--- TABLAS - devices
+-- TABLES - devices
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS devices.device_type (

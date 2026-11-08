@@ -1,12 +1,12 @@
 -- ============================================================
--- FUNCIONES TECNICAS - particionado de consumo
--- Archivo: 01_ddl/07_functions/005_consumption_partition_functions.sql
+-- TECHNICAL FUNCTIONS - consumption partitioning
+-- File: 01_ddl/07_functions/005_consumption_partition_functions.sql
 --
--- La tabla padre consumption.consumption debe existir como:
+-- The parent table consumption.consumption must exist as:
 --   PARTITION BY RANGE (read_at)
 --
--- Esta funcion crea la particion del mes actual y una cantidad
--- controlada de meses futuros.
+-- This function creates the partition for the current month and a
+-- controlled number of future months.
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION consumption.fn_ensure_consumption_partitions(

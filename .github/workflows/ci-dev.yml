@@ -81,8 +81,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Crear usuarios sinteticos, sin contrasena,
-          # solo en la base desechable del CI.
+          # Create synthetic users without a password,
+          # only in the disposable CI database.
           docker run --rm -i --network host \
             -e PGPASSWORD=ci-only-password \
             postgres:18-alpine \
@@ -121,8 +121,8 @@ jobs:
           $fixture$;
           SQL
 
-          # Ejecutar auditoria estricta de solo lectura.
-          # Cualquier excepcion SQL detiene el workflow.
+          # Run a strict read-only audit.
+          # Any SQL exception stops the workflow.
           docker run --rm --network host \
             -e PGPASSWORD=ci-only-password \
             -v "$PWD/scripts/audit-mqtt-dev-readiness.sql:/audit.sql:ro" \
@@ -143,6 +143,29 @@ jobs:
           -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-master.yaml
           liquibase/liquibase:4.29
           --defaults-file=liquibase.properties status --verbose
+      - name: Apply demo seed and verify reversible migrations
+        shell: bash
+        run: |
+          lb() {
+            docker run --rm --network host \
+              -v "$PWD:/liquibase/project:ro" -w /liquibase/project \
+              -e LIQUIBASE_COMMAND_URL=jdbc:postgresql://127.0.0.1:5432/smarthome_ci \
+              -e LIQUIBASE_COMMAND_USERNAME=smarthome_app \
+              -e LIQUIBASE_COMMAND_PASSWORD=ci-only-password \
+              -e LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog/changelog-demo.yaml \
+              liquibase/liquibase:4.29 --defaults-file=liquibase.properties "$@"
+          }
+          q() {
+            docker run --rm --network host -e PGPASSWORD=ci-only-password postgres:18-alpine \
+              psql -h 127.0.0.1 -U smarthome_app -d smarthome_ci -Atc "$1"
+          }
+          lb update
+          test "$(q "SELECT count(*) FROM auth.\"user\" WHERE email LIKE '%@example.com'")" = 4
+          # Roll back the demo seed and SQL037..SQL030, then apply them again.
+          lb rollback-count --count=10
+          test "$(q "SELECT count(*) FROM auth.\"user\" WHERE email LIKE '%@example.com'")" = 0
+          lb update
+          test "$(q "SELECT count(*) FROM auth.\"user\" WHERE email LIKE '%@example.com'")" = 4
       - name: Validate production Compose syntax
         run: >-
           docker compose --env-file .env.production.example -f docker-compose.production.yml config --quiet

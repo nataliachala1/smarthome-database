@@ -1,8 +1,8 @@
--- SQL035 / DEV / flespi: ledger para idempotencia transaccional.
--- Se crea una tabla NORMAL porque consumption.consumption está particionada
--- por read_at; su PK (id_consumption, read_at) no protege la identidad MQTT.
--- El ledger NO deduplica por igualdad de valores eléctricos ni por hora
--- de recepción: el backend debe suministrar una identidad de evento estable.
+-- SQL035 / DEV / flespi: ledger for transactional idempotency.
+-- A NORMAL table is created because consumption.consumption is partitioned
+-- by read_at; its PK (id_consumption, read_at) does not protect the MQTT identity.
+-- The ledger does NOT deduplicate by equal electrical values or by reception
+-- time: the backend must supply a stable event identity.
 
 CREATE TABLE consumption.mqtt_ingest_dedup (
     id_device          UUID          NOT NULL,
@@ -26,9 +26,9 @@ CREATE TABLE consumption.mqtt_ingest_dedup (
 CREATE INDEX idx_mqtt_ingest_dedup_received_at
     ON consumption.mqtt_ingest_dedup (first_received_at);
 
--- Segregación: solo la identidad de ingesta registra o lee su propio ledger.
--- RETURNING y ON CONFLICT (id_device, event_key) requieren SELECT sobre
--- columnas de identificación además de INSERT sobre las de escritura.
+-- Segregation: only the ingest identity records or reads its own ledger.
+-- RETURNING and ON CONFLICT (id_device, event_key) require SELECT on the
+-- identifying columns in addition to INSERT on the written ones.
 REVOKE ALL ON TABLE consumption.mqtt_ingest_dedup FROM PUBLIC;
 GRANT INSERT (id_device, id_home, event_key, source_topic, device_event_ts)
     ON consumption.mqtt_ingest_dedup TO smarthome_ingest;

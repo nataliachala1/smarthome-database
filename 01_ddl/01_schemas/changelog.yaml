@@ -1,6 +1,9 @@
 databaseChangeLog:
   - changeSet:
       id: b2373da2-a937-455a-a350-976ab989e275
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:6384f216f145735302e23b67601628d6"
       author: natalia chala
       labels: "BD-01-dev,ddl,schema"
       comment: Creates the auth schema.
@@ -16,6 +19,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: a1a4c984-d259-48a3-b749-e42cc0327891
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:3fb1f2a1728f046874879024ffcd0437"
       author: natalia chala
       labels: "BD-01-dev,ddl,schema"
       comment: Creates the homes schema.
@@ -31,6 +37,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: c1c4d984-e259-48a3-b749-e42cc0327892
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:0ccf12deb60cd525bc187f756e7115c9"
       author: natalia chala
       labels: "BD-01-dev,ddl,schema"
       comment: Creates the devices schema.
@@ -46,6 +55,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: 15cfe1a2-86fc-4c88-8dae-100c4da9ec9d
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:d992afb6b0af98c90413e7453d995486"
       author: natalia chala
       labels: "BD-01-dev,ddl,schema"
       comment: Creates the consumption schema.
@@ -61,6 +73,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: f0380626-7e8f-42ce-9ff2-7027ee92562a
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:489c3cfd39d19ff4e9655e22f752a904"
       author: natalia chala
       labels: "BD-01-dev,ddl,schema"
       comment: Creates the notifications schema.
@@ -76,6 +91,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: 8e108faf-d126-4a30-b772-6cb84b3be342
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:edce1138dfde1044a417ce1db01850ba"
       author: natalia chala
       labels: "BD-01-dev,ddl,schema"
       comment: Creates the sync schema.
@@ -91,6 +109,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: 3f14d2cd-2266-45ea-9b16-ea54a3d00cb3
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:7d97042ea6557631dc167140adddcb84"
       author: natalia chala
       labels: "BD-01-dev,ddl,schema"
       comment: Creates the config schema.
@@ -106,6 +127,9 @@ databaseChangeLog:
             stripComments: false
   - changeSet:
       id: b1e8f3a2-4c5d-4e6b-9f3a-2c1e4d5f6a7b
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:393eedd9be4e048a200dd3e5d728914f"
       author: natalia chala
       labels: "BD-01-dev,ddl,schema"
       comment: Creates the identity_audit schema.

@@ -1,5 +1,5 @@
 -- ============================================================
--- TABLAS - config
+-- TABLES - config
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS config.user_preference (

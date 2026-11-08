@@ -1,6 +1,9 @@
 databaseChangeLog:
   - changeSet:
       id: smarthome-sql035-flespi-mqtt-ingest-dedup-20261030
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:7fa444caa2bf2c05d2c2e456d94ccbd5"
       author: smarthome
       labels: 'BD-035,iot,flespi,mqtt,idempotency,rls'
       comment: Add durable single-device MQTT event ledger under smarthome_ingest RLS without changing the partitioned consumption table.

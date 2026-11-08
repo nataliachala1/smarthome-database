@@ -21,7 +21,7 @@ DROP FUNCTION IF EXISTS devices.fn_device_app_update_allowed(
 
 
 -- ============================================================
--- Restaurar catálogo
+-- Restore the catalog
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS devices.device_type (

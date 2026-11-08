@@ -1,4 +1,4 @@
--- Triggers técnicos de updated_at. No contienen lógica de negocio.
+-- Technical updated_at triggers. They contain no business logic.
 
 DROP TRIGGER IF EXISTS trg_user_updated_at ON auth."user";
 CREATE TRIGGER trg_user_updated_at BEFORE UPDATE ON auth."user"

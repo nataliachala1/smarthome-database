@@ -1,8 +1,8 @@
 
 -- SmartHome Database
--- Aprovisionamiento de roles de ejecucion.
--- Ejecutar solamente mediante procedimiento autorizado.
--- No ejecutar automaticamente desde QA o produccion.
+-- Provisioning of runtime roles.
+-- Run only through an authorized procedure.
+-- Do not run automatically from QA or production.
 
 \set ON_ERROR_STOP on
 

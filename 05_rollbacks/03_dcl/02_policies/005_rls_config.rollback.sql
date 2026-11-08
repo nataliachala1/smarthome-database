@@ -25,6 +25,6 @@ DISABLE ROW LEVEL SECURITY;
 
 
 -- ============================================================
--- Helper técnico concedido en este changeset
+-- Technical helper granted in this changeset
 -- ============================================================
 

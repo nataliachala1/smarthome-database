@@ -1,2 +1,2 @@
--- Reglas de alerta, alertas persistentes y notificaciones.
+-- Alert rules, persistent alerts and notifications.
 CREATE SCHEMA IF NOT EXISTS notifications;

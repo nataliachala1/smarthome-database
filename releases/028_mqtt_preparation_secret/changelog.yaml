@@ -1,6 +1,9 @@
 databaseChangeLog:
   - changeSet:
       id: hu16-mqtt-preparation-secret-envelope-fencing-20261023
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:07c718d7bd78318130034ed17b8a672b"
       author: smarthome
       labels: 'HU16,mqtt,secret,aes-gcm,fail-closed,fencing'
       comment: Guarded read and insert of an immutable AES-GCM envelope with active lease token; pending isolated lab test.

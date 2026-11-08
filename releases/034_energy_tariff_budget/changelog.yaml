@@ -1,6 +1,9 @@
 databaseChangeLog:
   - changeSet:
       id: smarthome-sql034-energy-tariff-budget-20261029
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:17ac4307bebeae5a103f6c61599e2059"
       author: smarthome
       labels: 'BD-034,energy,tariff,budget,security,rls'
       comment: Add effective-dated COP/kWh tariff and home monthly energy goals with owner writes and consumption-scoped reads.

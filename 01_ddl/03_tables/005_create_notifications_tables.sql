@@ -1,5 +1,5 @@
 -- ============================================================
--- TABLAS - notifications
+-- TABLES - notifications
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS notifications.alert_rule (

@@ -1,24 +1,24 @@
 -- ============================================================
--- HELPERS RLS - auth/homes
--- Archivo: 01_ddl/07_functions/006_rls_security_functions.sql
+-- RLS HELPERS - auth/homes
+-- File: 01_ddl/07_functions/006_rls_security_functions.sql
 --
--- Fuente de autorizacion contextual:
+-- Source of contextual authorization:
 --   homes.home_member
 --
--- Roles de hogar:
+-- Home roles:
 --   OWNER | MEMBER | GUEST
 --
--- Estados de membresia:
+-- Membership states:
 --   PENDING | ACTIVE | REVOKED | LEFT
 --
--- Todas las funciones SECURITY DEFINER fijan search_path y
--- revocan EXECUTE a PUBLIC. DCL concede EXECUTE solo a los
--- roles tecnicos que lo requieren.
+-- Every SECURITY DEFINER function pins search_path and
+-- revokes EXECUTE from PUBLIC. DCL grants EXECUTE only to the
+-- technical roles that need it.
 -- ============================================================
 
 -- ------------------------------------------------------------
--- ¿Existe una membresia del usuario actual en alguno de los
--- estados solicitados?
+-- Does the current user have a membership in any of the
+-- requested states?
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION homes.fn_has_home_membership(
     p_home_id UUID,
@@ -47,7 +47,7 @@ REVOKE ALL ON FUNCTION homes.fn_has_home_membership(UUID, TEXT[]) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- Membresia ACTIVE con uno de los roles indicados.
+-- ACTIVE membership with one of the given roles.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION homes.fn_is_home_member(
     p_home_id UUID,
@@ -77,9 +77,9 @@ REVOKE ALL ON FUNCTION homes.fn_is_home_member(UUID, TEXT[]) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- OWNER activo del hogar.
--- No exige que el hogar este ACTIVE porque el OWNER debe poder
--- consultar/reactivar un hogar desactivado.
+-- Active OWNER of the home.
+-- Does not require the home to be ACTIVE because the OWNER must be
+-- able to read/reactivate a deactivated home.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION homes.fn_is_home_owner(
     p_home_id UUID
@@ -107,7 +107,7 @@ REVOKE ALL ON FUNCTION homes.fn_is_home_owner(UUID) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- Hogar operativo.
+-- Operational home.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION homes.fn_is_home_active(
     p_home_id UUID
@@ -131,7 +131,7 @@ REVOKE ALL ON FUNCTION homes.fn_is_home_active(UUID) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- OWNER + hogar operativo.
+-- OWNER + operational home.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION homes.fn_can_manage_home(
     p_home_id UUID
@@ -151,8 +151,8 @@ REVOKE ALL ON FUNCTION homes.fn_can_manage_home(UUID) FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- Permite crear la membresia OWNER inicial inmediatamente
--- despues de registrar el hogar.
+-- Allows creating the initial OWNER membership right
+-- after the home is registered.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION homes.fn_can_create_initial_owner(
     p_home_id UUID,
@@ -190,13 +190,13 @@ REVOKE ALL ON FUNCTION homes.fn_can_create_initial_owner(UUID, UUID) FROM PUBLIC
 
 
 -- ------------------------------------------------------------
--- UPDATE de una membresia MEMBER/GUEST realizado por OWNER.
+-- UPDATE of a MEMBER/GUEST membership performed by the OWNER.
 --
--- Permitido:
---   * mantener PENDING/ACTIVE y cambiar MEMBER <-> GUEST;
---   * PENDING/ACTIVE -> REVOKED con ended_at informado.
+-- Allowed:
+--   * keep PENDING/ACTIVE and switch MEMBER <-> GUEST;
+--   * PENDING/ACTIVE -> REVOKED with ended_at set.
 --
--- Nunca permite modificar una membresia OWNER.
+-- Never allows modifying an OWNER membership.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION homes.fn_owner_membership_update_allowed(
     p_home_member_id UUID,
@@ -237,13 +237,13 @@ BEGIN
         RETURN FALSE;
     END IF;
 
-    -- Cambio de rol sin alterar las fechas históricas.
+    -- Role change without altering the historical dates.
     IF p_new_status = v_old.status THEN
         RETURN p_new_accepted_at IS NOT DISTINCT FROM v_old.accepted_at
            AND p_new_ended_at IS NOT DISTINCT FROM v_old.ended_at;
     END IF;
 
-    -- Revocacion por OWNER.
+    -- Revocation by the OWNER.
     IF p_new_status = 'REVOKED' THEN
         RETURN p_new_role = v_old.role
            AND p_new_accepted_at IS NOT DISTINCT FROM v_old.accepted_at
@@ -262,11 +262,11 @@ FROM PUBLIC;
 
 
 -- ------------------------------------------------------------
--- Transiciones que el propio MEMBER/GUEST puede realizar.
+-- Transitions the MEMBER/GUEST can perform themself.
 --
---   PENDING -> ACTIVE : aceptar invitacion
---   PENDING -> LEFT   : rechazar invitacion
---   ACTIVE  -> LEFT   : abandonar hogar
+--   PENDING -> ACTIVE : accept the invitation
+--   PENDING -> LEFT   : reject the invitation
+--   ACTIVE  -> LEFT   : leave the home
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION homes.fn_self_membership_transition_allowed(
     p_home_member_id UUID,
@@ -322,7 +322,7 @@ BEGIN
            AND p_new_ended_at IS NOT NULL;
     END IF;
 
-    -- Abandonar una membresia activa.
+    -- Leave an active membership.
     IF v_old.status = 'ACTIVE' AND p_new_status = 'LEFT' THEN
         RETURN p_new_accepted_at IS NOT DISTINCT FROM v_old.accepted_at
            AND p_new_ended_at IS NOT NULL;
