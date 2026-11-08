@@ -1,17 +1,18 @@
 -- ============================================================
--- INSERT — Tipos de dispositivos
--- Archivo: 02_dml/00_inserts/004_insert_tipos_dispositivos.sql
--- Descripción: Inserta el catálogo inicial de tipos de
---              dispositivos IoT compatibles con el sistema
---              Smart Home.
--- Autor: Karen Daniela Holguín Cruz, Natalia Chala Chala,
---        Kevin Stiven López Amaya
--- Institución: SENA — Análisis y Desarrollo de Software
--- Ficha: 3145555
--- Versión: 1.0.0
--- Fecha: 2025
--- Referencia SRS: RF3.1
--- Dependencias: 01_ddl/03_tables/003_create_devices_tables.sql
+-- INSERT — Device types
+-- File: 02_dml/00_inserts/004_insert_device_types.sql
+-- Description: Inserts the initial catalog of IoT device
+--              types supported by the Smart Home system.
+--              The catalog was later removed by
+--              01_ddl/11_refactors/001_remove_device_type.sql.
+-- Authors: Karen Daniela Holguín Cruz, Natalia Chala Chala,
+--          Kevin Stiven López Amaya
+-- Institution: SENA — Análisis y Desarrollo de Software
+-- Training group (ficha): 3145555
+-- Version: 1.0.0
+-- Date: 2025
+-- SRS reference: RF3.1
+-- Dependencies: 01_ddl/03_tables/003_create_devices_tables.sql
 -- ============================================================
 
 INSERT INTO devices.device_type (id_device_type, name, description, icon, created_at, updated_at)

@@ -1,24 +1,24 @@
 -- ============================================================
--- RLS — Esquema devices
--- Archivo: 03_dcl/02_policies/002_rls_devices.sql
+-- RLS — devices schema
+-- File: 03_dcl/02_policies/002_rls_devices.sql
 --
--- Tablas protegidas:
+-- Protected tables:
 --   devices.device
 --   devices.smart_device
 --   devices.device_schedule
 --   devices.device_telemetry_raw
 --
--- devices.device_type es un catálogo global y no necesita RLS.
+-- devices.device_type is a global catalog and needs no RLS.
 --
--- Roles funcionales:
+-- Functional roles:
 --   OWNER
 --   MEMBER
 --   GUEST
 --
--- Rol técnico:
+-- Technical role:
 --   smarthome_ingest
 --
--- No existen policies DELETE.
+-- There are no DELETE policies.
 -- ============================================================
 
 
@@ -32,14 +32,14 @@ ENABLE ROW LEVEL SECURITY;
 
 
 -- ------------------------------------------------------------
--- SELECT — aplicación
+-- SELECT — application
 --
 -- OWNER:
---   puede ver también dispositivos DEACTIVATED para poder
---   administrarlos/reactivarlos.
+--   can also see DEACTIVATED devices in order to
+--   manage/reactivate them.
 --
 -- MEMBER/GUEST:
---   solo dispositivos ACTIVE de hogares ACTIVE.
+--   only ACTIVE devices of ACTIVE homes.
 -- ------------------------------------------------------------
 
 CREATE POLICY device_app_select_policy
@@ -67,16 +67,16 @@ USING (
 
 
 -- ------------------------------------------------------------
--- INSERT — aplicación
+-- INSERT — application
 --
--- Solamente OWNER.
+-- OWNER only.
 --
--- Un nuevo dispositivo:
---   - pertenece a hogar ACTIVE;
---   - comienza ACTIVE;
---   - comienza OFFLINE;
---   - no inventa potencia actual;
---   - no nace eliminado.
+-- A new device:
+--   - belongs to an ACTIVE home;
+--   - starts ACTIVE;
+--   - starts OFFLINE;
+--   - does not invent a current power value;
+--   - is not created deleted.
 -- ------------------------------------------------------------
 
 CREATE POLICY device_app_insert_policy
@@ -100,16 +100,16 @@ WITH CHECK (
 
 
 -- ------------------------------------------------------------
--- UPDATE — aplicación
+-- UPDATE — application
 --
 -- OWNER:
---   administra configuración.
+--   manages the configuration.
 --
 -- MEMBER:
---   puede controlar is_on pero no cambiar la configuración.
+--   can control is_on but cannot change the configuration.
 --
 -- GUEST:
---   no puede actualizar.
+--   cannot update.
 -- ------------------------------------------------------------
 
 CREATE POLICY device_app_update_policy
@@ -118,13 +118,13 @@ FOR UPDATE
 TO smarthome_runtime_app
 USING (
 
-    -- OWNER puede administrar incluso un device DEACTIVATED,
-    -- siempre que el hogar esté operativo.
+    -- The OWNER can manage even a DEACTIVATED device,
+    -- as long as the home is operational.
     homes.fn_can_manage_home(id_home)
 
     OR
 
-    -- MEMBER solamente sobre dispositivos operativos.
+    -- MEMBER only on operational devices.
     (
         status = 'ACTIVE'
         AND deleted_at IS NULL
@@ -153,10 +153,10 @@ WITH CHECK (
 
 
 -- ------------------------------------------------------------
--- SELECT — ingesta
+-- SELECT — ingest
 --
--- El flujo MQTT necesita localizar dispositivos operativos.
--- No depende de OWNER/MEMBER/GUEST.
+-- The MQTT flow needs to locate operational devices.
+-- It does not depend on OWNER/MEMBER/GUEST.
 -- ------------------------------------------------------------
 
 CREATE POLICY device_ingest_select_policy
@@ -170,16 +170,16 @@ USING (
 
 
 -- ------------------------------------------------------------
--- UPDATE — ingesta
+-- UPDATE — ingest
 --
--- El GRANT limita físicamente las columnas a:
+-- The GRANT physically limits the columns to:
 --   connectivity_status
 --   is_on
 --   current_power_w
 --   updated_at
 --
--- Por tanto, incluso con esta policy el rol técnico no puede
--- cambiar hogar, nombre, status, etc.
+-- Therefore, even with this policy the technical role cannot
+-- change the home, name, status, etc.
 -- ------------------------------------------------------------
 
 CREATE POLICY device_ingest_update_policy
@@ -206,12 +206,12 @@ ENABLE ROW LEVEL SECURITY;
 
 
 -- ------------------------------------------------------------
--- SELECT — aplicación
+-- SELECT — application
 --
--- OWNER puede consultar metadata aunque el dispositivo esté
+-- The OWNER can read metadata even if the device is
 -- DEACTIVATED.
 --
--- MEMBER/GUEST solo metadata de dispositivos operativos.
+-- MEMBER/GUEST only read metadata of operational devices.
 -- ------------------------------------------------------------
 
 CREATE POLICY smart_device_app_select_policy
@@ -232,7 +232,7 @@ USING (
 
 
 -- ------------------------------------------------------------
--- INSERT — solo OWNER
+-- INSERT — OWNER only
 -- ------------------------------------------------------------
 
 CREATE POLICY smart_device_app_insert_policy
@@ -245,7 +245,7 @@ WITH CHECK (
 
 
 -- ------------------------------------------------------------
--- UPDATE — solo OWNER
+-- UPDATE — OWNER only
 -- ------------------------------------------------------------
 
 CREATE POLICY smart_device_app_update_policy
@@ -261,10 +261,10 @@ WITH CHECK (
 
 
 -- ------------------------------------------------------------
--- SELECT — ingesta
+-- SELECT — ingest
 --
--- El módulo MQTT puede consultar metadata técnica únicamente
--- de dispositivos operativos.
+-- The MQTT module can read technical metadata only
+-- of operational devices.
 -- ------------------------------------------------------------
 
 CREATE POLICY smart_device_ingest_select_policy
@@ -289,13 +289,13 @@ ENABLE ROW LEVEL SECURITY;
 -- SELECT
 --
 -- OWNER:
---   consulta todas las programaciones, incluidas desactivadas.
+--   reads every schedule, including disabled ones.
 --
 -- MEMBER:
---   consulta únicamente schedules activos del dispositivo.
+--   reads only the active schedules of the device.
 --
 -- GUEST:
---   no necesita consultar configuración automática.
+--   does not need to read automatic configuration.
 -- ------------------------------------------------------------
 
 CREATE POLICY device_schedule_select_policy
@@ -321,7 +321,7 @@ USING (
 
 
 -- ------------------------------------------------------------
--- INSERT — solo OWNER
+-- INSERT — OWNER only
 -- ------------------------------------------------------------
 
 CREATE POLICY device_schedule_insert_policy
@@ -335,9 +335,9 @@ WITH CHECK (
 
 
 -- ------------------------------------------------------------
--- UPDATE — solo OWNER
+-- UPDATE — OWNER only
 --
--- Permite activar/desactivar y realizar soft delete.
+-- Allows enabling/disabling and soft delete.
 -- ------------------------------------------------------------
 
 CREATE POLICY device_schedule_update_policy
@@ -362,10 +362,10 @@ ENABLE ROW LEVEL SECURITY;
 
 
 -- ------------------------------------------------------------
--- INSERT — ingesta MQTT
+-- INSERT — MQTT ingest
 --
--- Telemetría raw es append-only.
--- El id_device debe corresponder a un dispositivo operativo.
+-- Raw telemetry is append-only.
+-- id_device must belong to an operational device.
 -- ------------------------------------------------------------
 
 CREATE POLICY telemetry_raw_ingest_insert_policy

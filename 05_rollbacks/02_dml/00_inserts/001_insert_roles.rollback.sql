@@ -1,5 +1,5 @@
 -- ============================================================
--- ROLLBACK — Roles globales base
+-- ROLLBACK — Base global roles
 -- ============================================================
 
 DELETE FROM auth.role

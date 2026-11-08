@@ -1,14 +1,14 @@
 -- ============================================================
--- RLS — Esquema config
--- Archivo: 03_dcl/02_policies/005_rls_config.sql
+-- RLS — config schema
+-- File: 03_dcl/02_policies/005_rls_config.sql
 --
--- Tablas:
+-- Tables:
 --   config.user_preference
 --
--- Reglas:
---   USER -> solo su propia configuración.
+-- Rules:
+--   USER -> only their own configuration.
 --
--- No existen policies DELETE.
+-- There are no DELETE policies.
 -- ============================================================
 
 -- ============================================================
@@ -21,7 +21,7 @@ ENABLE ROW LEVEL SECURITY;
 -- ------------------------------------------------------------
 -- SELECT
 --
--- Cada usuario consulta exclusivamente su propia configuración.
+-- Each user reads only their own configuration.
 -- ------------------------------------------------------------
 
 CREATE POLICY user_preference_select_policy
@@ -35,8 +35,8 @@ USING (
 -- ------------------------------------------------------------
 -- INSERT
 --
--- Solo se puede crear una preferencia para el usuario actual.
--- UNIQUE(id_user) impide tener más de una configuración global.
+-- A preference can only be created for the current user.
+-- UNIQUE(id_user) prevents having more than one global configuration.
 -- ------------------------------------------------------------
 
 CREATE POLICY user_preference_insert_policy
@@ -50,7 +50,7 @@ WITH CHECK (
 -- ------------------------------------------------------------
 -- UPDATE
 --
--- El GRANT por columnas impide cambiar id_user y la PK.
+-- The column-level GRANT prevents changing id_user and the PK.
 -- ------------------------------------------------------------
 
 CREATE POLICY user_preference_update_policy

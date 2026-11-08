@@ -1,6 +1,9 @@
 databaseChangeLog:
   - changeSet:
       id: remove-device-type-2026-09-24
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:13ac2b84d006ad148eb420a9886268a3"
       author: natalia chala
       labels: BD-01-dev,ddl,refactor,devices
       comment: Removes the obsolete device type catalog and id_device_type dependency.
@@ -19,6 +22,9 @@ databaseChangeLog:
 
   - changeSet:
       id: fix-device-lifecycle-permissions-2026-10-01
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:44cf01e3d485c207dc6a9c00f3b8ccce"
       author: natalia chala
       labels: BD-01-dev,ddl,security,devices
       comment: Allows lifecycle operations to set connectivity status while preserving MEMBER restrictions.

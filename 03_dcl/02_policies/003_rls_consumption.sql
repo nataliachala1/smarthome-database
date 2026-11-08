@@ -1,25 +1,25 @@
 -- ============================================================
--- RLS — Esquema consumption
--- Archivo: 03_dcl/02_policies/003_rls_consumption.sql
+-- RLS — consumption schema
+-- File: 03_dcl/02_policies/003_rls_consumption.sql
 --
--- Tablas:
+-- Tables:
 --   consumption.consumption
 --   consumption.consumption_metric
 --
--- Reglas funcionales:
+-- Functional rules:
 --
--- Consumo/reportes:
+-- Consumption/reports:
 --   OWNER  -> SELECT
 --   MEMBER -> SELECT
 --   GUEST  -> SELECT
 --
--- Escritura de lecturas:
+-- Writing readings:
 --   smarthome_ingest
 --
--- Agregados y métricas:
+-- Aggregates and metrics:
 --   smarthome_worker
 --
--- No existen policies DELETE.
+-- There are no DELETE policies.
 -- ============================================================
 
 
@@ -33,14 +33,14 @@ ENABLE ROW LEVEL SECURITY;
 
 
 -- ------------------------------------------------------------
--- SELECT — usuario
+-- SELECT — user
 --
 -- OWNER:
--- Puede conservar acceso a históricos incluso si el hogar
--- fue desactivado.
+-- Can keep access to history even if the home
+-- was deactivated.
 --
 -- MEMBER/GUEST:
--- Solo sobre hogares actualmente operativos.
+-- Only on currently operational homes.
 -- ------------------------------------------------------------
 
 CREATE POLICY consumption_app_select_policy
@@ -65,12 +65,12 @@ USING (
 
 
 -- ------------------------------------------------------------
--- SELECT — ingesta
+-- SELECT — ingest
 --
--- Necesario para obtener la última lectura del dispositivo
--- y calcular energy_delta_kwh.
+-- Needed to get the latest reading of the device
+-- and compute energy_delta_kwh.
 --
--- El GRANT ya limita las columnas visibles a:
+-- The GRANT already limits the visible columns to:
 --   id_device
 --   energy_total_kwh
 --   read_at
@@ -92,14 +92,14 @@ USING (
 
 
 -- ------------------------------------------------------------
--- INSERT — ingesta
+-- INSERT — ingest
 --
--- Solo acepta lecturas cuyo dispositivo:
---   - existe;
---   - está operativo para ingesta;
---   - pertenece exactamente al id_home indicado.
+-- Only accepts readings whose device:
+--   - exists;
+--   - is operational for ingest;
+--   - belongs exactly to the given id_home.
 --
--- La FK compuesta actúa además como segunda protección.
+-- The composite FK also acts as a second safeguard.
 -- ------------------------------------------------------------
 
 CREATE POLICY consumption_ingest_insert_policy
@@ -120,8 +120,8 @@ WITH CHECK (
 -- ------------------------------------------------------------
 -- SELECT — worker
 --
--- El worker genera agregados de todos los hogares.
--- Es un rol técnico NOBYPASSRLS con permisos específicos.
+-- The worker builds aggregates for every home.
+-- It is a NOBYPASSRLS technical role with specific permissions.
 -- ------------------------------------------------------------
 
 CREATE POLICY consumption_worker_select_policy
@@ -142,9 +142,9 @@ ENABLE ROW LEVEL SECURITY;
 
 
 -- ------------------------------------------------------------
--- SELECT — usuario
+-- SELECT — user
 --
--- Misma regla de históricos que consumption.consumption.
+-- Same history rule as consumption.consumption.
 -- ------------------------------------------------------------
 
 CREATE POLICY consumption_metric_app_select_policy
@@ -182,8 +182,8 @@ USING (TRUE);
 -- ------------------------------------------------------------
 -- INSERT — worker
 --
--- No puede crear una métrica con dispositivo y hogar
--- incompatibles.
+-- Cannot create a metric with a device and a home
+-- that do not match.
 -- ------------------------------------------------------------
 
 CREATE POLICY consumption_metric_worker_insert_policy
@@ -202,8 +202,8 @@ WITH CHECK (
 -- ------------------------------------------------------------
 -- UPDATE — worker
 --
--- El GRANT por columnas impide modificar identidad, periodo
--- y fechas del agregado.
+-- The column-level GRANT prevents changing the identity, period
+-- and dates of the aggregate.
 -- ------------------------------------------------------------
 
 CREATE POLICY consumption_metric_worker_update_policy

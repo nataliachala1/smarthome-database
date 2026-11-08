@@ -1,5 +1,5 @@
--- HU16: rollback de revinculacion de dispositivos.
--- No elimina dispositivos ni registros historicos.
+-- HU16: rollback of device re-pairing.
+-- Does not delete devices or historical records.
 
 DO $$
 BEGIN

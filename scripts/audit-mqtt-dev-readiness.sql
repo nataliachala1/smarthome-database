@@ -1,11 +1,11 @@
 
 -- SmartHome Database
--- Auditoria de identidades PostgreSQL MQTT DEV.
--- Preparacion para migracion controlada a QA.
+-- Audit of the MQTT DEV PostgreSQL identities.
+-- Preparation for a controlled migration to QA.
 --
--- SOLO LECTURA.
--- No crea usuarios, no cambia permisos
--- y no ejecuta migraciones.
+-- READ ONLY.
+-- Creates no users, changes no permissions
+-- and runs no migrations.
 
 \set ON_ERROR_STOP on
 
@@ -15,7 +15,7 @@ SELECT
     current_database() AS database_name,
     current_user AS audit_user;
 
--- 1. Comprobar los siete LOGIN y sus roles.
+-- 1. Check the seven LOGINs and their roles.
 
 WITH expected(login_name, functional_role) AS (
     VALUES
@@ -100,9 +100,9 @@ LEFT JOIN pg_catalog.pg_roles g
 
 ORDER BY e.login_name;
 
--- 2. Verificar el permiso prohibido por SQL037.
--- Tanto el LOGIN como su rol funcional deben
--- carecer de EXECUTE sobre esta funcion.
+-- 2. Verify the permission forbidden by SQL037.
+-- Both the LOGIN and its functional role must
+-- lack EXECUTE on this function.
 
 WITH target AS (
     SELECT
@@ -148,8 +148,8 @@ SELECT
 
 FROM target;
 
--- 3. Localizar el historial Liquibase.
--- No consulta ni modifica los changesets.
+-- 3. Locate the Liquibase history.
+-- Does not read or modify the changesets.
 
 SELECT
     n.nspname AS schema_name,
@@ -165,9 +165,9 @@ WHERE LOWER(c.relname) = 'databasechangelog'
 
 ORDER BY n.nspname;
 
--- 4. Fallar si las identidades MQTT no cumplen el contrato esperado.
--- Cada LOGIN solo puede pertenecer a su rol funcional, sin privilegios
--- administrativos ni membresías que amplíen el acceso.
+-- 4. Fail if the MQTT identities do not meet the expected contract.
+-- Each LOGIN may only belong to its functional role, without administrative
+-- privileges or memberships that widen its access.
 DO $audit$
 DECLARE
     v_expected RECORD;

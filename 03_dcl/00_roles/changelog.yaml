@@ -2,6 +2,9 @@ databaseChangeLog:
 
   - changeSet:
       id: 7afd86d3-7320-4910-9e36-3ce73849fb82
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:697780d5badd373b6d9da2355640c2d6"
       author: natalia chala
       labels: "BD-01-dev,dcl,role"
       comment: Creates PostgreSQL technical roles for Smart Home.

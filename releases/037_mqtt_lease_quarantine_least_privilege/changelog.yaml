@@ -9,3 +9,9 @@ databaseChangeLog:
             path: 001_mqtt_lease_quarantine_least_privilege.sql
             relativeToChangelogFile: true
             splitStatements: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_lease_quarantine_least_privilege.rollback.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+            stripComments: false

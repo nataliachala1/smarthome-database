@@ -1,12 +1,21 @@
 databaseChangeLog:
   - changeSet:
       id: hu16-mqtt-enable-fencing-20261026
+      # Checksum before the English translation of SQL comments (2026-11-07);
+      # keeps databases migrated earlier valid without clear-checksums.
+      validCheckSum: "9:86c194a904ddc784a99481e2218d5e41"
       author: smarthome
       labels: hu16,mqtt,broker-enable,lease-fencing
-      comments: Activacion MQTT con lease y estado AWAITING_AUTH; sin autenticar ni registrar el dispositivo.
+      comments: MQTT enabling with lease and AWAITING_AUTH state; does not authenticate or register the device.
       changes:
         - sqlFile:
             path: 001_mqtt_enable_fencing.sql
+            relativeToChangelogFile: true
+            splitStatements: false
+            stripComments: false
+      rollback:
+        - sqlFile:
+            path: 001_mqtt_enable_fencing.rollback.sql
             relativeToChangelogFile: true
             splitStatements: false
             stripComments: false

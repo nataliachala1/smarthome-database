@@ -1,14 +1,14 @@
 -- ============================================================
 -- REMOVE DEVICE TYPE
 --
--- El catálogo devices.device_type dejó de formar parte del
--- modelo vigente. La identidad técnica del dispositivo se
--- obtiene mediante manufacturer/model/integration metadata.
+-- The devices.device_type catalog is no longer part of the
+-- current model. The technical identity of a device is
+-- obtained from manufacturer/model/integration metadata.
 -- ============================================================
 
 
 -- ============================================================
--- 1. Policies que dependen de id_device_type
+-- 1. Policies that depend on id_device_type
 -- ============================================================
 
 DROP POLICY IF EXISTS device_app_insert_policy
@@ -38,7 +38,7 @@ DROP FUNCTION IF EXISTS devices.fn_is_active_device_type(UUID);
 
 
 -- ============================================================
--- 3. Eliminar FK y columna antigua
+-- 3. Drop the FK and the old column
 -- ============================================================
 
 ALTER TABLE devices.device
@@ -49,14 +49,14 @@ DROP COLUMN IF EXISTS id_device_type;
 
 
 -- ============================================================
--- 4. Eliminar catálogo obsoleto
+-- 4. Drop the obsolete catalog
 -- ============================================================
 
 DROP TABLE IF EXISTS devices.device_type;
 
 
 -- ============================================================
--- 5. Nueva función de autorización UPDATE
+-- 5. New UPDATE authorization function
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION devices.fn_device_app_update_allowed(
@@ -87,8 +87,8 @@ BEGIN
         RETURN FALSE;
     END IF;
 
-    -- El dispositivo nunca puede trasladarse a otro hogar
-    -- mediante una actualización normal.
+    -- A device can never be moved to another home
+    -- through a regular update.
     IF p_home_id <> v_old.id_home THEN
         RETURN FALSE;
     END IF;
@@ -167,7 +167,7 @@ TO smarthome_runtime_app;
 
 
 -- ============================================================
--- 6. Nueva policy INSERT
+-- 6. New INSERT policy
 -- ============================================================
 
 CREATE POLICY device_app_insert_policy
@@ -186,7 +186,7 @@ WITH CHECK (
 
 
 -- ============================================================
--- 7. Nueva policy UPDATE
+-- 7. New UPDATE policy
 -- ============================================================
 
 CREATE POLICY device_app_update_policy
@@ -223,7 +223,7 @@ WITH CHECK (
 
 
 -- ============================================================
--- 8. Permisos finales
+-- 8. Final permissions
 -- ============================================================
 
 GRANT UPDATE (

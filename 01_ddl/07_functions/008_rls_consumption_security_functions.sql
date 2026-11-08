@@ -1,14 +1,14 @@
 -- ============================================================
--- HELPERS RLS - consumption
--- Archivo: 01_ddl/07_functions/008_rls_consumption_security_functions.sql
+-- RLS HELPERS - consumption
+-- File: 01_ddl/07_functions/008_rls_consumption_security_functions.sql
 -- ============================================================
 
 -- ------------------------------------------------------------
--- Garantiza que el dispositivo indicado pertenezca realmente
--- al hogar indicado.
+-- Guarantees that the given device really belongs
+-- to the given home.
 --
--- Se utiliza como segunda proteccion junto a las FK compuestas
--- del modelo de consumo/notificaciones.
+-- Used as a second safeguard together with the composite FKs
+-- of the consumption/notifications model.
 -- ------------------------------------------------------------
 CREATE OR REPLACE FUNCTION devices.fn_device_belongs_to_home(
     p_device_id UUID,

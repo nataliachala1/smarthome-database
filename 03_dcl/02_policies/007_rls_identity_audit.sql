@@ -1,32 +1,32 @@
 -- ============================================================
--- RLS — Esquema identity_audit
--- Archivo:
+-- RLS — identity_audit schema
+-- File:
 -- 03_dcl/02_policies/007_rls_identity_audit.sql
 --
--- Tabla:
+-- Table:
 --   identity_audit.audit_log
 --
--- Reglas:
+-- Rules:
 --
 -- INSERT:
---   NestJS puede registrar eventos semánticos.
+--   NestJS can record semantic events.
 --
 -- SELECT:
---   únicamente usuarios globales SYSTEM_ADMIN.
+--   only global SYSTEM_ADMIN users.
 --
 -- UPDATE:
---   prohibido.
+--   forbidden.
 --
 -- DELETE:
---   prohibido.
+--   forbidden.
 --
 -- actor_type:
 --   USER
 --   SYSTEM
 --   INFRASTRUCTURE
 --
--- Los eventos INFRASTRUCTURE no se insertan mediante
--- smarthome_runtime_app; pertenecen al flujo técnico administrativo.
+-- INFRASTRUCTURE events are not inserted through
+-- smarthome_runtime_app; they belong to the technical administrative flow.
 -- ============================================================
 
 
@@ -42,16 +42,16 @@ ENABLE ROW LEVEL SECURITY;
 -- ============================================================
 -- SELECT — SYSTEM_ADMIN
 --
--- smarthome_runtime_app es la conexión utilizada por NestJS.
--- El rol PostgreSQL no distingue usuarios funcionales;
--- auth.fn_is_system_admin() resuelve si el usuario actual
--- posee el rol global SYSTEM_ADMIN.
+-- smarthome_runtime_app is the connection used by NestJS.
+-- The PostgreSQL role does not distinguish functional users;
+-- auth.fn_is_system_admin() resolves whether the current user
+-- holds the global SYSTEM_ADMIN role.
 --
--- USER normal:
---   SELECT -> 0 filas.
+-- Regular USER:
+--   SELECT -> 0 rows.
 --
 -- SYSTEM_ADMIN:
---   SELECT -> todos los eventos permitidos.
+--   SELECT -> every allowed event.
 -- ============================================================
 
 CREATE POLICY audit_system_admin_select_policy
@@ -66,18 +66,18 @@ USING (
 -- ============================================================
 -- INSERT — NestJS
 --
--- Caso A — USER autenticado
+-- Case A — authenticated USER
 --
---   app.current_user_id existe
---   y debe coincidir con audit_log.id_user.
+--   app.current_user_id exists
+--   and must match audit_log.id_user.
 --
 --
--- Caso B — autenticación todavía no completada
+-- Case B — authentication not completed yet
 --
 --   app.current_user_id = NULL
---   únicamente se permiten eventos del módulo AUTH.
+--   only AUTH module events are allowed.
 --
--- Esto permite registrar, por ejemplo:
+-- This allows recording, for example:
 --
 --   AUTH_LOGIN_FAILED
 --   AUTH_ACCOUNT_LOCKED
@@ -85,13 +85,13 @@ USING (
 --   AUTH_PASSWORD_RECOVERY_COMPLETED
 --
 --
--- Caso C — evento SYSTEM
+-- Case C — SYSTEM event
 --
 --   actor_type = SYSTEM
---   id_user debe ser NULL.
+--   id_user must be NULL.
 --
 --
--- INFRASTRUCTURE no se permite mediante smarthome_runtime_app.
+-- INFRASTRUCTURE is not allowed through smarthome_runtime_app.
 -- ============================================================
 
 CREATE POLICY audit_app_insert_policy
@@ -101,7 +101,7 @@ TO smarthome_runtime_app
 WITH CHECK (
 
     -- ========================================================
-    -- EVENTO DE USUARIO
+    -- USER EVENT
     -- ========================================================
 
     (
@@ -109,8 +109,8 @@ WITH CHECK (
 
         AND (
 
-            -- Usuario autenticado:
-            -- el actor almacenado debe ser el usuario actual.
+            -- Authenticated user:
+            -- the stored actor must be the current user.
             (
                 auth.fn_current_user_id() IS NOT NULL
 
@@ -119,8 +119,8 @@ WITH CHECK (
 
             OR
 
-            -- Usuario todavía no autenticado:
-            -- únicamente eventos relacionados con AUTH.
+            -- User not authenticated yet:
+            -- only AUTH-related events.
             (
                 auth.fn_current_user_id() IS NULL
 
@@ -134,7 +134,7 @@ WITH CHECK (
 
 
     -- ========================================================
-    -- EVENTO GENERADO POR EL SISTEMA
+    -- SYSTEM-GENERATED EVENT
     -- ========================================================
 
     (

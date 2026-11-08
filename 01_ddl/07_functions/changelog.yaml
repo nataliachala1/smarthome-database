@@ -1,6 +1,9 @@
 databaseChangeLog:
 - changeSet:
     id: d50ff794-183a-4e9c-bba9-d1d3e6c57206
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:81fe92d31bdc7fef12983a205a643b65"
     author: natalia chala
     labels: BD-01-dev,ddl,function
     comment: Creates the technical updated_at trigger function.
@@ -17,6 +20,9 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: 9b7c9fc6-93e0-447a-b111-76e398b4640c
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:c0a1f836e238e2e802bcd587e3b59c9f"
     author: natalia chala
     labels: BD-01-dev,ddl,function
     comment: Creates minimal technical authentication helpers for RLS.
@@ -33,6 +39,9 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: deb3fc9e-ac39-4515-bcef-640226993f77
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:1bfa62929fb3a48a6c67f4f80c2bda5b"
     author: natalia chala
     labels: BD-01-dev,ddl,function
     comment: Creates the controlled monthly consumption partition maintenance function.
@@ -49,6 +58,9 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: 43a79f51-f436-4099-b24a-ffbdc55838b0
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:621a695fda2575a0e120eb2a7927ce5f"
     author: natalia chala
     labels: BD-01-dev,ddl,function,rls
     comment: Creates home membership and ownership helpers used by row-level security.
@@ -65,6 +77,9 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: 34077983-26ba-47b4-aa80-888ef0b5b662
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:39116a391b5cf7b83269e6a00afd6105"
     author: natalia chala
     labels: BD-01-dev,ddl,function,rls
     comment: Creates device authorization helpers used by row-level security.
@@ -81,6 +96,9 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: b5df25d1-5987-428a-8e85-b18ea9592467
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:0c50c0d01a912144b901eed197fc9c8c"
     author: natalia chala
     labels: BD-01-dev,ddl,function,rls
     comment: Creates device-to-home consistency helper used by consumption RLS.
@@ -97,6 +115,9 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: 19c41bf7-5c40-46ee-a222-02be7b624bbd
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:5ea9462119f1768dee8dd3f74a50accd"
     author: natalia chala
     labels: BD-01-dev,ddl,function,rls
     comment: Creates notification recipient, alert and status-transition helpers used
@@ -114,6 +135,9 @@ databaseChangeLog:
         stripComments: false
 - changeSet:
     id: 6e859c61-d534-4fe6-904c-92a7e175fd72
+    # Checksum before the English translation of SQL comments (2026-11-07);
+    # keeps databases migrated earlier valid without clear-checksums.
+    validCheckSum: "9:f64e2aca8f5a20d32da611a962520203"
     author: natalia chala
     labels: BD-01-dev,ddl,function,rls,device-lifecycle
     comment: Aligns device update authorization with inactive and soft-deleted lifecycle states.

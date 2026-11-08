@@ -1,9 +1,9 @@
 
 \set ON_ERROR_STOP on
 
--- PROTECCION DE ENTORNO
--- Pruebas exclusivas de PostgreSQL desechable.
--- No ejecutar sobre bases compartidas ni persistentes.
+-- ENVIRONMENT PROTECTION
+-- Tests exclusively for a disposable PostgreSQL.
+-- Do not run against shared or persistent databases.
 
 DO $safety$
 BEGIN

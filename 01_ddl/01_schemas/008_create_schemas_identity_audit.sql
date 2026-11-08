@@ -1,2 +1,2 @@
--- Auditoría semántica e inmutable.
+-- Immutable semantic audit.
 CREATE SCHEMA IF NOT EXISTS identity_audit;

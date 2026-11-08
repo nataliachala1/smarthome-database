@@ -1,5 +1,5 @@
--- Permisos de ejecución para helpers técnicos RLS.
--- Se centralizan aquí para que las policies no administren privilegios.
+-- Execute permissions for technical RLS helpers.
+-- They are centralized here so that policies do not manage privileges.
 
 GRANT EXECUTE ON FUNCTION auth.fn_current_user_id() TO smarthome_runtime_app;
 GRANT EXECUTE ON FUNCTION auth.fn_is_active_user(UUID) TO smarthome_runtime_app, smarthome_ingest, smarthome_worker;

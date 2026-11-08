@@ -1,7 +1,7 @@
--- SmartHome HU16 SQL028 - propuesta 503.29 CON FENCING.
--- NO EJECUTAR EN PRODUCCION. Mantener separada hasta la validacion Liquibase.
--- Protege lectura e insercion con el lease_token de SQL025 (sin confiar en el runtime normal).
--- No guarda password plaintext ni material de claves. No crea roles LOGIN ni endpoints.
+-- SmartHome HU16 SQL028 - proposal 503.29 WITH FENCING.
+-- DO NOT RUN IN PRODUCTION. Keep separate until Liquibase validation.
+-- Protects reads and inserts with the SQL025 lease_token (without trusting the normal runtime).
+-- Stores no plaintext password or key material. Creates no LOGIN roles or endpoints.
 DO $$
 BEGIN
   IF to_regclass('devices.mqtt_pairing_operation') IS NULL
@@ -39,8 +39,8 @@ ALTER TABLE devices.mqtt_preparation_secret ENABLE ROW LEVEL SECURITY;
 COMMENT ON TABLE devices.mqtt_preparation_secret IS
   'Immutable AES-GCM envelope por operacion MQTT, sin plaintext ni clave. Lectura/insercion requieren lease SQL025 cercado.';
 
--- La lectura tambien requiere el lease ACTUAL: un worker obsoleto no puede
--- extraer contrasenas tras perder su token. Se bloquea la fila hasta fin de tx.
+-- Reading also requires the CURRENT lease: a stale worker cannot
+-- extract passwords after losing its token. The row is locked until the end of the tx.
 CREATE FUNCTION devices.fn_load_mqtt_preparation_secret(
   p_operation UUID, p_lease_token UUID
 )
@@ -74,8 +74,8 @@ REVOKE ALL ON FUNCTION devices.fn_load_mqtt_preparation_secret(UUID, UUID) FROM 
 GRANT EXECUTE ON FUNCTION devices.fn_load_mqtt_preparation_secret(UUID, UUID)
   TO smarthome_mqtt_secret_worker;
 
--- Lock FOR SHARE impide rotacion concurrente del lease entre la verificacion
--- y el INSERT. No guardar ni sobrescribir secretos desde un worker obsoleto.
+-- The FOR SHARE lock prevents concurrent lease rotation between the check
+-- and the INSERT. Never store or overwrite secrets from a stale worker.
 CREATE FUNCTION devices.fn_insert_mqtt_preparation_secret_if_absent(
   p_operation UUID, p_lease_token UUID, p_format SMALLINT, p_key_id TEXT,
   p_nonce TEXT, p_ciphertext TEXT, p_tag TEXT

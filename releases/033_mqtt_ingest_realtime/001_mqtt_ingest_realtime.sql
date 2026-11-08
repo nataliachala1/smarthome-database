@@ -1,16 +1,16 @@
--- SEGURIDAD: negar lecturas directas de hogares a la ingesta MQTT.
--- Unicamente se consulta destinatarios con la funcion SECURITY DEFINER.
+-- SECURITY: deny direct reads of homes to MQTT ingest.
+-- Recipients are queried only through the SECURITY DEFINER function.
 REVOKE SELECT ON TABLE homes.home, homes.home_member FROM smarthome_ingest;
--- SQL033: permisos mínimos para ingesta MQTT y eventos realtime.
--- Requiere revisión y validación Liquibase antes de su aplicación.
+-- SQL033: minimum permissions for MQTT ingest and realtime events.
+-- Requires review and Liquibase validation before being applied.
 
--- El subscriber filtra la lectura anterior por id_home.
+-- The subscriber filters the previous read by id_home.
 GRANT SELECT (id_home)
 ON consumption.consumption
 TO smarthome_ingest;
 
--- Devuelve destinatarios únicamente para un dispositivo MQTT activo
--- que pertenezca al hogar indicado.
+-- Returns recipients only for an active MQTT device
+-- that belongs to the given home.
 CREATE FUNCTION homes.fn_mqtt_realtime_recipients(
     p_device_id UUID,
     p_home_id UUID
